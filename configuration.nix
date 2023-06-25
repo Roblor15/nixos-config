@@ -139,7 +139,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    git
     google-chrome
     cryptsetup
     vimPlugins.vim-plug
@@ -253,25 +252,22 @@
 
   virtualisation.podman.enable = true;
 
-  programs = {
-    bash = {
-      shellInit = ''
-        export PATH="$HOME/.cargo/bin:$PATH"
-      '';
-
-    };
-  };
-
   services.logind = {
   #   lidSwitch = "suspend-then-hibernate";
+    lidSwitch = "suspend";
+    # extraConfig = ''
+    #   HandlePowerKey=poweroff
+    #   IdleAction=suspend-then-hibernate
+    #   IdleActionSec=2m
+    # '';
     extraConfig = ''
       HandlePowerKey=poweroff
-  #     IdleAction=suspend-then-hibernate
-  #     IdleActionSec=2m
+      IdleAction=suspend
+      IdleActionSec=2m
     '';
   };
 
-  systemd.sleep.extraConfig = "HibernateDelaySec=2h";
+  # systemd.sleep.extraConfig = "HibernateDelaySec=2h";
 
   hardware.bluetooth.enable = true;
 
@@ -368,5 +364,4 @@
   };
 
   programs.light.enable = true;
-
 }

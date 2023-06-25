@@ -24,22 +24,25 @@
 
   boot.supportedFilesystems = [ "ntfs" ];
 
-  fileSystems."/media/roblor/Dati" =
-    {
-      device = "/dev/disk/by-label/Dati";
-      fsType = "ntfs";
-      options = [ "rw" "uid=1000" ];
-    };
+  #fileSystems."/media/roblor/Dati" =
+  #  {
+  #    device = "/dev/disk/by-label/Dati";
+  #    fsType = "ntfs";
+  #    options = [ "rw" "uid=1000" ];
+  #  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
   # Setup keyfile
   boot.initrd.secrets = {
     "/crypto_keyfile.bin" = null;
   };
+
+  # Enable swap on luks
+  boot.initrd.luks.devices."luks-ac76c2f3-3359-4ad5-873c-cdf7e5dee2eb".device = "/dev/disk/by-uuid/ac76c2f3-3359-4ad5-873c-cdf7e5dee2eb";
+  boot.initrd.luks.devices."luks-ac76c2f3-3359-4ad5-873c-cdf7e5dee2eb".keyFile = "/crypto_keyfile.bin";
 
   networking.hostName = "roblor-matebook"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -55,10 +58,18 @@
   time.timeZone = "Europe/Rome";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "it_IT.utf8";
+  i18n.defaultLocale = "en_US.UTF-8";
 
   i18n.extraLocaleSettings = {
-    LANG = "en_US.UTF-8";
+    LC_ADDRESS = "it_IT.UTF-8";
+    LC_IDENTIFICATION = "it_IT.UTF-8";
+    LC_MEASUREMENT = "it_IT.UTF-8";
+    LC_MONETARY = "it_IT.UTF-8";
+    LC_NAME = "it_IT.UTF-8";
+    LC_NUMERIC = "it_IT.UTF-8";
+    LC_PAPER = "it_IT.UTF-8";
+    LC_TELEPHONE = "it_IT.UTF-8";
+    LC_TIME = "it_IT.UTF-8";
   };
 
   # Enable the X11 windowing system.
@@ -100,12 +111,12 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  users.users.damlor = {
-    isNormalUser = true;
-    description = "Damiano";
-    home = "/home/damlor";
-    extraGroups = [ "networkmanager" "dialout" ];
-  };
+  #users.users.damlor = {
+  #  isNormalUser = true;
+  #  description = "Damiano";
+  #  home = "/home/damlor";
+  #  extraGroups = [ "networkmanager" "dialout" ];
+  #};
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.roblor = {
@@ -130,7 +141,6 @@
   environment.systemPackages = with pkgs; [
     git
     google-chrome
-    alacritty
     cryptsetup
     vimPlugins.vim-plug
     fzf
@@ -168,7 +178,7 @@
     wlsunset
     swaylock-effects
     swayidle
-    eww-wayland
+    # eww-wayland
     # nvidia-offload
   ];
 
@@ -195,8 +205,6 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "22.05"; # Did you read the comment?
-
-  environment.variables.EDITOR = "nvim";
 
   fonts.fonts = with pkgs; [
     # font-awesome
@@ -255,11 +263,11 @@
   };
 
   services.logind = {
-    lidSwitch = "suspend-then-hibernate";
+  #   lidSwitch = "suspend-then-hibernate";
     extraConfig = ''
       HandlePowerKey=poweroff
-      IdleAction=suspend-then-hibernate
-      IdleActionSec=2m
+  #     IdleAction=suspend-then-hibernate
+  #     IdleActionSec=2m
     '';
   };
 

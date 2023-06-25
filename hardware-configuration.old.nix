@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
@@ -14,20 +15,26 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/4079a853-afd6-4e6a-a6cd-f05c39add0df";
+    {
+      device = "/dev/disk/by-uuid/53dc9fd2-067e-454f-911b-e0df8a367050";
       fsType = "ext4";
     };
 
-  boot.initrd.luks.devices."luks-905b676c-8833-487f-8966-cb5d1ce00ec7".device = "/dev/disk/by-uuid/905b676c-8833-487f-8966-cb5d1ce00ec7";
+  boot.initrd.luks.devices."luks-716f0439-bc21-45f0-864b-2cc2951e5148".device = "/dev/disk/by-uuid/716f0439-bc21-45f0-864b-2cc2951e5148";
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/88F1-0984";
+  fileSystems."/boot/efi" =
+    {
+      device = "/dev/disk/by-uuid/A4AE-38C7";
       fsType = "vfat";
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/afea9640-2198-4ff5-b002-f6c35dac59ce"; }
-    ];
+  swapDevices = [
+    { device = "/swapfile"; }
+  ];
+
+  boot.resumeDevice = "/dev/disk/by-uuid/53dc9fd2-067e-454f-911b-e0df8a367050";
+  boot.kernelParams = [ "mem_sleep_default=deep" "resume_offset=49123328" ];
+
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -36,7 +43,8 @@
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp0s20f3.useDHCP = lib.mkDefault true;
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  # high-resolution display
+  # hardware.video.hidpi.enable = lib.mkDefault true;
 }

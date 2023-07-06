@@ -41,8 +41,8 @@
   };
 
   # Enable swap on luks
-  boot.initrd.luks.devices."luks-ac76c2f3-3359-4ad5-873c-cdf7e5dee2eb".device = "/dev/disk/by-uuid/ac76c2f3-3359-4ad5-873c-cdf7e5dee2eb";
-  boot.initrd.luks.devices."luks-ac76c2f3-3359-4ad5-873c-cdf7e5dee2eb".keyFile = "/crypto_keyfile.bin";
+  boot.initrd.luks.devices."luks-bcdb7e4a-a24a-4781-a361-c9401db61474".device = "/dev/disk/by-uuid/bcdb7e4a-a24a-4781-a361-c9401db61474";
+  boot.initrd.luks.devices."luks-bcdb7e4a-a24a-4781-a361-c9401db61474".keyFile = "/crypto_keyfile.bin";  
 
   networking.hostName = "roblor-matebook"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -177,7 +177,7 @@
     wlsunset
     swaylock-effects
     swayidle
-    # eww-wayland
+    eww-wayland
     # nvidia-offload
   ];
 
@@ -203,7 +203,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.05"; # Did you read the comment?
+  system.stateVersion = "23.05"; # Did you read the comment?
 
   fonts.fonts = with pkgs; [
     # font-awesome

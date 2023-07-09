@@ -24,6 +24,8 @@
 
   boot.supportedFilesystems = [ "ntfs" ];
 
+  hardware.i2c.enable = true;
+
   #fileSystems."/media/roblor/Dati" =
   #  {
   #    device = "/dev/disk/by-label/Dati";
@@ -122,7 +124,7 @@
   users.users.roblor = {
     isNormalUser = true;
     description = "Roberto";
-    extraGroups = [ "networkmanager" "wheel" "dialout" "video" ];
+    extraGroups = [ "networkmanager" "wheel" "dialout" "video" "i2c" ];
     packages = with pkgs; [
       firefox
       vscode-fhs
@@ -178,6 +180,8 @@
     swaylock-effects
     swayidle
     eww-wayland
+    ddcutil
+    wluma
     # nvidia-offload
   ];
 

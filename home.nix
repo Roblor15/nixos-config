@@ -28,6 +28,8 @@
 
   home.packages = with pkgs; [
     tiramisu
+    profile-sync-daemon
+    audacity
   ];
 
   gtk = {

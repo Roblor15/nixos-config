@@ -209,7 +209,7 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
 
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     # font-awesome
     # cascadia-code
     nerdfonts
@@ -241,7 +241,7 @@
   # system.autoUpgrade.enable = true;
 
   nix.gc.automatic = true;
-  nix.gc.options = "--delete-older-than 8d";
+  nix.gc.options = "--delete-older-than 10d";
   nix.gc.dates = "weekly";
 
   services.openssh = {
@@ -368,4 +368,9 @@
   };
 
   programs.light.enable = true;
+
+  services.psd = {
+    enable = true;
+    resyncTimer = "1h";
+  };
 }

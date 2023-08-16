@@ -14,13 +14,16 @@
             "\"" = "\"";
             "`" = "`";
             "<" = ">";
-
+            "'" = "'";
           };
         }
       ];
     };
     settings = {
       theme = "onelight";
+      editor = {
+        auto-format = true;
+      };
       editor.statusline = {
         left = [ "mode" "spinner" "file-name" "separator" "version-control" ];
       };

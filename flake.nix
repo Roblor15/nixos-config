@@ -1,18 +1,18 @@
 {
   inputs = {
     nixpkgs.url = github:NixOS/nixpkgs;
-    nixpkgs-unstable.url = github:NixOS/nixpkgs/nixos-unstable;
+    # nixpkgs-unstable.url = github:NixOS/nixpkgs/nixos-unstable;
     home-manager.url = github:nix-community/home-manager;
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     hyprland.url = github:hyprwm/Hyprland;
     rust-overlay.url = github:oxalica/rust-overlay;
   };
 
-  outputs = { self, nixpkgs, hyprland, nixpkgs-unstable, rust-overlay, home-manager }:
+  outputs = { self, nixpkgs, hyprland, /* nixpkgs-unstable */, rust-overlay, home-manager }:
     let
       system = "x86_64-linux";
-      overlay-unstable = final: prev: {
-        unstable = nixpkgs-unstable.legacyPackages.${prev.system};
+      # overlay-unstable = final: prev: {
+        # unstable = nixpkgs-unstable.legacyPackages.${prev.system};
         # use this variant if unfree packages are needed:
         # unstable = import nixpkgs-unstable {
         #   inherit system;

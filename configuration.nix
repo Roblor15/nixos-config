@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, lib, ... }:
 
 #   let
@@ -25,13 +21,6 @@
   boot.supportedFilesystems = [ "ntfs" ];
 
   hardware.i2c.enable = true;
-
-  #fileSystems."/media/roblor/Dati" =
-  #  {
-  #    device = "/dev/disk/by-label/Dati";
-  #    fsType = "ntfs";
-  #    options = [ "rw" "uid=1000" ];
-  #  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -174,11 +163,10 @@
     hyprpaper
     waybar
     mpvpaper
-    unstable.swww
+    # unstable.swww
     postman
     wlsunset
     swaylock-effects
-    swayidle
     eww-wayland
     ddcutil
     wluma
@@ -342,6 +330,7 @@
 
   specialisation = {
     hyprland.configuration = {
+      system.nixos.tags = [ "hyprland" ];
       services.xserver.desktopManager.gnome.enable = lib.mkForce false;
       programs.hyprland.enable = lib.mkForce true;
       services.upower.enable = true;

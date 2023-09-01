@@ -8,7 +8,7 @@
     rust-overlay.url = github:oxalica/rust-overlay;
   };
 
-  outputs = { self, nixpkgs, hyprland, /* nixpkgs-unstable */, rust-overlay, home-manager }:
+  outputs = { self, nixpkgs, hyprland, /* nixpkgs-unstable, */ rust-overlay, home-manager }:
     let
       system = "x86_64-linux";
       # overlay-unstable = final: prev: {
@@ -18,7 +18,7 @@
         #   inherit system;
         #   config.allowUnfree = true;
         # };
-      };
+      # };
     in
     {
       nixosConfigurations.roblor-matebook = nixpkgs.lib.nixosSystem {
@@ -26,7 +26,7 @@
         modules = [
           ({ config, pkgs, ... }: {
             nixpkgs.overlays = [
-              overlay-unstable
+              # overlay-unstable
               rust-overlay.overlays.default
             ];
             environment.systemPackages = [

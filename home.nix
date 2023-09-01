@@ -6,6 +6,7 @@
     ./programs/bash.nix
     ./programs/git.nix
     ./programs/helix.nix
+    ./programs/swayidle.nix
   ];
   
   # Home Manager needs a bit of information about you and the

@@ -3,6 +3,7 @@
 /* lib.mkIf (config.specialisation) */ {
 	services.swayidle = {
 		enable = true;
+    # systemdTarget = "hyprland-session.target";
 		events = [
 			{
 				event = "before-sleep";
@@ -11,7 +12,7 @@
 		];
 		timeouts = [
 			{
-				timeout = 3 * 60;
+				timeout = 10;
 				command = "systemctl suspend";
 			}
 		];

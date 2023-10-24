@@ -150,26 +150,25 @@
     gnomeExtensions.compiz-windows-effect
     gnome.gnome-settings-daemon
     gnome.gnome-tweaks
-    mailspring
     spotify
     zoom-us
     lm_sensors
     rust-analyzer
     starship
-    borgbackup
     onlyoffice-bin
     rnix-lsp
     wofi
     hyprpaper
     waybar
     mpvpaper
-    # unstable.swww
     postman
     wlsunset
     swaylock-effects
     eww-wayland
     ddcutil
     wluma
+    swayidle
+    rustic-rs
     # nvidia-offload
   ];
 
@@ -229,7 +228,7 @@
   # system.autoUpgrade.enable = true;
 
   nix.gc.automatic = true;
-  nix.gc.options = "--delete-older-than 10d";
+  nix.gc.options = "--delete-older-than 30d";
   nix.gc.dates = "weekly";
 
   services.openssh = {
@@ -294,6 +293,7 @@
 
   hardware.opengl.enable = true;
   hardware.opengl.driSupport = true;
+  hardware.opengl.extraPackages = with pkgs; [ intel-media-driver ];
 
   /*
     specialisation = {
@@ -327,6 +327,7 @@
   */
 
   programs.hyprland.enable = false;
+  programs.fish.enable = true;
 
   specialisation = {
     hyprland.configuration = {

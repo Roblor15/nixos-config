@@ -27,11 +27,17 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  programs.nix-index = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
   home.packages = with pkgs; [
     tiramisu
     profile-sync-daemon
     audacity
     google-chrome
+    zoxide
   ];
 
   gtk = {

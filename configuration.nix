@@ -14,6 +14,7 @@
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./cachix.nix
     ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -113,6 +114,7 @@
   users.users.roblor = {
     isNormalUser = true;
     description = "Roberto";
+    shell = pkgs.fish;
     extraGroups = [ "networkmanager" "wheel" "dialout" "video" "i2c" ];
     packages = with pkgs; [
       firefox
@@ -228,7 +230,7 @@
   # system.autoUpgrade.enable = true;
 
   nix.gc.automatic = true;
-  nix.gc.options = "--delete-older-than 30d";
+  nix.gc.options = "--delete-older-than 60d";
   nix.gc.dates = "weekly";
 
   services.openssh = {
@@ -363,4 +365,11 @@
     enable = true;
     resyncTimer = "1h";
   };
+
+  # hardware.bluetooth.settings = {
+  #   GATT = {
+  #     Cache = "no";
+  #     Channels = 1;
+  #   };
+  # };
 }

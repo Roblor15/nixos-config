@@ -155,10 +155,8 @@
     spotify
     zoom-us
     lm_sensors
-    rust-analyzer
     starship
     onlyoffice-bin
-    rnix-lsp
     wofi
     hyprpaper
     waybar

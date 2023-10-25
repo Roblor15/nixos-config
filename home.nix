@@ -38,6 +38,10 @@
     audacity
     google-chrome
     zoxide
+    nix-your-shell
+    clang-tools
+    rust-analyzer
+    nodePackages.bash-language-server
   ];
 
   gtk = {

@@ -1,5 +1,5 @@
-{ }:
+{ ... }:
 
 {
-  home.file.".config/rustic".source = ./rustic.toml;
+  home.file.".config/rustic/rustic.toml".source = ./rustic.toml;
 }

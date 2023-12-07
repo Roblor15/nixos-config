@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 #   let
 #     nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
@@ -14,9 +14,9 @@
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./cachix.nix
     ];
 
+  nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   boot.supportedFilesystems = [ "ntfs" ];
@@ -161,7 +161,7 @@
     hyprpaper
     waybar
     mpvpaper
-    postman
+    # postman
     wlsunset
     swaylock-effects
     eww-wayland
@@ -169,6 +169,8 @@
     wluma
     swayidle
     rustic-rs
+    globalprotect-openconnect
+    libva-utils
     # nvidia-offload
   ];
 
@@ -183,10 +185,10 @@
   # List services that you want to enable:
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 3000 5173 ];
+  # networking.firewall.allowedTCPPorts = [ 3000 5173 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -229,7 +231,7 @@
 
   nix.gc.automatic = true;
   nix.gc.options = "--delete-older-than 60d";
-  nix.gc.dates = "weekly";
+  nix.gc.dates = "monthly";
 
   services.openssh = {
     enable = true;
@@ -244,21 +246,21 @@
   virtualisation.podman.enable = true;
 
   services.logind = {
-  #   lidSwitch = "suspend-then-hibernate";
-    lidSwitch = "suspend";
-    # extraConfig = ''
-    #   HandlePowerKey=poweroff
-    #   IdleAction=suspend-then-hibernate
-    #   IdleActionSec=2m
-    # '';
+    lidSwitch = "suspend-then-hibernate";
+    # lidSwitch = "suspend";
     extraConfig = ''
       HandlePowerKey=poweroff
-      IdleAction=suspend
+      IdleAction=suspend-then-hibernate
       IdleActionSec=2m
     '';
+    # extraConfig = ''
+      # HandlePowerKey=poweroff
+      # IdleAction=suspend
+      # IdleActionSec=2m
+    # '';
   };
 
-  # systemd.sleep.extraConfig = "HibernateDelaySec=2h";
+  systemd.sleep.extraConfig = "HibernateDelaySec=2h";
 
   hardware.bluetooth.enable = true;
 
@@ -293,7 +295,10 @@
 
   hardware.opengl.enable = true;
   hardware.opengl.driSupport = true;
-  hardware.opengl.extraPackages = with pkgs; [ intel-media-driver ];
+  hardware.opengl.extraPackages = with pkgs; [
+    intel-media-driver
+    # vaapiIntel
+  ];
 
   /*
     specialisation = {
@@ -334,6 +339,7 @@
       system.nixos.tags = [ "hyprland" ];
       services.xserver.desktopManager.gnome.enable = lib.mkForce false;
       programs.hyprland.enable = lib.mkForce true;
+      programs.hyprland.package = inputs.hyprland.packages.${pkgs.system}.hyprland;
       services.upower.enable = true;
       security.pam.services.swaylock = {
         text = ''
@@ -362,6 +368,10 @@
   services.psd = {
     enable = true;
     resyncTimer = "1h";
+  };
+
+  services.globalprotect = {
+    enable = true;
   };
 
   # hardware.bluetooth.settings = {

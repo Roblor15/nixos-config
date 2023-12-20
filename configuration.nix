@@ -1,18 +1,8 @@
 { config, pkgs, lib, inputs, ... }:
 
-#   let
-#     nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
-#       export __NV_PRIME_RENDER_OFFLOAD=1
-#       export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
-#       export __GLX_VENDOR_LIBRARY_NAME=nvidia
-#       export __VK_LAYER_NV_optimus=NVIDIA_only
-#       exec "$@"
-#     '';
-#   in
 {
   imports =
     [
-      # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
 
@@ -103,13 +93,6 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  #users.users.damlor = {
-  #  isNormalUser = true;
-  #  description = "Damiano";
-  #  home = "/home/damlor";
-  #  extraGroups = [ "networkmanager" "dialout" ];
-  #};
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.roblor = {
     isNormalUser = true;
@@ -129,61 +112,6 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    google-chrome
-    cryptsetup
-    vimPlugins.vim-plug
-    fzf
-    gcc
-    tdesktop
-    nodejs
-    tree-sitter
-    ripgrep
-    python3Full
-    gnumake
-    fd
-    bibata-cursors
-    neovim
-    gnomeExtensions.appindicator
-    gnomeExtensions.caffeine
-    gnomeExtensions.system-monitor
-    gnomeExtensions.compiz-windows-effect
-    gnome.gnome-settings-daemon
-    gnome.gnome-tweaks
-    spotify
-    zoom-us
-    lm_sensors
-    starship
-    onlyoffice-bin
-    wofi
-    hyprpaper
-    waybar
-    mpvpaper
-    # postman
-    wlsunset
-    swaylock-effects
-    eww-wayland
-    ddcutil
-    wluma
-    swayidle
-    rustic-rs
-    globalprotect-openconnect
-    libva-utils
-    # nvidia-offload
-  ];
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ 3000 5173 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
@@ -199,8 +127,6 @@
   system.stateVersion = "23.05"; # Did you read the comment?
 
   fonts.packages = with pkgs; [
-    # font-awesome
-    # cascadia-code
     nerdfonts
   ];
 
@@ -281,16 +207,6 @@
   virtualisation.virtualbox.host.enableExtensionPack = true;
   users.extraGroups.vboxusers.members = [ "roblor" ];
 
-  /* Backup
-    services.borgbackup.jobs.dati = {
-    paths = "/media/roblor/Dati";
-    encryption.mode = "none";
-    repo = "/run/media/roblor/Roblor's Files/Dati-Backup";
-    compression = "auto,zstd";
-    startAt = "daily";
-    };
-  */
-
   hardware.sensor.iio.enable = true;
 
   hardware.opengl.enable = true;
@@ -300,54 +216,30 @@
     # vaapiIntel
   ];
 
-  /*
-    specialisation = {
-    nvidia.configuration = {
-    system.nixos.tags = [ "nvidia" ];
-    programs.hyprland.nvidiaPatches = true;
+  programs.hyprland.enable = true;
+  services.upower.enable = true;
+  security.pam.services.swaylock = {
+    text = ''
+      auth include login
+    '';
+  };
 
-    services.xserver.videoDrivers = [ "nvidia" ];
-    hardware.opengl.enable = true;
-    # hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.latest;
-    hardware.nvidia.modesetting.enable = true;
-    # boot.kernelParams = [ "module_blacklist=i915" ];
-    hardware.nvidia.prime = {
-    # sync.enable = true;
-    offload.enable = true;
-
-    # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
-    nvidiaBusId = "PCI:1:0:0";
-
-    # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
-    intelBusId = "PCI:0:2:0";
-    };
-    # hardware.nvidia.powerManagement.enable = true;
-
-    # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    # hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
-
-    services.tlp.enable = lib.mkForce false;
-    };
-    };
-  */
-
-  programs.hyprland.enable = false;
   programs.fish.enable = true;
 
-  specialisation = {
-    hyprland.configuration = {
-      system.nixos.tags = [ "hyprland" ];
-      services.xserver.desktopManager.gnome.enable = lib.mkForce false;
-      programs.hyprland.enable = lib.mkForce true;
-      programs.hyprland.package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-      services.upower.enable = true;
-      security.pam.services.swaylock = {
-        text = ''
-          auth include login
-        '';
-      };
-    };
-  };
+  # specialisation = {
+  #   hyprland.configuration = {
+  #     system.nixos.tags = [ "hyprland" ];
+  #     services.xserver.desktopManager.gnome.enable = lib.mkForce false;
+  #     programs.hyprland.enable = lib.mkForce true;
+  #     programs.hyprland.package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  #     services.upower.enable = true;
+  #     security.pam.services.swaylock = {
+  #       text = ''
+  #         auth include login
+  #       '';
+  #     };
+  #   };
+  # };
 
   services.power-profiles-daemon.enable = false;
 
@@ -369,15 +261,4 @@
     enable = true;
     resyncTimer = "1h";
   };
-
-  services.globalprotect = {
-    enable = true;
-  };
-
-  # hardware.bluetooth.settings = {
-  #   GATT = {
-  #     Cache = "no";
-  #     Channels = 1;
-  #   };
-  # };
 }

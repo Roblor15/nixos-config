@@ -97,6 +97,8 @@
     };
   };
 
+  services.mpris-proxy.enable = true;
+
   wayland.windowManager.hyprland.enable = true;
   wayland.windowManager.hyprland.extraConfig = ''
     # monitor=eDP-1,3000x2000@60,530x1440,2
@@ -111,6 +113,7 @@
     exec-once = hyprpaper
     exec-once = eww --config ~/.config/eww/bar open bar
     exec-once = wlsunset -l $(~/.config/hypr/position.fish --lat) -L $(~/.config/hypr/position.fish --lon) -t 3000
+    exec-once = wluma
 
     exec-once = swayidle -w timeout 180 'swaylock -f -C ~/.config/swaylock/swaylock'
     exec-once = swayidle -w timeout 10 'if pgrep -x swaylock; then systemctl suspend; fi' before-sleep 'if ! pgrep -x swaylock; then swaylock -f -C ~/.config/swaylock/swaylock; fi'

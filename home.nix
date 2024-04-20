@@ -39,24 +39,13 @@
     firefox
     google-chrome
     cryptsetup
-    vimPlugins.vim-plug
-    fzf
     gcc
     tdesktop
     nodejs
     tree-sitter
     ripgrep
-    python3Full
-    gnumake
     fd
     bibata-cursors
-    neovim
-    gnomeExtensions.appindicator
-    gnomeExtensions.caffeine
-    gnomeExtensions.system-monitor
-    gnomeExtensions.compiz-windows-effect
-    gnome.gnome-settings-daemon
-    gnome.gnome-tweaks
     spotify
     zoom-us
     lm_sensors
@@ -74,12 +63,9 @@
     wluma
     swayidle
     rustic-rs
-    globalprotect-openconnect
     libva-utils
-    tiramisu
     profile-sync-daemon
     audacity
-    google-chrome
     zoxide
     nix-your-shell
     clang-tools
@@ -90,6 +76,7 @@
     gparted
     nodePackages.bash-language-server
     cargo-generate
+    quickemu
   ];
 
   gtk = {

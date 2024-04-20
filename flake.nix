@@ -1,12 +1,13 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
+    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
-  outputs = { self, nixpkgs, rust-overlay, home-manager }@inputs:
+  outputs = { self, nixpkgs, unstable, rust-overlay, home-manager }@inputs:
     let
       system = "x86_64-linux";
     in
@@ -31,6 +32,10 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.roblor = import ./home.nix;
+            home-manager.extraSpecialArgs = { unstable = import unstable {
+              inherit system;
+            };
+          };
 
             # Optionally, use home-manager.extraSpecialArgs to pass
             # arguments to home.nix

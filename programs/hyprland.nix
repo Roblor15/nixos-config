@@ -11,6 +11,8 @@
     workspace=eDP-1,1
     workspace=DP-1,2
 
+    exec-once = set -xU $HYPR_THEME light
+    exec-once = cp ~/.config/alacritty/alacritty-light.toml ~/.config/alacritty/alacritty.toml
     exec-once = hyprctl setcursor Bibata-Modern-Amber 24
     exec-once = hyprpaper
     exec-once = eww --config ~/.config/eww/bar open bar
@@ -134,7 +136,7 @@
     bind = $mainMod, C, killactive,
     bind = $mainMod, M, exit,
     bind = $mainMod, V, togglefloating,
-    bind = $mainMod, R, exec, wofi --show drun
+    bind = $mainMod, R, exec, anyrun
     bind = $mainMod, X, togglesplit, # dwindle
     bind = $mainMod, F, fullscreen
     bind = $mainMod, S, fakefullscreen
@@ -201,6 +203,7 @@
     bind = $mainMod, XF86AudioRaiseVolume, exec, amixer set Capture 5%+
 
     bind = $mainMod SHIFT, c, exec, ~/.config/hypr/swayidle.sh
+    bind = $mainMod SHIFT, t, exec, ~/.config/hypr/change-theme.fish
 
     bindle = , XF86MonBrightnessUp, exec, light -T 1.2
     bindle = , XF86MonBrightnessDown, exec, light -T 0.8

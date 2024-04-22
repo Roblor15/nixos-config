@@ -1,4 +1,4 @@
-{ config, unstable, ... }:
+{ config, pkgs, unstable, ... }:
 
 {
   programs.alacritty = {
@@ -50,6 +50,9 @@
     #   };
     # };
   };
-  home.file.".config/alacritty/alacritty.toml".source = ./alacritty.toml;
-  home.file.".config/alacritty/latte.toml".source = ./latte.toml;
+  home.file.".config/alacritty/alacritty-light.toml".source = ./alacritty-light.toml;
+  home.file.".config/alacritty/alacritty-dark.toml".source = ./alacritty-dark.toml;
+  # home.file.".config/alacritty/light.toml".source = ./latte.toml;
+  home.file.".config/alacritty/light.toml".source = pkgs.alacritty-theme.catppuccin_latte;
+  home.file.".config/alacritty/dark.toml".source = pkgs.alacritty-theme.catppuccin_mocha;
 }

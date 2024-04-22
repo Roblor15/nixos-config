@@ -42,6 +42,10 @@
         background: transparent; 
       }
 
+      #match {
+        font-weight: bold;
+      }
+
       #match.activatable {
         border-radius: 7px;
         padding: 3px 3px;
@@ -59,7 +63,7 @@
 
 
       #match:selected {
-        color: @theme_selected_fg_color;
+        color: rgba(0,0,0,0.7);
         background: #FCA035;
         border-radius: 7px;
       }
@@ -100,7 +104,7 @@
         border-style: solid;
         margin-top: 15px;
         background-color: rgba(0,0,0,0.7);
-        border-radius: 7px;
+        border-radius: 5px;
         padding: 5px;
       }
 

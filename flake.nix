@@ -5,9 +5,12 @@
     home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     rust-overlay.url = "github:oxalica/rust-overlay";
+    alacritty-theme.url = "github:alexghr/alacritty-theme.nix";
+    anyrun.url = "github:Kirottu/anyrun";
+    anyrun.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, unstable, rust-overlay, home-manager }@inputs:
+  outputs = { self, nixpkgs, alacritty-theme, unstable, rust-overlay, home-manager, anyrun }@inputs:
     let
       system = "x86_64-linux";
     in
@@ -18,7 +21,8 @@
         modules = [
           ({ config, pkgs, ... }: {
             nixpkgs.overlays = [
-            rust-overlay.overlays.default
+              rust-overlay.overlays.default
+              alacritty-theme.overlays.default
             ];
             environment.systemPackages = [
               (pkgs.rust-bin.stable.latest.default.override
@@ -32,13 +36,12 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.roblor = import ./home.nix;
-            home-manager.extraSpecialArgs = { unstable = import unstable {
-              inherit system;
+            home-manager.extraSpecialArgs = { 
+              unstable = import unstable {
+                inherit system;
+              };
+              inherit inputs;
             };
-          };
-
-            # Optionally, use home-manager.extraSpecialArgs to pass
-            # arguments to home.nix
           }
           ./configuration.nix
         ];

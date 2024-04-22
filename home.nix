@@ -1,8 +1,9 @@
-{ config, pkgs, ... }:
+{ config, inputs, pkgs, ... }:
 
 {
   imports = [
     ./programs/alacritty.nix
+    ./programs/anyrun.nix
     ./programs/bash.nix
     ./programs/git.nix
     ./programs/helix.nix
@@ -51,7 +52,6 @@
     lm_sensors
     starship
     onlyoffice-bin
-    wofi
     hyprpaper
     waybar
     mpvpaper

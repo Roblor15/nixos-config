@@ -1,4 +1,4 @@
-import = [ "~/.config/alacritty/latte.toml" ]
+import = [ "~/.config/alacritty/dark.toml" ]
 
 [font]
 normal = { family = "CaskaydiaCove Nerd Font", style = "Book" }

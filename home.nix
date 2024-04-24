@@ -1,4 +1,4 @@
-{ config, inputs, pkgs, ... }:
+{ config, unstable, pkgs, ... }:
 
 {
   imports = [
@@ -77,6 +77,8 @@
     nodePackages.bash-language-server
     cargo-generate
     quickemu
+    unstable.hypridle
+    unstable.hyprlock
   ];
 
   gtk = {

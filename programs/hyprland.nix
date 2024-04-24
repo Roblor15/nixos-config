@@ -142,7 +142,11 @@
     bind = $mainMod, F, fullscreen
     bind = $mainMod, S, fakefullscreen
     bind = $mainMod, SPACE, centerwindow
-    bind = $mainMod, O, exec, systemctl suspend
+    bindl = $mainMod, O, exec, systemctl suspend
+    bind = $mainMod, L, exec, hyprlock
+
+    bind = $mainMod SHIFT, c, exec, ~/.config/hypr/hypridle.fish
+    bind = $mainMod SHIFT, t, exec, ~/.config/hypr/change-theme.fish
 
     # Move focus with mainMod + arrow keys
     bind = $mainMod, left, movefocus, l
@@ -202,9 +206,6 @@
     bind = , XF86AudioMicMute, exec, amixer set Capture toggle
     bind = $mainMod, XF86AudioLowerVolume, exec, amixer set Capture 5%-
     bind = $mainMod, XF86AudioRaiseVolume, exec, amixer set Capture 5%+
-
-    bind = $mainMod SHIFT, c, exec, ~/.config/hypr/swayidle.sh
-    bind = $mainMod SHIFT, t, exec, ~/.config/hypr/change-theme.fish
 
     bindle = , XF86MonBrightnessUp, exec, light -T 1.2
     bindle = , XF86MonBrightnessDown, exec, light -T 0.8
@@ -270,12 +271,14 @@
 
   home.file.".config/hypr/hyprlock.conf".text = ''
     general {
-    	disable_loading_bar = true;
+      disable_loading_bar = true;
     }
 
     background {
-    	monitor =
-    	color = rgba(0, 0, 0, 0.4)
+      monitor =
+      color = rgba(0, 0, 0, 0.4)
+      blur_passes = 10 # 0 disables blurring
+      blur_size = 8
     }
 
     input-field {

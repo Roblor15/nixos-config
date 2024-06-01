@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ osConfig, config, pkgs, inputs, ... }:
 
 {
   imports = [
@@ -61,9 +61,8 @@
         margin-bottom: 0;
       }
 
-
       #match:selected {
-        color: rgba(0,0,0,0.7);
+        color: rgba(53, 20, 29, 0.87);
         background: #FCA035;
         border-radius: 7px;
       }
@@ -103,7 +102,7 @@
         border-width: 4px;
         border-style: solid;
         margin-top: 15px;
-        background-color: rgba(0,0,0,0.7);
+        background-color: rgba(53, 20, 29, 0.87);
         border-radius: 5px;
         padding: 5px;
       }
@@ -135,5 +134,9 @@
         max_entries: 3,
       )
     '';
+  };
+
+  home.file.".config/anyrun/libstdin.so" = {
+    source = "${inputs.anyrun.packages.${pkgs.system}.stdin}/lib/libstdin.so";
   };
 }

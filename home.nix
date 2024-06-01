@@ -1,16 +1,17 @@
-{ config, unstable, pkgs, ... }:
+{ config, /* unstable, */ inputs, pkgs, ... }:
 
 {
   imports = [
-    ./programs/alacritty.nix
+    ./programs/alacritty/alacritty.nix
     ./programs/anyrun.nix
     ./programs/bash.nix
     ./programs/git.nix
     ./programs/helix.nix
     ./programs/fish.nix
     ./programs/rustic.nix
-    ./programs/hyprland.nix
+    ./programs/hyprland/hyprland.nix
     ./programs/vscode.nix
+    ./programs/mako.nix
   ];
   
   # Home Manager needs a bit of information about you and the
@@ -52,16 +53,9 @@
     lm_sensors
     starship
     onlyoffice-bin
-    hyprpaper
-    waybar
-    mpvpaper
-    # postman
     wlsunset
-    swaylock-effects
-    eww-wayland
+    eww
     ddcutil
-    wluma
-    swayidle
     rustic-rs
     libva-utils
     profile-sync-daemon
@@ -77,18 +71,55 @@
     nodePackages.bash-language-server
     cargo-generate
     quickemu
-    unstable.hypridle
-    unstable.hyprlock
+    mako
+    hypridle
+    hyprlock
+    hyprpaper
+    tor-browser
+    wl-clipboard
+    # unstable.cliphist
+    # unstable.wluma
+    cliphist
+    wluma
+    jq
+    socat
+    inputs.hyprland-contrib.packages.${pkgs.system}.grimblast
   ];
 
-  gtk = {
-    enable = true;
-    cursorTheme = {
-      package = pkgs.bibata-cursors;
-      name = "Bibata-Modern-Amber";
-      size = 24;
-    };
+  home.pointerCursor = {
+    gtk.enable = true;
+    # x11.enable = true;
+    package = pkgs.bibata-cursors;
+    name = "Bibata-Modern-Amber";
+    size = 24;
   };
+
+  # gtk = {
+  #   enable = true;
+  #   cursorTheme = {
+  #     package = pkgs.bibata-cursors;
+  #     name = "Bibata-Modern-Amber";
+  #     size = 24;
+  #   };
+  # };
+
+# gtk = {
+#   enable = true;
+#   theme = {
+#     package = pkgs.flat-remix-gtk;
+#     name = "Flat-Remix-GTK-Grey-Darkest";
+#   };
+
+#   iconTheme = {
+#     package = pkgs.gnome.adwaita-icon-theme;
+#     name = "Adwaita";
+#   };
+
+#   font = {
+#     name = "Sans";
+#     size = 11;
+#   };
+# };
 
   services.mpris-proxy.enable = true;
 }

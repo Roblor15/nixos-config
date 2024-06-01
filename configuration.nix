@@ -9,6 +9,20 @@
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  nix.settings = {
+    builders-use-substitutes = true;
+    substituters = [
+      "https://hyprland.cachix.org"
+      "https://anyrun.cachix.org"
+      "https://nix-community.cachix.org"
+    ];
+    trusted-public-keys = [
+      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
+  };
+
   boot.supportedFilesystems = [ "ntfs" ];
 
   hardware.i2c.enable = true;
@@ -62,9 +76,9 @@
   services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
-  services.xserver = {
+  services.xserver.xkb = {
     layout = "it";
-    xkbVariant = "";
+    variant = "";
   };
 
   # Configure console keymap
@@ -98,7 +112,15 @@
     isNormalUser = true;
     description = "Roberto";
     shell = pkgs.fish;
-    extraGroups = [ "networkmanager" "wheel" "dialout" "video" "i2c" "tss" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "dialout"
+      "video"
+      "i2c"
+      "tss"
+      "adbusers"
+    ];
     openssh.authorizedKeys.keys = [
       "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC1zKtf72PNwwrYhc5StUy2UQeWGwCBiGHRQK/gpTLCqNleloK87q33628BGVx+f9oU2YcvF5+rwLeRJZEUpo3cdkHK5vLV9fM4T7pPWQBAkvNm0U3tro+AiODCw3XQEn0lbjLsw3MjhR7oZCHFbFRzJ77xQKMdr6O+qyamULLOgpEzmdJxA60dWsMiShDKX/2k31fmpAweP48UDqfUfgXwnk+93gfaKh+4kGCmMOCHICLi9nTK53GocLgPeBB8Hq8V6fdxdH3QzCUMQ/FOiclcvXeDmIYaN8DFR1fIJeGCIl7zdLpvwEC9013Gmtgb3Pr3hzkFECG17+3LHydlhHx+5EDfx2C0IW8l9veJXOREw1Qt9FtAbLnCqbe+hcq0apOL+Qdgtu4Yfis8VSt0JjSr3WnGNLGi7D3+Q99VQ1cgZ4lP0oRQ+6A4fXWpRjq2PZPBEcRwqbqMjQdK5zciLkfvXPiJiV+QuaszyGA7pDgst0Ve81wVsfHd2sx8Vqzf4T8SzeUwlk3o/I/jZCPOYkshENl8+R4stDf96sHD9whqXuxRI+GWqa24F+RuCHHUdMKNblk7iT7Ap9NacXfJf/8j2QXa2eJGtN1m4/yHn+tINkC8ubuS9jN/DzbVYdqFSo2s8ShftLTFyRKRkhKzqrKl6En6Y/AsASaMzqr1m1yB7w== roblor"
       "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJ4bzLMIpw2WK3DYhJENru2f5UEMHENnHRLpf6U8sxqkYC8m2TAN0CO9uTsDdAJuEtwETIRLkyx3B5zhdwow0fA="
@@ -135,7 +157,7 @@
     cheese # webcam tool
     gnome-music
     gnome-terminal
-    gedit # text editor
+    # gedit # text editor
     epiphany # web browser
     geary # email reader
     evince # document viewer
@@ -208,7 +230,10 @@
     # vaapiIntel
   ];
 
-  programs.hyprland.enable = true;
+  programs.hyprland = {
+    enable = true;
+    # package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  };
   services.upower.enable = true;
   security.pam.services.swaylock = {
     text = ''
@@ -252,4 +277,6 @@
   #   pkcs11.enable = true;
   #   tctiEnvironment.enable = true;
   # };
+
+  programs.adb.enable = true;
 }

@@ -1,0 +1,46 @@
+{ ... }:
+
+{
+  home.file.".config/hypr/rounded-borders.fish" = {
+    text = ''
+        #! /usr/bin/env fish
+
+        function change_borders --on-event change_bar_event
+            sleep 1
+            set layers $(hyprctl layers -j)
+            set monitors_with_bar (echo $layers | jq 'to_entries[] | select(.value.levels | .[] | .[] | .namespace=="gtk-layer-shell") | .key')
+
+            if set -q monitors_with_bar[1]
+                set com (string join ' and .key!=' $monitors_with_bar)
+                set com (string join "" '.key!=' $com)
+
+                set monitors_without_bar (echo $layers | jq -r "to_entries[] | select($com) | .key")
+            else
+                set monitors_without_bar (echo $layers | jq -r "to_entries[] | .key")
+            end
+
+            echo "" >  ~/.config/hypr/borders.conf
+
+            for monitor in $monitors_without_bar
+                set monitor (string join "" 'm[' $monitor)
+                set monitor (string join "" $monitor ']')
+
+                echo "workspace=1,monitor:eDP-1,default:true
+        workspace=2,monitor:DP-1,default:true
+        workspace=$monitor w[1],gapsin:0,gapsout:0,rounding:false,border:false
+        workspace=$monitor,gapsin:0,gapsout:0,rounding:false" >> ~/.config/hypr/borders.conf
+            end
+        end
+
+        socat -U - UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock |
+            while read -l line
+                if test $line = "openlayer>>gtk-layer-shell"
+                    emit change_bar_event open
+                else if test $line = "closelayer>>gtk-layer-shell"
+                    emit change_bar_event close
+                end
+            end
+    '';
+    executable = true;
+  };
+}

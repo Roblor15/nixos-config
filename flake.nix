@@ -16,20 +16,20 @@
     };
     anyrun.url = "github:Kirottu/anyrun";
     anyrun.inputs.nixpkgs.follows = "nixpkgs";
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    hyprpaper.url = "github:hyprwm/hyprpaper";
-    hypridle = {
-      url = "github:hyprwm/hypridle";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprlock = {
-      url = "github:hyprwm/hyprlock";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprland-contrib = {
-      url = "github:hyprwm/contrib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # hyprpaper.url = "github:hyprwm/hyprpaper";
+    # hypridle = {
+      # url = "github:hyprwm/hypridle";
+      # inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    # hyprlock = {
+      # url = "github:hyprwm/hyprlock";
+      # inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    # hyprland-contrib = {
+      # url = "github:hyprwm/contrib";
+      # inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, ... }@inputs:
@@ -45,9 +45,9 @@
             nixpkgs.overlays = [
               rust-overlay.overlays.default
               alacritty-theme.overlays.default
-              inputs.hypridle.overlays.default
-              inputs.hyprlock.overlays.default
-              inputs.hyprpaper.overlays.default
+              # inputs.hypridle.overlays.default
+              # inputs.hyprlock.overlays.default
+              # inputs.hyprpaper.overlays.default
             ];
             environment.systemPackages = [
               (pkgs.rust-bin.stable.latest.default.override
@@ -64,9 +64,6 @@
               users.roblor = { ... }: {
                 imports = [
                   ./home.nix
-                  # inputs.hyprpaper.homeManagerModules.default
-                  # inputs.hypridle.homeManagerModules.default
-                  # inputs.hyprlock.homeManagerModules.default
                 ];
               };
               extraSpecialArgs = { 

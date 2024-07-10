@@ -13,6 +13,7 @@
         inputs.anyrun.packages.${pkgs.system}.applications
         inputs.anyrun.packages.${pkgs.system}.translate
         inputs.anyrun.packages.${pkgs.system}.websearch
+        inputs.anyrun.packages.${pkgs.system}.rink
         # ./some_plugin.so
         # "${inputs.anyrun.packages.${pkgs.system}.anyrun-with-all-plugins}/lib/kidex"
       ];

@@ -12,7 +12,7 @@
   ];
 
   wayland.windowManager.hyprland.enable = true;
-  wayland.windowManager.hyprland.package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  # wayland.windowManager.hyprland.package = inputs.hyprland.packages.${pkgs.system}.hyprland;
   wayland.windowManager.hyprland.extraConfig = ''
     source = ~/.config/hypr/colors.conf
     source = ~/.config/hypr/borders.conf
@@ -121,7 +121,7 @@
 
     master {
         # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
-        new_is_master = true
+        new_status=master
     }
 
     gestures {
@@ -155,6 +155,11 @@
     bindl = $mainMod, O, exec, systemctl suspend
     bind = $mainMod, L, exec, hyprlock
     bind = $mainMod, W, exec, pkill wlsunset; wlsunset -l $(~/.config/hypr/position.fish --lat) -L $(~/.config/hypr/position.fish --lon) -t 3000
+
+    bind = $mainMod, P, exec, eww open --config ~/.config/eww/bar bar  
+    bind = $mainMod SHIFT, P, exec, eww close --config ~/.config/eww/bar bar  
+    bind = $mainMod ALT, 0, exec, eww open --config ~/.config/eww/bar bar --screen 0  
+    bind = $mainMod ALT, 1, exec, eww open --config ~/.config/eww/bar bar --screen 1  
 
     bind = $mainMod SHIFT, c, exec, ~/.config/hypr/hypridle.fish
     bind = $mainMod, h, exec, ~/.config/hypr/change-theme.fish --theme hyprland
@@ -227,6 +232,7 @@
     bind = , XF86Tools, exec, [fakefullscreen] firefox --new-window www.gmail.com
     bind = $mainMod, F10, exec, [fakefullscreen] firefox --new-window 'ext+container:name=Studing&url=www.gmail.com'
     bind = $mainMod SHIFT, F10, exec, [fakefullscreen] firefox --new-window www.outlook.it 
+    bind = $mainMod CTRL, F10, exec, [fakefullscreen] firefox --new-window 'ext+container:name=Tampere&url=www.outlook.it' 
 
     bind = , Print, exec,  grimblast --notify copysave output ~/Pictures/Screenshots/$(date +'%F-%T.png')
     bind = $mainMod, Print, exec,  grimblast --notify copysave active ~/Pictures/Screenshots/$(date +'%F-%T.png')

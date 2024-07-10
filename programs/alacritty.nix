@@ -41,13 +41,23 @@
         # };
       };
       cursor = {
-        style.shape = "Underline";
-        vi_mode_style = "Block";
+        style = {
+          shape = "Underline";
+          blinking = "On";
+        };
+        vi_mode_style = {
+          shape = "Block";
+          blinking = "Off";
+        };
         unfocused_hollow = true;
       };
+      window.opacity = 0.9;
       mouse = {
         hide_when_typing = true;
       };
     };
   };
+  home.file.".config/alacritty/light.toml".source = pkgs.alacritty-theme.catppuccin_latte;
+  home.file.".config/alacritty/dark.toml".source = pkgs.alacritty-theme.catppuccin_mocha;
+  home.file.".config/alacritty/bluish.toml".source = pkgs.alacritty-theme.bluish;
 }

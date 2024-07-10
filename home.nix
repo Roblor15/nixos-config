@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./programs/alacritty/alacritty.nix
+    ./programs/alacritty.nix
     ./programs/anyrun.nix
     ./programs/bash.nix
     ./programs/git.nix
@@ -83,7 +83,11 @@
     wluma
     jq
     socat
-    inputs.hyprland-contrib.packages.${pkgs.system}.grimblast
+    # inputs.hyprland-contrib.packages.${pkgs.system}.grimblast
+    grimblast
+    kicad
+    cinnamon.nemo
+    hyprutils
   ];
 
   home.pointerCursor = {

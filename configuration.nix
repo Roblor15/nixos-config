@@ -167,6 +167,7 @@
     iagno # go game
     hitori # sudoku game
     atomix # puzzle game
+    nautilus
   ]);
 
   services.xserver.excludePackages = [ pkgs.xterm ];

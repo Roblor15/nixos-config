@@ -1,3 +1,5 @@
+# TODO: Controllare se i monitor sono attivi, no reload della configurazione
+
 { ... }:
 
 {
@@ -6,7 +8,6 @@
         #! /usr/bin/env fish
 
         function change_borders --on-event change_bar_event
-            sleep 1
             set layers $(hyprctl layers -j)
             set monitors_with_bar (echo $layers | jq 'to_entries[] | select(.value.levels | .[] | .[] | .namespace=="gtk-layer-shell") | .key')
 
@@ -34,10 +35,12 @@
 
         socat -U - UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock |
             while read -l line
-                if test $line = "openlayer>>gtk-layer-shell"
-                    emit change_bar_event open
+                if test $line = "openlayer>>gtk-layer-shell";
+                    or string match -q -r "monitoradded*|monitorremoved*" $line
+                    emit change_bar_event
                 else if test $line = "closelayer>>gtk-layer-shell"
-                    emit change_bar_event close
+                    sleep 1
+                    emit change_bar_event
                 end
             end
     '';

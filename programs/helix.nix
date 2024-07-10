@@ -17,10 +17,31 @@
             "'" = "'";
           };
         }
+        {
+          name = "java";
+          auto-format = true;
+          indent = { tab-width = 4; unit = "    "; };
+        }
+        {
+          name = "typst";
+          formatter = { command = "typstyle"; };
+          auto-format = true;
+          auto-pairs = {
+            "(" = ")";
+            "{" = "}";
+            "[" = "]";
+            "\"" = "\"";
+            "`" = "`";
+            "<" = ">";
+            "'" = "'";
+            "*" = "*";
+            "_" = "_";
+          };
+        }
       ];
     };
     settings = {
-      theme = "onelight";
+      theme = "adaptive";
       editor = {
         auto-format = true;
         preview-completion-insert = false;
@@ -58,4 +79,14 @@
     };
     defaultEditor = true;
   };
+
+  home.file.".config/helix/themes/theme-light.toml".text = ''
+    inherits = "onelight"
+  '';
+  home.file.".config/helix/themes/theme-dark.toml".text = ''
+    inherits = "merionette"
+  '';
+  home.file.".config/helix/themes/theme-blue.toml".text = ''
+    inherits = "tokyonight_storm"
+  '';
 }

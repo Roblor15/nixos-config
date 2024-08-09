@@ -83,11 +83,11 @@
     wluma
     jq
     socat
-    # inputs.hyprland-contrib.packages.${pkgs.system}.grimblast
-    grimblast
+    inputs.hyprland-contrib.packages.${pkgs.system}.grimblast
+    # grimblast
     kicad
     cinnamon.nemo
-    hyprutils
+    # hyprutils
   ];
 
   home.pointerCursor = {

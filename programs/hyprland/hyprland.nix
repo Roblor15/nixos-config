@@ -12,7 +12,7 @@
   ];
 
   wayland.windowManager.hyprland.enable = true;
-  # wayland.windowManager.hyprland.package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  wayland.windowManager.hyprland.package = inputs.hyprland.packages.${pkgs.system}.hyprland;
   wayland.windowManager.hyprland.extraConfig = ''
     source = ~/.config/hypr/colors.conf
     source = ~/.config/hypr/borders.conf
@@ -89,15 +89,17 @@
 
     decoration {
         rounding = 10
-        # blur = yes
-        # blur_size = 3
-        # blur_passes = 1
-        # blur_new_optimizations = on
 
         drop_shadow = yes
         shadow_range = 4
         shadow_render_power = 3
         col.shadow = $shadow
+
+        blur {
+            enabled = true
+            passes = 3
+            size = 15
+        }
     }
 
     animations {
@@ -134,7 +136,8 @@
     # Example windowrule v2
     # windowrulev2 = float,class:^(kitty)$,title:^(kitty)$
     # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-
+    # windowrulev2 = noblur,title:^(alacritty)$
+    windowrulev2 = noblur,class:^(?:(?!Alacritty).)+$
 
     # See https://wiki.hyprland.org/Configuring/Keywords/ for more
     $mainMod = SUPER

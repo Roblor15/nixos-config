@@ -51,7 +51,8 @@
   networking.networkmanager.enable = true;
 
   # Set your time zone.
-  time.timeZone = "Europe/Rome";
+  # time.timeZone = "Europe/Rome";
+  time.timeZone = "Europe/Helsinki";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -145,7 +146,7 @@
   system.stateVersion = "23.05"; # Did you read the comment?
 
   fonts.packages = with pkgs; [
-    nerdfonts
+    (nerdfonts.override { fonts = [ "CascadiaCode" ]; })
   ];
 
   environment.gnome.excludePackages = (with pkgs; [
@@ -220,13 +221,18 @@
     # options hid_apple iso_layout=0
     # Swap Alt key and Command key.
     options hid_apple swap_opt_cmd=1
+
+    blacklist nouveau
+    options nouveau modeset=0
   '';
+
+  boot.blacklistedKernelModules = [ "nouveau" ];
 
   hardware.sensor.iio.enable = true;
 
   hardware.opengl = 
     # let
-      # pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+    #   pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
     # in
      {
     enable = true;
@@ -240,7 +246,7 @@
 
   programs.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
   };
   services.upower.enable = true;
   security.pam.services.swaylock = {

@@ -88,6 +88,8 @@
     kicad
     cinnamon.nemo
     # hyprutils
+    ethtool
+    darktable
   ];
 
   home.pointerCursor = {

@@ -12,7 +12,7 @@
   ];
 
   wayland.windowManager.hyprland.enable = true;
-  wayland.windowManager.hyprland.package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  # wayland.windowManager.hyprland.package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
   wayland.windowManager.hyprland.extraConfig = ''
     source = ~/.config/hypr/colors.conf
     source = ~/.config/hypr/borders.conf
@@ -208,6 +208,9 @@
     bind = $mainMod CTRL, 8, movetoworkspacesilent, 8
     bind = $mainMod CTRL, 9, movetoworkspacesilent, 9
     bind = $mainMod CTRL, 0, movetoworkspacesilent, 10
+
+    bindle = $mainMod, Return, exec, hyprctl keyword monitor eDP-1,disable
+    bindle = $mainMod SHIFT, Return, exec, hyprctl keyword monitor eDP-1,3000x2000@60,0x1440,2
 
     # Scroll through existing workspaces with mainMod + scroll
     bind = $mainMod, mouse_down, workspace, e+1

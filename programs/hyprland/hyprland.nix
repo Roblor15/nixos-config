@@ -155,7 +155,7 @@
     bind = $mainMod, F, fullscreen
     bind = $mainMod, S, fakefullscreen
     bind = $mainMod, SPACE, centerwindow
-    bindl = $mainMod, O, exec, systemctl suspend
+    bindl = $mainMod, O, exec, systemctl suspend-then-hibernate
     bind = $mainMod, L, exec, hyprlock
     bind = $mainMod, W, exec, pkill wlsunset; wlsunset -l $(~/.config/hypr/position.fish --lat) -L $(~/.config/hypr/position.fish --lon) -t 3000
 

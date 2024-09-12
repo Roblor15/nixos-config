@@ -8,6 +8,12 @@
       argparse 't/theme=' -- $argv
       or return
 
+      set gsett '[Settings]
+      gtk-icon-theme-name = Adwaita
+      gtk-theme-name = Adwaita'
+      set gsett1 '
+      gtk-application-prefer-dark-theme = true'
+
       if test $_flag_theme = "hyprland"
           # change alacritty color
           cp -f ~/.config/alacritty/bluish.toml ~/.config/alacritty/color.toml
@@ -21,6 +27,9 @@
           cp -f ~/.config/helix/themes/theme-blue.toml ~/.config/helix/themes/adaptive.toml
           # reload helix config
           pkill -USR1 hx || true
+          # change theme for gtk
+          string join0 $gsett $gsett1 > ~/.config/gtk-3.0/settings.ini
+          string join0 $gsett $gsett1 > ~/.config/gtk-4.0/settings.ini
           # rm the theme dir
           rm -r /tmp/theme
       else if test $_flag_theme = "onepiece"
@@ -40,6 +49,9 @@
               cp -f ~/.config/helix/themes/theme-dark.toml ~/.config/helix/themes/adaptive.toml
               # reload helix config
               pkill -USR1 hx || true
+              # change theme for gtk
+              string join0 $gsett $gsett1 > ~/.config/gtk-3.0/settings.ini
+              string join0 $gsett $gsett1 > ~/.config/gtk-4.0/settings.ini
           else if test -f /tmp/theme/dark
               # change theme 
               rm /tmp/theme/dark
@@ -52,6 +64,9 @@
               cp -f ~/.config/helix/themes/theme-light.toml ~/.config/helix/themes/adaptive.toml
               # reload helix config
               pkill -USR1 hx || true
+              # change theme for gtk
+              echo $gsett > ~/.config/gtk-3.0/settings.ini
+              echo $gsett > ~/.config/gtk-4.0/settings.ini
           else
               # default theme light
               # systemctl --user start hyprpaper.service
@@ -69,6 +84,9 @@
               cp -f ~/.config/helix/themes/theme-light.toml ~/.config/helix/themes/adaptive.toml
               # reload helix config
               pkill -USR1 hx || true
+              # change theme for gtk
+              echo $gsett > ~/.config/gtk-3.0/settings.ini
+              echo $gsett > ~/.config/gtk-4.0/settings.ini
               sleep 5
               # open eww
               eww --config ~/.config/eww/bar open bar

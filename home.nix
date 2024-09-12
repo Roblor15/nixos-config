@@ -90,6 +90,7 @@
     # hyprutils
     ethtool
     darktable
+    mattermost-desktop
   ];
 
   home.pointerCursor = {

@@ -206,7 +206,7 @@
     # '';
   };
 
-  systemd.sleep.extraConfig = "HibernateDelaySec=2h";
+  systemd.sleep.extraConfig = "HibernateDelaySec=6h";
 
   hardware.bluetooth.enable = true;
 
@@ -331,4 +331,6 @@
 
     };
   };
+
+  virtualisation.vmware.host.enable = true;
 }

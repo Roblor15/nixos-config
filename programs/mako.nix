@@ -2,15 +2,18 @@
 
 {
   home.file.".config/mako/config".text = ''
+    max-history=5
+    sort=-time
+
     on-button-left=invoke-default-action
     on-button-right=dismiss
+
     # General
     icons=1
     markup=1
     actions=1
     width=300
     height=200
-    sort=-time
     invisible=0
     group-by=none
     format=%s\n%b
@@ -24,11 +27,11 @@
     border-radius=7
     ignore-timeout=0
     text-alignment=right
-    default-timeout=5000
+    default-timeout=0
     font=CaskaydiaCove Nerd Font 11
     icon-path=/usr/share/icons/hicolor
 
-    # Colors (Catppuccin Mocha)
+    # Colors
 
     background-color=#35141DDD
     text-color=#FEEAE2
@@ -46,5 +49,8 @@
 
     [urgency=high]
     border-color=#EA5B23
+
+    [category=notification-sync]
+    anchor=bottom-right
   '';
 }

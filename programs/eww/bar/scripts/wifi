@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+bars() {
+    b=$1
+    s="_"
+    r=${b#*$s}
+    res=$(( ${#b} - ${#r} - ${#s} ))
+    
+    if [[ $res == 1 ]]; then
+        icon="󰤟"
+    elif [[ $res == 2 ]]; then
+        icon="󰤢"
+    elif [[ $res == 3 ]]; then
+        icon="󰤥"
+    elif [[ $res == -1 ]]; then
+        icon="󰤨"
+    fi
+}
+
+status=$(nmcli g | grep -oE "disconnected")
+status_1=$(nmcli g | grep -oE "disconnesso")
+
+if [ $status  ] || [ $status_1 ] ; then
+    icon="󰤭"
+    text=""
+else
+    b=$(nmcli dev wifi list | awk '/\*/{if (NR!=1) {print $9}}')
+    bars $b
+    essid=$(nmcli c | grep wlp0s20f3 | awk '{print ($1)}')
+    text="${essid}"
+fi
+
+if [[ "$1" == "--ESSID" ]]; then
+	echo $text
+elif [[ "$1" == "--ICON" ]]; then
+	echo $icon
+fi
+

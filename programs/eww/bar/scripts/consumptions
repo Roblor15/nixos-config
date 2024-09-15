@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+upower --monitor-detail | stdbuf -oL grep energy-rate |
+	while RET= read line
+	do
+		res=$(echo $line | awk -F"[:,]" '{gsub(/ /, ""); print $2}')
+		echo $res
+	done
+
+# upower --monitor-detail | grep --line-buffered energy-rate | awk -F"[:,]" '{gsub(/ /,""); print $2}' | 
+# 	while RET= read line
+# 	do
+# 		echo $line
+# 	done

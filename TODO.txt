@@ -1,0 +1,3 @@
+A simple configuration file where I can select which programs I want to activate (hyprland and home-manager synch)
+Convert configurations to nix
+Improve eww bar

@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+stdbuf -oL amixer events | 
+    while RET= read line
+    do 
+        if echo $line | grep -q "event value: numid=$1"
+        then
+            if [[ $2 == "--icon" ]]
+            then
+                amixer_res=$(amixer get Master)
+                status=$(echo $amixer_res | grep 'Left:' | awk -F'[][]' '{ print $4 }')
+                if [[ $status == 'off' ]]
+                then
+                    echo '󰸈'
+                else
+                    value=$(echo $amixer_res | grep 'Left:' | awk -F'[][]' '{ print $2 }' | tr -d '%')
+                    echo $value
+                    if [[ $value == 0 ]]
+                    then
+                        echo '󰕿'
+                    elif [[ $value == 100 ]]
+                    then
+                        echo '󱄠'
+                    elif [[ $value < 50 ]]
+                    then
+                        echo '󰖀'
+                    else
+                        echo '󰕾'
+                    fi
+                fi
+            elif [[ $2 == '--value' ]]
+            then
+                echo $(amixer get Master | grep 'Left:' | awk -F'[][]' '{ print $2 }' | tr -d '%')
+            fi
+        fi
+    done

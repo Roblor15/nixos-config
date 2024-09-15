@@ -12,6 +12,7 @@
     ./programs/hyprland/hyprland.nix
     ./programs/vscode.nix
     ./programs/mako.nix
+    ./programs/eww/eww.nix
   ];
   
   # Home Manager needs a bit of information about you and the

@@ -23,7 +23,7 @@
     monitor=desc:Samsung Electric Company SAMSUNG 0x01000E00,preferred,auto,2.5
     monitor=,preferred,auto,1
 
-    exec-once = ~/.config/hypr/change-theme.fish --theme hyprland
+    exec-once = ~/.config/hypr/change-theme.fish --theme onepiece
     exec-once = ~/.config/hypr/rounded-borders.fish
     exec-once = eww --config ~/.config/eww/bar open bar
     exec-once = hyprctl setcursor Bibata-Modern-Amber 24

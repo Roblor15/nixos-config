@@ -92,6 +92,7 @@
     ethtool
     darktable
     mattermost-desktop
+    inputs.zen-browser.packages."${pkgs.system}".specific
   ];
 
   home.pointerCursor = {

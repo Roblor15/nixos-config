@@ -145,7 +145,7 @@
     # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
     bind = $mainMod, T, exec, alacritty
     bind = $mainMod, N, exec, alacritty -e nvim
-    bind = $mainMod, B, exec, firefox
+    bind = $mainMod, B, exec, zen
     bind = $mainMod, C, killactive,
     bind = $mainMod, M, exit,
     bind = $mainMod, V, togglefloating,
@@ -235,10 +235,10 @@
     bindle = $mainMod, XF86MonBrightnessUp, exec, ddcutil --bus 15 setvcp 10 + 5
     bindle = $mainMod, XF86MonBrightnessDown, exec, ddcutil --bus 15 setvcp 10 - 5
 
-    bind = , XF86Tools, exec, [fakefullscreen] firefox --new-window www.gmail.com
-    bind = $mainMod, F10, exec, [fakefullscreen] firefox --new-window 'ext+container:name=Studing&url=www.gmail.com'
-    bind = $mainMod SHIFT, F10, exec, [fakefullscreen] firefox --new-window www.outlook.it 
-    bind = $mainMod CTRL, F10, exec, [fakefullscreen] firefox --new-window 'ext+container:name=Tampere&url=www.outlook.it' 
+    bind = , XF86Tools, exec, zen --new-window www.gmail.com
+    bind = $mainMod, F10, exec, zen --new-window 'ext+container:name=UniTN&url=www.gmail.com'
+    bind = $mainMod SHIFT, F10, exec, zen --new-window www.outlook.it 
+    bind = $mainMod CTRL, F10, exec, zen --new-window 'ext+container:name=Tuni&url=www.outlook.it' 
 
     bind = , Print, exec,  grimblast --notify copysave output ~/Pictures/Screenshots/$(date +'%F-%T.png')
     bind = $mainMod, Print, exec,  grimblast --notify copysave active ~/Pictures/Screenshots/$(date +'%F-%T.png')

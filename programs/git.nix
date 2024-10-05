@@ -21,6 +21,9 @@
       tag = {
         gpgsign = true;
       };
+      core = {
+        filemode = true;
+      };
     };
   };
 }

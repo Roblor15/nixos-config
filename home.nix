@@ -1,5 +1,5 @@
-# { config, /* unstable, */ inputs, pkgs, ... }:
-{ config, unstable, inputs, pkgs, ... }:
+{ config, /* unstable, */ inputs, pkgs, ... }:
+# { config, unstable, inputs, pkgs, ... }:
 
 {
   imports = [
@@ -94,7 +94,7 @@
     darktable
     mattermost-desktop
     inputs.zen-browser.packages."${pkgs.system}".specific
-    unstable.probe-rs-tools
+    # unstable.probe-rs-tools
   ];
 
   home.pointerCursor = {

@@ -248,6 +248,7 @@
   programs.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
   };
   services.upower.enable = true;
   security.pam.services.swaylock = {
@@ -342,16 +343,16 @@
 #   KERNEL=="ttyACM0", MODE:="666"
 # '';
 
-  services.udev.packages = [
-    (pkgs.writeTextFile {
-      name = "dependable-embedded-systems";
-      text = ''
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0660", GROUP="dialout"
-      '';
+  # services.udev.packages = [
+  #   (pkgs.writeTextFile {
+  #     name = "dependable-embedded-systems";
+  #     text = ''
+  #       SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0660", GROUP="dialout"
+  #     '';
 
-      destination = "/etc/udev/rules.d/99-esp-rusy-board.rules";
-    })
-  ];
+  #     destination = "/etc/udev/rules.d/99-esp-rusy-board.rules";
+  #   })
+  # ];
 
 
 }

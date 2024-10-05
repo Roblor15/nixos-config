@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
-    # unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -33,7 +33,8 @@
     zen-browser.url = "github:MarceColl/zen-browser-flake";
   };
 
-  outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, ... }@inputs:
+  # outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, ... }@inputs:
+  outputs = { self, unstable, nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, ... }@inputs:
     let
       system = "x86_64-linux";
     in
@@ -68,9 +69,9 @@
                 ];
               };
               extraSpecialArgs = { 
-                # unstable = import unstable {
-                #   inherit system;
-                # };
+                unstable = import unstable {
+                  inherit system;
+                };
                 inherit inputs;
               };
             };

@@ -338,21 +338,16 @@
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-#   services.udev.extraRules = ''
-#   SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0660", GROUP="plugdev"
-#   KERNEL=="ttyACM0", MODE:="666"
-# '';
+  services.udev.packages = [
+    (pkgs.writeTextFile {
+      name = "dependable-embedded-systems";
+      text = ''
+        SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0660", GROUP="dialout"
+      '';
 
-  # services.udev.packages = [
-  #   (pkgs.writeTextFile {
-  #     name = "dependable-embedded-systems";
-  #     text = ''
-  #       SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0660", GROUP="dialout"
-  #     '';
-
-  #     destination = "/etc/udev/rules.d/99-esp-rusy-board.rules";
-  #   })
-  # ];
+      destination = "/etc/udev/rules.d/99-esp-rusy-board.rules";
+    })
+  ];
 
 
 }

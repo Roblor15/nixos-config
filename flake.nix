@@ -17,7 +17,7 @@
     anyrun.url = "github:Kirottu/anyrun";
     anyrun.inputs.nixpkgs.follows = "nixpkgs";
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    hyprpaper.url = "github:hyprwm/hyprpaper";
+    # hyprpaper.url = "github:hyprwm/hyprpaper";
     hypridle = {
       url = "github:hyprwm/hypridle";
       # inputs.nixpkgs.follows = "nixpkgs";
@@ -30,7 +30,7 @@
       url = "github:hyprwm/contrib";
       # inputs.nixpkgs.follows = "nixpkgs";
     };
-    zen-browser.url = "github:MarceColl/zen-browser-flake";
+    zen-browser.url = "github:omarcresp/zen-browser-flake";
   };
 
   # outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, ... }@inputs:
@@ -49,7 +49,7 @@
               alacritty-theme.overlays.default
               inputs.hypridle.overlays.default
               inputs.hyprlock.overlays.default
-              inputs.hyprpaper.overlays.default
+              # inputs.hyprpaper.overlays.default
             ];
             environment.systemPackages = [
               (pkgs.rust-bin.stable.latest.default.override

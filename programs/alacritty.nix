@@ -5,7 +5,7 @@
     enable = true;
     package = pkgs.alacritty;
     settings = {
-      import = [
+      general.import = [
         "~/.config/alacritty/color.toml"
       ];
       env = {

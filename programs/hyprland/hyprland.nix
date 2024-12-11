@@ -90,10 +90,12 @@
     decoration {
         rounding = 10
 
-        drop_shadow = yes
-        shadow_range = 4
-        shadow_render_power = 3
-        col.shadow = $shadow
+        shadow {
+            enabled = yes
+            range = 4
+            render_power = 3
+            color = $shadow
+        }
 
         blur {
             enabled = true
@@ -153,7 +155,7 @@
     bind = $mainMod SHIFT, R, exec, cliphist list | anyrun --plugins ~/.config/anyrun/libstdin.so | cliphist decode | wl-copy
     bind = $mainMod, X, togglesplit, # dwindle
     bind = $mainMod, F, fullscreen
-    bind = $mainMod, S, fakefullscreen
+    bind = $mainMod, S, fullscreenstate
     bind = $mainMod, SPACE, centerwindow
     bindl = $mainMod, O, exec, systemctl suspend-then-hibernate
     bind = $mainMod, L, exec, hyprlock
@@ -222,13 +224,13 @@
     bindm = $mainMod, mouse:272, movewindow
     bindm = $mainMod, mouse:273, resizewindow
 
-    bindl = , XF86AudioMute, exec, amixer set Master toggle
-    bindle = , XF86AudioLowerVolume, exec, amixer set Master 5%-
-    bindle = , XF86AudioRaiseVolume, exec, amixer set Master 5%+
+    bindl = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle 
+    bindle = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+    bindle = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
 
-    bind = , XF86AudioMicMute, exec, amixer set Capture toggle
-    bind = $mainMod, XF86AudioLowerVolume, exec, amixer set Capture 5%-
-    bind = $mainMod, XF86AudioRaiseVolume, exec, amixer set Capture 5%+
+    bind = , XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+    bind = $mainMod, XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%-
+    bind = $mainMod, XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%+
 
     bindle = , XF86MonBrightnessUp, exec, light -T 1.2
     bindle = , XF86MonBrightnessDown, exec, light -T 0.8

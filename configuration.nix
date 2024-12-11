@@ -91,14 +91,12 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
-    pulse.enable = true;
+    # pulse.enable = true;
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
 
@@ -157,7 +155,6 @@
     gnome-tour
     # gnome-console
     xterm
-  ]) ++ (with pkgs.gnome; [
     cheese # webcam tool
     gnome-music
     gnome-terminal
@@ -233,14 +230,14 @@
 
   hardware.sensor.iio.enable = true;
 
-  hardware.opengl = 
+  hardware.graphics = 
     # let
     #   pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
     # in
      {
     enable = true;
     # package = pkgs-unstable.mesa.drivers;
-    driSupport = true;
+    # driSupport = true;
     extraPackages = with pkgs; [
       intel-media-driver
       # vaapiIntel

@@ -87,8 +87,8 @@
     socat
     inputs.hyprland-contrib.packages.${pkgs.system}.grimblast
     # grimblast
-    kicad
-    cinnamon.nemo
+    # kicad
+    nemo
     # hyprutils
     ethtool
     darktable

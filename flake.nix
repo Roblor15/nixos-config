@@ -16,20 +16,20 @@
     };
     anyrun.url = "github:Kirottu/anyrun";
     anyrun.inputs.nixpkgs.follows = "nixpkgs";
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    hyprland.url = "github:hyprwm/Hyprland";
     # hyprpaper.url = "github:hyprwm/hyprpaper";
-    hypridle = {
-      url = "github:hyprwm/hypridle";
+    # hypridle = {
+    #   url = "github:hyprwm/hypridle";
       # inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprlock = {
-      url = "github:hyprwm/hyprlock";
+    # };
+    # hyprlock = {
+      # url = "github:hyprwm/hyprlock";
       # inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprland-contrib = {
-      url = "github:hyprwm/contrib";
+    # };
+    # hyprland-contrib = {
+      # url = "github:hyprwm/contrib";
       # inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # };
     zen-browser.url = "github:omarcresp/zen-browser-flake";
   };
 
@@ -47,8 +47,8 @@
             nixpkgs.overlays = [
               rust-overlay.overlays.default
               alacritty-theme.overlays.default
-              inputs.hypridle.overlays.default
-              inputs.hyprlock.overlays.default
+              # inputs.hypridle.overlays.default
+              # inputs.hyprlock.overlays.default
               # inputs.hyprpaper.overlays.default
             ];
             environment.systemPackages = [

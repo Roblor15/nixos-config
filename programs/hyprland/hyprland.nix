@@ -160,6 +160,7 @@
     bindl = $mainMod, O, exec, systemctl suspend-then-hibernate
     bind = $mainMod, L, exec, hyprlock
     bind = $mainMod, W, exec, pkill wlsunset; wlsunset -l $(~/.config/hypr/position.fish --lat) -L $(~/.config/hypr/position.fish --lon) -t 3000
+    bind = $mainMod SHIFT, W, exec, pkill wlsunset
 
     bind = $mainMod, P, exec, eww open --config ~/.config/eww/bar bar  
     bind = $mainMod SHIFT, P, exec, eww close --config ~/.config/eww/bar bar  

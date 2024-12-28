@@ -286,5 +286,8 @@
         hide_on_touch = true
         hotspot_padding = 0
     }
+
+    workspace=1,monitor:eDP-1,default:true
+    workspace=2,monitor:DP-1,default:true
   '';
 }

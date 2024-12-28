@@ -150,6 +150,10 @@
     (nerdfonts.override { fonts = [ "CascadiaCode" ]; })
   ];
 
+  environment.systemPackages = (with pkgs; [
+    gparted
+  ]);
+
   environment.gnome.excludePackages = (with pkgs; [
     gnome-photos
     gnome-tour

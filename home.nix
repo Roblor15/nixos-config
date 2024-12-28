@@ -69,7 +69,6 @@
     nil
     taplo
     cachix
-    gparted
     nodePackages.bash-language-server
     cargo-generate
     quickemu

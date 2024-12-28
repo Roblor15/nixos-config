@@ -43,4 +43,9 @@
     '';
     executable = true;
   };
+
+  home.file."Pictures/Wallpapers" = {
+    source = ../../images/Wallpapers;
+    recursive = true;
+  };
 }

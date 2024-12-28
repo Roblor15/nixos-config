@@ -1,5 +1,3 @@
-# TODO: Controllare se i monitor sono attivi, no reload della configurazione
-
 { ... }:
 
 {
@@ -20,16 +18,25 @@
                 set monitors_without_bar (echo $layers | jq -r "to_entries[] | .key")
             end
 
-            echo "" >  ~/.config/hypr/borders.conf
-
             for monitor in $monitors_without_bar
                 set monitor (string join "" 'm[' $monitor)
                 set monitor (string join "" $monitor ']')
 
-                echo "workspace=1,monitor:eDP-1,default:true
-        workspace=2,monitor:DP-1,default:true
-        workspace=$monitor w[1],gapsin:0,gapsout:0,rounding:false,border:false
-        workspace=$monitor,gapsin:0,gapsout:0,rounding:false" >> ~/.config/hypr/borders.conf
+                # echo "workspace=1,monitor:eDP-1,default:true
+        # workspace=2,monitor:DP-1,default:true
+        # workspace=$monitor w[1],gapsin:0,gapsout:0,rounding:false,border:false
+        # workspace=$monitor,gapsin:0,gapsout:0,rounding:false" >> ~/.config/hypr/borders.conf
+                hyprctl keyword workspace $monitor,gapsin:0,gapsout:0,rounding:false
+                hyprctl keyword workspace $monitor w[1],gapsin:0,gapsout:0,rounding:false,border:false
+            end
+
+            for monitor in $monitors_with_bar
+                set monitor (string sub -s 2 -l (math (string length $monitor) - 2) $monitor)
+                set monitor (string join "" 'm[' $monitor)
+                set monitor (string join "" $monitor ']')
+
+                hyprctl keyword workspace $monitor w[1],gapsin:5,gapsout:20,rounding:true,border:true
+                hyprctl keyword workspace $monitor,gapsin:5,gapsout:20,rounding:true,border:true
             end
         end
 

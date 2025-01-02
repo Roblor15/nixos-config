@@ -7,7 +7,7 @@
     userEmail = "roberto.lorenzon.2001@gmail.com";
     extraConfig = {
       user = {
-        signingKey = "~/.ssh/id_rsa.pub";
+        signingKey = "~/.ssh/github_signing_ed25519.pub";
       };
       init = {
         defaultBranch = "main";  

@@ -15,7 +15,7 @@
   # wayland.windowManager.hyprland.package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
   wayland.windowManager.hyprland.extraConfig = ''
     source = ~/.config/hypr/colors.conf
-    source = ~/.config/hypr/borders.conf
+    # source = ~/.config/hypr/borders.conf
 
     # monitor=eDP-1,3000x2000@60,530x1440,2
     monitor=eDP-1,3000x2000@60,0x1440,2

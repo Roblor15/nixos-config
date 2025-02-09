@@ -8,43 +8,54 @@
 	(box :orientation "v" 
 		:space-evenly "false" 
 		:spacing -15
-  	(button :class "launcher_icon ${caffeine}" 
-		  	:onclick "scripts/popup launcher"  "")))
+		(button :class "launcher_icon ${caffeine}" 
+			:onclick "scripts/popup launcher"  ""
+		)
+	)
+)
 
-(defpoll caffeine :interval "1s" "./scripts/hypridle.fish")
+(deflisten caffeine :initial "" "./scripts/hypridle.fish")
 
 (defwidget consumptions []
 	(box :orientation "v" 
-		 (label :text consumption)))
+		(label :text consumption)
+	)
+)
+
 (deflisten consumption :initial "-" "./scripts/consumptions")
 
 ;; Workspaces Widgets ;;
-(defwidget workspaces []
-	(literal :content workspace))
-(deflisten workspace "scripts/workspace")
+; (defwidget workspaces []
+; 	(literal :content workspace))
+; (deflisten workspace "scripts/workspace")
 
 ;; Battery Widgets ;;
 (defwidget bat []
-		(box :class "bat_module" :vexpand "false" :hexpand "false" 
-            (circular-progress :value "${EWW_BATTERY["BAT0"].capacity}"
-                :class {EWW_BATTERY["BAT0"].capacity > 10 ? "batbar" : "batbar batlowlevel"}
-                :start-at 75
-                :clockwise false
-                :thickness 4
-            (button 
-                :class {EWW_BATTERY["BAT0"].capacity > 10 ? "iconbat" : "iconbat batlowlevel"}
-                :limit-width 2
-                :tooltip "battery on ${EWW_BATTERY["BAT0"].capacity}%"
-                :show_truncated false
-                :wrap false
-                ""))))
+	(box :class "bat_module" :vexpand "false" :hexpand "false" 
+		(circular-progress :value "${EWW_BATTERY["BAT0"].capacity}"
+			:class {EWW_BATTERY["BAT0"].capacity > 10 ? "batbar" : "batbar batlowlevel"}
+			:start-at 75
+			:clockwise false
+			:thickness 4
+			(button 
+				:class {EWW_BATTERY["BAT0"].capacity > 10 ? "iconbat" : "iconbat batlowlevel"}
+				:limit-width 2
+				:tooltip "battery on ${EWW_BATTERY["BAT0"].capacity}%"
+				:show_truncated false
+				:wrap false
+				""
+			)
+		)
+	)
+)
 
 ;; Wifi Widgets ;;
 (defwidget wifi []
 	(box :orientation "v"  
-				:tooltip ESSID_WLAN
-	(button		
-				:class "wifi-icon" WLAN_ICON)))
+		:tooltip ESSID_WLAN
+		(button :class "wifi-icon" WLAN_ICON)
+	)
+)
 
 ; (defpoll COL_WLAN :interval "1s" "scripts/wifi --COL")
 (defpoll ESSID_WLAN :interval "1s" "scripts/wifi --ESSID")
@@ -52,46 +63,58 @@
 
 ;; Brightness Widgets ;;
 (defwidget bright []
-  (eventbox :onhover "${eww} update bright=true"   
-  			:onhoverlost "${eww} update bright=false"
-  			(box    :orientation "v"  
-			  		:space-evenly "false"  
-					:spacing 2
-  			(revealer :transition "slideup" 
-			  		  :reveal bright   
-					  :duration "550ms"
-  			(scale :class "bribar" 
-		  	   :value current-brightness 
-				   :tooltip "Brightness: ${current-brightness}%" 
-				   :onchange "light -S {}%" 
-				   :orientation "v" 
-				   :flipped true 
-				   :max 101 
-				   :min 0))
-  			(label :class "brightness-icon" 
-			  	   :text "󰃟"))))
+	(eventbox :onhover "${eww} update bright=true"   
+		:onhoverlost "${eww} update bright=false"
+		(box    :orientation "v"  
+			:space-evenly "false"  
+			:spacing 2
+			(revealer :transition "slideup" 
+				:reveal bright   
+				:duration "550ms"
+				(scale :class "bribar" 
+					:value current-brightness 
+					:tooltip "Brightness: ${current-brightness}%" 
+					:onchange "light -S {}%" 
+					:orientation "v" 
+					:flipped true 
+					:max 101 
+					:min 0
+				)
+			)
+			(label :class "brightness-icon" 
+				:text "󰃟"
+			)
+		)
+	)
+)
+
 (defpoll current-brightness :interval "1s" "light -G")
 (defvar bright false)
 
 ;; Volume Widgets ;;
 (defwidget volum []
 	(eventbox :onhover "${eww} update volum=true" 		
-			  :onhoverlost "${eww} update volum=false"
-	(box      :orientation "v" 	  
-			  :space-evenly "false" 
-			  :spacing "2"
-	(revealer :transition "slideup" 
-			  :reveal volum         
-			  :duration "550ms"
-	(scale    :class "volbar" 	  
-			  :value current-volume 
-			  :orientation "v"      
-			  :flipped true 
-			  :tooltip "Volume: ${current-volume}%" 
-			  :max 101 
-			  :min 0 
-			  :onchange "amixer set Master {}%" ))
-	(button   :onclick "scripts/popup audio"   :class "volume-icon" icon-volume))))
+		:onhoverlost "${eww} update volum=false"
+		(box :orientation "v" 	  
+			:space-evenly "false" 
+			:spacing "2"
+			(revealer :transition "slideup" 
+				:reveal volum         
+				:duration "550ms"
+				(scale :class "volbar" 	  
+					:value current-volume 
+					:orientation "v"      
+					:flipped true 
+					:tooltip "Volume: ${current-volume}%" 
+					:max 101 
+					:min 0 
+					:onchange "amixer set Master {}%"
+				)
+			)
+			(button :onclick "scripts/popup audio" :class "volume-icon" icon-volume)
+		)
+	)
+)
 
 (deflisten current-volume :initial "0" "./scripts/volume 3 --value")
 (deflisten icon-volume :initial "0" "./scripts/volume '[3|4]' --icon")
@@ -100,24 +123,31 @@
 ;; Control Panel Widgets ;;	
 (defwidget control []
 	(box :orientation "v" 
-		 :space-evenly false  
-		 :class "control"
-(bat)
-(wifi)
-(bright)
-(volum)))
+		:space-evenly false  
+		:class "control"
+		(bat)
+		(wifi)
+		(bright)
+		(volum)
+	)
+)
 
 ;; Clock Widgets ;;
 (defwidget time []
-	(box	:orientation "v" 
-			:class "time" 
-			:valign "end"
-	(button	:onclick "scripts/popup calendar"	
-			:class "time-hour" hour)
-	(button	:onclick "scripts/popup calendar"	
-			:class "time-min"  min)))
-(defpoll hour	:interval "1s"	"date '+%H'")
-(defpoll min	:interval "1s"	"date '+%M'")
+	(box :orientation "v" 
+		:class "time" 
+		:valign "end"
+		(button :onclick "scripts/popup calendar"
+			:class "time-hour" hour
+		)
+		(button :onclick "scripts/popup calendar"
+			:class "time-min"  min
+		)
+	)
+)
+
+(defpoll hour :interval "1s"	"date '+%H'")
+(defpoll min :interval "1s"	"date '+%M'")
 
 ; ;; Calendar Widgets ;;
 ; (defwidget cal []
@@ -137,93 +167,113 @@
 
 ;; Powermenu Widgets ;;
 (defwidget power []
-	(eventbox	:onhover "${eww} update power=true"	
-				:onhoverlost "${eww} update power=false" 
-	(box		:orientation "v"					
-				:space-evenly "false" 	 
-				:vexpand "false" 	
-				:class "powermenu"
-	(revealer	:transition "slideup"				
-				:reveal power			 
+	(eventbox :onhover "${eww} update power=true"
+		:onhoverlost "${eww} update power=false" 
+		(box :orientation "v"
+			:space-evenly "false"  
+			:vexpand "false" 
+			:class "powermenu"
+			(revealer :transition "slideup"
+				:reveal power 
 				:duration "550ms"
-	(box		:orientation "v"					
-				:space-evenly "false"
+				(box :orientation "v"
+					:space-evenly "false"
+					(button   :class "button-bspres"  
+						:tooltip "Hyprland Restart" 
+						:onclick "hyprctl reload" ""
+					)
+					(button :class "button-reb"
+						:tooltip "Reboot" 
+						:onclick "reboot"""
+					)
+					(button :class "button-quit" 
+						:tooltip "Logout"  
+						:onclick "hyprctl dispatch exit" "󰗽"
+					)
+					(button :class "button-lock" 
+						:tooltip "Lock Screen" 
+						:onclick "swaylock -f -C ~/.config/swaylock/swaylock" "󱦚"
+					)
+				)
+			)
+			(button :class "button-off"
+				:tooltip "Shutdown" 
+				:onclick "shutdown now"""
+			)
+		)
+	)
+)
 
-	(button   	:class "button-bspres"  			
-				:tooltip "Hyprland Restart" 
-				:onclick "hyprctl reload" "" )
-
-  	(button		:class "button-reb"					
-	  			:tooltip "Reboot"		 
-				:onclick "reboot"	"")
-
-	(button		:class "button-quit" 				
-				:tooltip "Logout" 		 
-				:onclick "hyprctl dispatch exit" "󰗽")
-
-	(button		:class "button-lock" 				
-				:tooltip "Lock Screen"	 
-				:onclick "swaylock -f -C ~/.config/swaylock/swaylock" "󱦚")))
-
-	(button		:class "button-off"					
-				:tooltip "Shutdown"		 
-				:onclick "shutdown now"	""))))
 (defvar power false)
 
 ;; Top Widgets ;;
 (defwidget top []
-	(box	:orientation "v" 
-			:space-evenly "false" 
-			:valign "start" 
-(launcher)
-(consumptions)))
+	(box :orientation "v" 
+		:space-evenly "false" 
+		:valign "start" 
+		(launcher)
+		(consumptions)
+	)
+)
 
 ;; Bottom Widgets ;;
 (defwidget bottom []
-	(box	:orientation "v" 
-			:space-evenly false 
-(time)
-(power)))
+	(box :orientation "v" 
+		:space-evenly false 
+		(time)
+		(power)
+	)
+)
 
 ;; End Widgets ;;
 (defwidget end []
 	(box :orientation "v" 
-		 :space-evenly "false" 
-		 :valign "end" 
-     :halign "center"
-		 :spacing 5
-(control)
-(bottom)))
+		:space-evenly "false" 
+		:valign "end" 
+		:halign "center"
+		:spacing 5
+		(control)
+		(bottom)
+	)
+)
 
 ;; Bar Widgets ;;
 (defwidget bar []
 	(box :class "eww_bar" 
-		 :orientation "v" 
-		 :vexpand "false" 
-		 :hexpand "false"
-(top)
-(end)))
+		:orientation "v" 
+		:vexpand "false" 
+		:hexpand "false"
+		(top)
+		(end)
+	)
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;												  Window Section's	                           ;;	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bar Windows ;;
 (defwindow bar
-	:geometry (geometry :anchor "left center"
-						:height "95%" 
-                        :x "10px")
-		:monitor 0
-    :exclusive "true"
-    :stacking "bg"
-(bar))
+	:geometry
+	(geometry :anchor "left center"
+		:height "95%" 
+		:x "10px"
+	)
+	:monitor 0
+	:exclusive "true"
+	:stacking "bg"
+	(bar)
+)
 
 ;; Calendar Windows ;;
 (defwindow calendar
-	:geometry (geometry :x "70px" 
-						:y "65%" 
-						:width "270px" 
-						:height "60px")
-(cal))
+	:geometry
+	(geometry :x "70px" 
+		:y "65%" 
+		:width "270px" 
+		:height "60px"
+	)
+	(cal)
+)
 
 ;; (defwindow notification
 ;;    :geometry (geometry :x "100px"

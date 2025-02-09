@@ -5,6 +5,8 @@
     text = ''
       #! /usr/bin/env fish
 
+      echo "change" > /tmp/eww/hypridle
+
       if pidof hypridle
           pkill hypridle
       else

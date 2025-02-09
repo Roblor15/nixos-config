@@ -31,9 +31,10 @@
       # inputs.nixpkgs.follows = "nixpkgs";
     # };
     zen-browser.url = "github:omarcresp/zen-browser-flake";
+    hyprpanel.url = "github:Jas-SinghFSU/HyprPanel";
   };
 
-  outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, ... }@inputs:
+  outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, hyprpanel, ... }@inputs:
   # outputs = { self, unstable, nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, ... }@inputs:
     let
       system = "x86_64-linux";
@@ -47,6 +48,7 @@
             nixpkgs.overlays = [
               rust-overlay.overlays.default
               alacritty-theme.overlays.default
+              inputs.hyprpanel.overlay
               # inputs.hypridle.overlays.default
               # inputs.hyprlock.overlays.default
               # inputs.hyprpaper.overlays.default
@@ -63,6 +65,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
+              backupFileExtension = "backup";
               users.roblor = { ... }: {
                 imports = [
                   ./home.nix

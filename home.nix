@@ -14,8 +14,10 @@
     ./programs/vscode.nix
     ./programs/mako.nix
     ./programs/eww/eww.nix
+    ./programs/zathura.nix
+    # ./programs/hyprpanel.nix
   ];
-  
+
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = "roblor";
@@ -93,6 +95,7 @@
     darktable
     mattermost-desktop
     inputs.zen-browser.packages."${pkgs.system}".specific
+    teams-for-linux
     # unstable.probe-rs-tools
   ];
 

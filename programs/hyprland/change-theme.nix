@@ -41,6 +41,9 @@
               # change theme 
               rm /tmp/theme/light
               touch /tmp/theme/dark
+              # change theme for gtk
+              string join0 $gsett $gsett1 > ~/.config/gtk-3.0/settings.ini
+              string join0 $gsett $gsett1 > ~/.config/gtk-4.0/settings.ini
               # run hyprpaper
               hyprctl hyprpaper wallpaper "eDP-1,~/Pictures/Wallpapers/dark.png"
               # change alacritty color
@@ -49,13 +52,13 @@
               cp -f ~/.config/helix/themes/theme-dark.toml ~/.config/helix/themes/adaptive.toml
               # reload helix config
               pkill -USR1 hx || true
-              # change theme for gtk
-              string join0 $gsett $gsett1 > ~/.config/gtk-3.0/settings.ini
-              string join0 $gsett $gsett1 > ~/.config/gtk-4.0/settings.ini
           else if test -f /tmp/theme/dark
               # change theme 
               rm /tmp/theme/dark
               touch /tmp/theme/light
+              # change theme for gtk
+              echo $gsett > ~/.config/gtk-3.0/settings.ini
+              echo $gsett > ~/.config/gtk-4.0/settings.ini
               # run hyprpaper
               hyprctl hyprpaper wallpaper "eDP-1,~/Pictures/Wallpapers/light.png"
               # change alacritty color
@@ -64,12 +67,13 @@
               cp -f ~/.config/helix/themes/theme-light.toml ~/.config/helix/themes/adaptive.toml
               # reload helix config
               pkill -USR1 hx || true
-              # change theme for gtk
-              echo $gsett > ~/.config/gtk-3.0/settings.ini
-              echo $gsett > ~/.config/gtk-4.0/settings.ini
           else
               # default theme light
               # systemctl --user start hyprpaper.service
+              # change theme for gtk
+              echo $gsett > ~/.config/gtk-3.0/settings.ini
+              echo $gsett > ~/.config/gtk-4.0/settings.ini
+
               hyprpaper &
               # change theme 
               mkdir /tmp/theme
@@ -84,9 +88,6 @@
               cp -f ~/.config/helix/themes/theme-light.toml ~/.config/helix/themes/adaptive.toml
               # reload helix config
               pkill -USR1 hx || true
-              # change theme for gtk
-              echo $gsett > ~/.config/gtk-3.0/settings.ini
-              echo $gsett > ~/.config/gtk-4.0/settings.ini
               sleep 5
               # open eww
               eww --config ~/.config/eww/bar open bar

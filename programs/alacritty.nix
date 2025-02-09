@@ -20,19 +20,19 @@
       # };
       font = {
         normal = {
-          family = "CaskaydiaCove Nerd Font";
+          family = "Cascadia Mono NF";
           style = "Book";
         };
         bold = {
-          family = "CaskaydiaCove Nerd Font";
+          family = "Cascadia Mono NF";
           style = "Bold";
         };
         italic = {
-          family = "CaskaydiaCove Nerd Font";
+          family = "Cascadia Mono NF";
           style = "Italic";
         };
         bold_italic = {
-          family = "CaskaydiaCove Nerd Font";
+          family = "Cascadia Mono NF";
           style = "Bold Italic";
         };
         size = 11;

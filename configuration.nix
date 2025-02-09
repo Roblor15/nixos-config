@@ -147,7 +147,9 @@
   system.stateVersion = "23.05"; # Did you read the comment?
 
   fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "CascadiaCode" ]; })
+    cascadia-code
+    jetbrains-mono
+    ibm-plex
   ];
 
   environment.systemPackages = (with pkgs; [
@@ -194,6 +196,7 @@
   };
 
   virtualisation.podman.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true;
 
   services.logind = {
     lidSwitch = "suspend-then-hibernate";

@@ -9,6 +9,7 @@
     ./colors.nix
     ./hyprpaper.nix
     ./rounded-borders.nix
+    ./toggle_bars.nix
   ];
 
   wayland.windowManager.hyprland.enable = true;
@@ -20,12 +21,13 @@
     # monitor=eDP-1,3000x2000@60,530x1440,2
     monitor=eDP-1,3000x2000@60,0x1440,2
     monitor=desc:Microstep MSI MP271Q PA3T090C00618,highres,0x0,1
-    monitor=desc:Samsung Electric Company SAMSUNG 0x01000E00,preferred,auto,2.5
+    monitor=desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,auto,2.5
     monitor=,preferred,auto,1
 
     exec-once = ~/.config/hypr/change-theme.fish --theme onepiece
     exec-once = ~/.config/hypr/rounded-borders.fish
     exec-once = eww --config ~/.config/eww/bar open bar
+    # exec-once = hyprpanel
     exec-once = hyprctl setcursor Bibata-Modern-Amber 24
     exec-once = hypridle
     exec-once = mako
@@ -166,6 +168,7 @@
     bind = $mainMod SHIFT, P, exec, eww close --config ~/.config/eww/bar bar  
     bind = $mainMod ALT, 0, exec, eww open --config ~/.config/eww/bar bar --screen 0  
     bind = $mainMod ALT, 1, exec, eww open --config ~/.config/eww/bar bar --screen 1  
+    # bind = $mainMod, P, exec, ~/.config/hypr/toggle_bars.fish  
 
     bind = $mainMod SHIFT, c, exec, ~/.config/hypr/hypridle.fish
     bind = $mainMod, h, exec, ~/.config/hypr/change-theme.fish --theme hyprland

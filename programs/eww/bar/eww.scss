@@ -1,7 +1,10 @@
 // Global
 * {
     all: unset;
+    font-family: "Cascadia Mono NF";
 }
+
+$icon-size: 40px;
 
 @import 'colors'
 
@@ -17,7 +20,7 @@
 // EWW BAR
 .eww_bar {
     background-color: $background;
-    padding: 0.5rem;
+    padding: 0.5em;
     border-radius: 25px;
 }
 
@@ -29,28 +32,20 @@
     // animation-direction: alternate;
     // animation-iteration-count: infinite;
     // animation-timing-function: ease-in;
-    font-family: 'Font Awesome 6 Pro';
-    font-size: 1.7em;
-    padding: 0.4rem 0 1rem 0;
-    margin-right: 7px;
+    /* font-family: 'Font Awesome 6 Pro'; */
+    font-size: $icon-size;
+    /* padding: 0.4rem 0 1rem 0; */
+    /* margin-right: 7px; */
 }
 
 .caffeine {
     color: $icon-activated;
 }
 
-// Workspaces
-.works {
-    font-family: 'Font Awesome 6 Pro';
-    padding: 0.2rem 0.7rem 0.2rem 0.7rem;
-    background-color: $inside-background;
-    border-radius: 5px;
-}
-
 // Control Panel
 .control {
-    padding: 0.5rem;
-    font-family: Material Icons;
+    padding: 10px 6px;
+    /* font-family: Material Icons; */
     font-size: 1.6em;
     background-color: $inside-background;
     border-radius: 5px;
@@ -59,31 +54,32 @@
     color: $battery-charged;
     background-color: $battery-uncharged;
     border-radius: 10px;
-    margin: 0.2rem 0;
+    /* margin: 0.2rem 0; */
 }
 .batlowlevel {
     background-color: $battery-low-level;
 }
 .iconbat {
     color: $battery-charged;
-}
-.iconbat {
     font-size: 5px;
     margin: 8px;
 }
 .wifi-icon {
-    margin: 0.2rem 0;
-    margin-right: 5px;
+    /* margin: 0.2rem 0; */
+    /* margin-right: 5px; */
     color: $wifi;
+    font-size: $icon-size;
 }
 .brightness-icon {
-    margin: 0.2rem 0 0.2rem 0;
-    margin-right: 5px;
+    /* margin: 0.2rem 0 0.2rem 0; */
+    /* margin-right: 5px; */
     color: $light;
+    font-size: $icon-size;
 }
 .volume-icon {
-    margin: 0.2rem 0 0.2rem 0;
+    /* margin: 0.2rem 0 0.2rem 0; */
     color: $volume;
+    /* font-size: $icon-size; */
 }
 scale trough {
     all: unset;
@@ -91,7 +87,7 @@ scale trough {
     border-radius: 5px;
     min-height: 80px;
     min-width: 10px;
-    margin: 0.3rem 0 0.3rem 0;
+    /* margin: 0.3rem 0 0.3rem 0; */
 }
 .bribar trough highlight {
     background-color: $light;
@@ -104,53 +100,33 @@ scale trough {
 
 // Clock
 .time {
-    font-family: Comic Mono;
+    /* font-family: Comic Mono; */
     font-weight: bold;
     font-size: 1.2em;
     background-color: $inside-background;
     color: $white;
     border-radius: 5px;
-    padding: 0.7rem 0 0.5rem 0;
-    margin: 0.5rem 0 0.5rem 0;
-}
-
-// Calendar
-.cal-box {
-    background-color: $black;
-    font-family: Comic Mono;
-    font-size: 1em;
-    font-weight: bold;
-
-    .cal-inner-box {
-        padding: 1rem 1rem 0.2rem;
-
-        .cal {
-            &.highlight {
-                padding: 10rem;
-            }
-
-            padding: 0.8rem 0.25rem 0rem;
-            margin-left: 10px;
-        }
-    }
+    padding: 0.6em 0 0.5em 0;
+    margin: 0.5em 0 0.5em 0;
 }
 
 // Powermenu
 .powermenu {
-    font-family: feather;
-    font-size: 1.4em;
-    font-weight: bold;
+    /* font-family: feather; */
+    /* font-size: $icon-size; */
+    font-size: 30px;
+    /* font-weight: bold; */
 }
 .button-bspres,
 .button-reb,
 .button-lock,
 .button-quit,
 .button-off {
-    padding: 0.5rem 0.2rem 0.3rem 0.2rem;
-    margin-right: 3px;
+    /* padding: 0.5rem 0.2rem 0.3rem 0.2rem; */
+    /* margin-right: 3px; */
 }
 .button-off {
-    margin-bottom: 0.5rem;
+    /* margin-bottom: 0.5rem; */
     color: $red;
 }
 .button-bspres {

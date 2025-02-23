@@ -147,7 +147,8 @@
     $mainMod = SUPER
 
     # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-    bind = $mainMod, T, exec, alacritty
+    # bind = $mainMod, T, exec, alacritty
+    bind = $mainMod, T, exec, wezterm
     bind = $mainMod, N, exec, alacritty -e nvim
     bind = $mainMod, B, exec, zen
     bind = $mainMod, C, killactive,

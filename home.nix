@@ -15,6 +15,7 @@
     ./programs/mako.nix
     ./programs/eww/eww.nix
     ./programs/zathura.nix
+    ./programs/wezterm.nix
     # ./programs/hyprpanel.nix
   ];
 

@@ -85,7 +85,7 @@
     inherits = "onelight"
   '';
   home.file.".config/helix/themes/theme-dark.toml".text = ''
-    inherits = "merionette"
+    inherits = "horizon-dark"
   '';
   home.file.".config/helix/themes/theme-blue.toml".text = ''
     inherits = "tokyonight_storm"

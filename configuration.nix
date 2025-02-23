@@ -150,6 +150,32 @@
     cascadia-code
     jetbrains-mono
     ibm-plex
+    (iosevka.override {
+      set = "Term";
+      privateBuildPlan = ''
+        [buildPlans.IosevkaTermCustom]
+        family = "Iosevka Term Custom"
+        spacing = "term"
+        serifs = "sans"
+        noCvSs = true
+        exportGlyphNames = false
+
+        [buildPlans.IosevkaTermCustom.widths.Normal]
+        shape = 500
+        menu = 5
+        css = "normal"
+
+        [buildPlans.IosevkaTermCustom.widths.Extended]
+        shape = 600
+        menu = 7
+        css = "expanded"
+
+        [buildPlans.IosevkaTermCustom.widths.UltraExtended]
+        shape = 720
+        menu = 9
+        css = "ultra-expanded"
+      '';
+    })
   ];
 
   environment.systemPackages = (with pkgs; [

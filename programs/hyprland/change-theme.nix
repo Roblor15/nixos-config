@@ -48,6 +48,8 @@
               hyprctl hyprpaper wallpaper "eDP-1,~/Pictures/Wallpapers/dark.png"
               # change alacritty color
               cp -f ~/.config/alacritty/dark.toml ~/.config/alacritty/color.toml
+              # change wezterm color
+              cp -f ~/.config/wezterm/dark.lua ~/.config/wezterm/color.lua
               # change helix colors
               cp -f ~/.config/helix/themes/theme-dark.toml ~/.config/helix/themes/adaptive.toml
               # reload helix config
@@ -63,6 +65,8 @@
               hyprctl hyprpaper wallpaper "eDP-1,~/Pictures/Wallpapers/light.png"
               # change alacritty color
               cp -f ~/.config/alacritty/light.toml ~/.config/alacritty/color.toml
+              # change wezterm color
+              cp -f ~/.config/wezterm/light.lua ~/.config/wezterm/color.lua
               # change helix colors
               cp -f ~/.config/helix/themes/theme-light.toml ~/.config/helix/themes/adaptive.toml
               # reload helix config
@@ -84,6 +88,8 @@
               hyprctl hyprpaper wallpaper "eDP-1,~/Pictures/Wallpapers/light.png"
               # change alacritty color
               cp -f ~/.config/alacritty/light.toml ~/.config/alacritty/color.toml
+              # change wezterm color
+              cp -f ~/.config/wezterm/light.lua ~/.config/wezterm/color.lua
               # change helix colors
               cp -f ~/.config/helix/themes/theme-light.toml ~/.config/helix/themes/adaptive.toml
               # reload helix config

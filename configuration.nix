@@ -1,10 +1,12 @@
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, inputs, variants, ... }:
 
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
+  imports = if (variants.hostName == "roblor-matebook")
+  then [
+        ./hardware-configuration-matebook.nix
+  ] else if (variants.hostName == "roblor-desktop")
+  then []
+  else [];
 
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -42,7 +44,7 @@
   boot.initrd.luks.devices."luks-bcdb7e4a-a24a-4781-a361-c9401db61474".device = "/dev/disk/by-uuid/bcdb7e4a-a24a-4781-a361-c9401db61474";
   boot.initrd.luks.devices."luks-bcdb7e4a-a24a-4781-a361-c9401db61474".keyFile = "/crypto_keyfile.bin";  
 
-  networking.hostName = "roblor-matebook"; # Define your hostname.
+  networking.hostName = variants.hostName; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -76,7 +78,7 @@
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.desktopManager.gnome.enable = variants.gnome;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -96,9 +98,9 @@
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
-    # pulse.enable = true;
+    pulse.enable = true;
     # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
+    jack.enable = true;
 
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
@@ -144,38 +146,38 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.05"; # Did you read the comment?
+  system.stateVersion = variants.initialVersion; # Did you read the comment?
 
   fonts.packages = with pkgs; [
     cascadia-code
     jetbrains-mono
     ibm-plex
-    (iosevka.override {
-      set = "Term";
-      privateBuildPlan = ''
-        [buildPlans.IosevkaTermCustom]
-        family = "Iosevka Term Custom"
-        spacing = "term"
-        serifs = "sans"
-        noCvSs = true
-        exportGlyphNames = false
+    (iosevka-bin.override { variant = "SGr-IosevkaTerm"; })
+    # (iosevka.override {
+    #   set = "Term";
+    #   privateBuildPlan = ''
+    #     [buildPlans.IosevkaTermCustom]
+    #     family = "Iosevka Term Custom"
+    #     spacing = "term"
+    #     serifs = "sans"
+    #     noCvSs = true
+    #     exportGlyphNames = false
 
-        [buildPlans.IosevkaTermCustom.widths.Normal]
-        shape = 500
-        menu = 5
-        css = "normal"
+    #     [buildPlans.IosevkaTermCustom.widths.Normal]
+    #     shape = 500
+    #     menu = 5
+    #     css = "normal"
 
-        [buildPlans.IosevkaTermCustom.widths.Extended]
-        shape = 600
-        menu = 7
-        css = "expanded"
-
-        [buildPlans.IosevkaTermCustom.widths.UltraExtended]
-        shape = 720
-        menu = 9
-        css = "ultra-expanded"
-      '';
-    })
+    #     [buildPlans.IosevkaTermCustom.widths.Extended]
+    #     shape = 600
+    #     menu = 7
+    #     css = "expanded"
+    #     [buildPlans.IosevkaTermCustom.widths.UltraExtended]
+    #     shape = 720
+    #     menu = 9
+    #     css = "ultra-expanded"
+    #   '';
+    # })
   ];
 
   environment.systemPackages = (with pkgs; [
@@ -259,7 +261,7 @@
     options nouveau modeset=0
   '';
 
-  boot.blacklistedKernelModules = [ "nouveau" ];
+  boot.blacklistedKernelModules = lib.mkIf (variants.hostName == "roblor-matebook") [ "nouveau" ];
 
   hardware.sensor.iio.enable = true;
 
@@ -278,7 +280,7 @@
   };
 
   programs.hyprland = {
-    enable = true;
+    enable = variants.hyprland;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
   };
@@ -321,7 +323,7 @@
 
   programs.adb.enable = true;
 
-  specialisation = {
+  specialisation = lib.mkIf (variants.hostName == "roblor-matebook") {
     nvidia.configuration = {
       services.xserver.videoDrivers = ["nvidia"];
       
@@ -370,8 +372,6 @@
     };
   };
 
-  virtualisation.vmware.host.enable = true;
-
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   services.udev.packages = [
@@ -385,5 +385,6 @@
     })
   ];
 
-
+  virtualisation.virtualbox.host.enable = true;
+  users.extraGroups.vboxusers.members = [ "user-with-access-to-virtualbox" ];
 }

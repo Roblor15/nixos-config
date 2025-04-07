@@ -35,14 +35,73 @@
   };
 
   outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, hyprpanel, ... }@inputs:
-  # outputs = { self, unstable, nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, ... }@inputs:
-    let
-      system = "x86_64-linux";
-    in
     {
       nixosConfigurations.roblor-matebook = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs; }; 
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs;
+          variants = {
+            hyprland = true;
+            gnome = true;
+            initialVersion = "23.05";
+            hostName = "roblor-matebook";
+          };
+        }; 
+        modules = [
+          ({ config, pkgs, ... }: {
+            nixpkgs.overlays = [
+              rust-overlay.overlays.default
+              alacritty-theme.overlays.default
+              inputs.hyprpanel.overlay
+              # inputs.hypridle.overlays.default
+              # inputs.hyprlock.overlays.default
+              # inputs.hyprpaper.overlays.default
+            ];
+            environment.systemPackages = [
+              (pkgs.rust-bin.stable.latest.default.override
+                {
+                  extensions = [ "rust-src" ];
+                })
+            ];
+          })
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              # useUserPackages = true;
+              backupFileExtension = "backup";
+              users.roblor = { ... }: {
+                imports = [
+                  ./home.nix
+                ];
+              };
+              extraSpecialArgs = { 
+                # unstable = import unstable {
+                #   inherit system;
+                # };
+                inherit inputs;
+                variants = {
+                  hyprland = true;
+                  initialVersion = "23.05";
+                  hostName = "roblor-matebook";
+                };
+              };
+            };
+          }
+          ./configuration.nix
+        ];
+      };
+      nixosConfigurations.roblor-desktop = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs;
+          variants = {
+            hyprland = true;
+            gnome = false;
+            initialVersion = "?";
+            hostName = "roblor-desktop";
+          };
+        }; 
         modules = [
           ({ config, pkgs, ... }: {
             nixpkgs.overlays = [
@@ -76,6 +135,11 @@
                 #   inherit system;
                 # };
                 inherit inputs;
+                variants = {
+                  hyprland = true;
+                  gnome = false;
+                  initialVersion = "?";
+                };
               };
             };
           }

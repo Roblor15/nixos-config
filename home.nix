@@ -1,23 +1,23 @@
-{ config, /* unstable, */ inputs, pkgs, ... }:
-# { config, unstable, inputs, pkgs, ... }:
+{ config, /* unstable, */ inputs, pkgs, variants, ... }:
 
 {
   imports = [
     ./programs/alacritty.nix
-    ./programs/anyrun.nix
     ./programs/bash.nix
     ./programs/git.nix
     ./programs/helix.nix
     ./programs/fish.nix
     ./programs/rustic.nix
-    ./programs/hyprland/hyprland.nix
     ./programs/vscode.nix
-    ./programs/mako.nix
-    ./programs/eww/eww.nix
     ./programs/zathura.nix
     ./programs/wezterm.nix
+  ] ++ (if (variants.hyprland) then [
+    ./programs/anyrun.nix
+    ./programs/hyprland/hyprland.nix
+    ./programs/mako.nix
+    ./programs/eww/eww.nix
     # ./programs/hyprpanel.nix
-  ];
+  ] else []);
 
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -32,7 +32,7 @@
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "23.05";
+  home.stateVersion = variants.initialVersion;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -48,7 +48,7 @@
     cryptsetup
     gcc
     tdesktop
-    nodejs
+    # nodejs
     tree-sitter
     ripgrep
     fd
@@ -58,8 +58,6 @@
     lm_sensors
     starship
     onlyoffice-bin
-    wlsunset
-    eww
     ddcutil
     rustic-rs
     libva-utils
@@ -75,20 +73,12 @@
     nodePackages.bash-language-server
     cargo-generate
     quickemu
-    mako
-    hypridle
-    hyprlock
-    hyprpaper
     tor-browser
-    wl-clipboard
     # unstable.cliphist
     # unstable.wluma
-    cliphist
-    wluma
     jq
     socat
     # inputs.hyprland-contrib.packages.${pkgs.system}.grimblast
-    grimblast
     # kicad
     nemo
     # hyprutils
@@ -96,9 +86,20 @@
     darktable
     mattermost-desktop
     inputs.zen-browser.packages."${pkgs.system}".specific
-    teams-for-linux
+    # platformio-core
     # unstable.probe-rs-tools
-  ];
+  ] ++ (if (variants.hyprland) then [
+    grimblast
+    wl-clipboard
+    cliphist
+    wluma
+    mako
+    hypridle
+    hyprlock
+    hyprpaper
+    wlsunset
+    eww
+  ] else []);
 
   home.pointerCursor = {
     gtk.enable = true;

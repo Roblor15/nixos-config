@@ -377,11 +377,13 @@
   services.udev.packages = [
     (pkgs.writeTextFile {
       name = "dependable-embedded-systems";
-      text = ''
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0660", GROUP="dialout"
-      '';
+      # source = ./udev/69-probe-rs.rules;
+      text = builtins.readFile ./udev/69-probe-rs.rules;
+      # text = ''
+      #   SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0660", GROUP="dialout"
+      # '';
 
-      destination = "/etc/udev/rules.d/99-esp-rusy-board.rules";
+      destination = "/etc/udev/rules.d/69-probe-rs.rules";
     })
   ];
 

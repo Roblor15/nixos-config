@@ -38,7 +38,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Setup keyfile
-  boot.initrd.secrets = {
+  boot.initrd.secrets = lib.mkIf (variants.hostName == "roblor-matebook") {
     "/crypto_keyfile.bin" = null;
   };
 
@@ -95,7 +95,7 @@
   };
 
   # Configure console keymap
-  console.keyMap = "it2";
+  console.keyMap = lib.mkIf (variants.hostName == "roblor-matebook") "it2";
 
   # Enable CUPS to print documents.
   services.printing.enable = true;

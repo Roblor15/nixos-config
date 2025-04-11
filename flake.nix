@@ -98,7 +98,7 @@
           variants = {
             hyprland = true;
             gnome = false;
-            initialVersion = "?";
+            initialVersion = "24.11";
             hostName = "roblor-desktop";
           };
         }; 
@@ -138,7 +138,7 @@
                 variants = {
                   hyprland = true;
                   gnome = false;
-                  initialVersion = "?";
+                  initialVersion = "24.11";
                 };
               };
             };

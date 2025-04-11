@@ -3,9 +3,11 @@
 {
   imports = if (variants.hostName == "roblor-matebook")
   then [
-        ./hardware-configuration-matebook.nix
+    ./hardware-configuration-matebook.nix
   ] else if (variants.hostName == "roblor-desktop")
-  then []
+  then [
+    ./hardware-configuration-desktop.nix
+  ]
   else [];
 
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
@@ -41,8 +43,14 @@
   };
 
   # Enable swap on luks
-  boot.initrd.luks.devices."luks-bcdb7e4a-a24a-4781-a361-c9401db61474".device = "/dev/disk/by-uuid/bcdb7e4a-a24a-4781-a361-c9401db61474";
-  boot.initrd.luks.devices."luks-bcdb7e4a-a24a-4781-a361-c9401db61474".keyFile = "/crypto_keyfile.bin";  
+  boot.initrd.luks.devices = if (variants.hostName == "roblor-matebook") then {
+    "luks-bcdb7e4a-a24a-4781-a361-c9401db61474".device = "/dev/disk/by-uuid/bcdb7e4a-a24a-4781-a361-c9401db61474";
+    "luks-bcdb7e4a-a24a-4781-a361-c9401db61474".keyFile = "/crypto_keyfile.bin";
+  } else if (variants.hostName == "roblor-desktop") then {
+    "luks-3120b0d0-a11c-4b71-acc1-5786217863d2".device = "/dev/disk/by-uuid/3120b0d0-a11c-4b71-acc1-5786217863d2";
+  } else {};
+  # boot.initrd.luks.devices."luks-bcdb7e4a-a24a-4781-a361-c9401db61474".device = "/dev/disk/by-uuid/bcdb7e4a-a24a-4781-a361-c9401db61474";
+  # boot.initrd.luks.devices."luks-bcdb7e4a-a24a-4781-a361-c9401db61474".keyFile = "/crypto_keyfile.bin";  
 
   networking.hostName = variants.hostName; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -82,7 +90,7 @@
 
   # Configure keymap in X11
   services.xserver.xkb = {
-    layout = "it";
+    layout = if (variants.hostName == "roblor-matebook") then "it" else "us";
     variant = "";
   };
 

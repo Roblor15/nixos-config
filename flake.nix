@@ -139,6 +139,7 @@
                   hyprland = true;
                   gnome = false;
                   initialVersion = "24.11";
+                  hostName = "roblor-desktop";
                 };
               };
             };

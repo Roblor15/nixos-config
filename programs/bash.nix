@@ -10,6 +10,7 @@
       alias clean-generations="sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +2"
       if [[ $- == *i* ]]; then
         eval "$(starship init bash)"
+      fi
     '';
   };
 }

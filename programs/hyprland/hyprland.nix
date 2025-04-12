@@ -239,8 +239,8 @@
 
     bindle = , XF86MonBrightnessUp, exec, light -T 1.2
     bindle = , XF86MonBrightnessDown, exec, light -T 0.8
-    bindle = $mainMod, XF86MonBrightnessUp, exec, ddcutil --bus 15 setvcp 10 + 5
-    bindle = $mainMod, XF86MonBrightnessDown, exec, ddcutil --bus 15 setvcp 10 - 5
+    bindle = $mainMod, XF86MonBrightnessUp, exec, ddcutil --model "MSI MP271Q" setvcp 10 + 5
+    bindle = $mainMod, XF86MonBrightnessDown, exec, ddcutil --model "MSI MP271Q" setvcp 10 - 5
 
     bind = , XF86Tools, exec, zen --new-window www.gmail.com
     bind = $mainMod, F10, exec, zen --new-window 'ext+container:name=UniTN&url=www.gmail.com'

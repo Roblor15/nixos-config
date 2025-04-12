@@ -1,4 +1,4 @@
-{ ... }:
+{ variants, ... }:
 
 {
   # services.hyprpaper = {
@@ -18,29 +18,29 @@
   #   ];
   # };
   home.file.".config/hypr/hyprpaper.conf" = {
-    text = ''
+    text = if (variants.hostName == "roblor-matebook") then ''
       preload = ~/Pictures/Wallpapers/wolf-1.jpg
-      # preload = ~/Pictures/Wallpapers/wolf-2.jpg
-      # preload = ~/Pictures/Wallpapers/wolf-3.jpg
-      # preload = ~/Pictures/Wallpapers/210888.jpg
-      # preload = ~/Pictures/Wallpapers/210902.jpg
-      # preload = ~/Pictures/Wallpapers/one-piece-gear-5.png
       preload = ~/Pictures/Wallpapers/light.png
       preload = ~/Pictures/Wallpapers/dark.png
       preload = ~/Pictures/Wallpapers/one-piece-landscape.jpg
-      # preload = ~/Pictures/Wallpapers/one-piece-ace.jpg
 
-      # wallpaper = eDP-1,~/Pictures/Wallpapers/wolf-3.jpg
-      # wallpaper = eDP-1,~/Pictures/Wallpapers/210902.jpg
-      # wallpaper =  DP-1,~/Pictures/Wallpapers/wolf-2.jpg
       wallpaper = eDP-1,~/Pictures/Wallpapers/light.png
       wallpaper = DP-1,~/Pictures/Wallpapers/one-piece-landscape.jpg
-      # wallpaper = DP-1,~/Pictures/Wallpapers/one-piece-ace.jpg
       wallpaper = ,~/Pictures/Wallpapers/wolf-1.jpg
 
       # ipc = off
       splash = false
-    '';
+    '' else if (variants.hostName == "roblor-desktop") then ''
+      preload = ~/Pictures/Wallpapers/wolf-1.jpg
+      preload = ~/Pictures/Wallpapers/light.jpg
+      preload = ~/Pictures/Wallpapers/dark.png
+
+      wallpaper = HDMI-A-1,~/Pictures/Wallpapers/light.jpg
+      wallpaper = ,~/Pictures/Wallpapers/wolf-1.jpg
+
+      # ipc = off
+      splash = false
+    '' else "";
     executable = true;
   };
 

@@ -1,7 +1,24 @@
-{ ... }:
+# TODO: hyprctl make the defailt display an external variable
+{ variants, ... }:
 
 {
-  home.file.".config/hypr/change-theme.fish" = {
+  home.file.".config/hypr/change-theme.fish" =
+  let
+    mainDisplay = if (variants.hostName == "roblor-matebook") then
+      {
+        name = "eDP-1";
+        light = "light.png";
+        dark = "dark.png";
+      }
+    else if (variants.hostName == "roblor-desktop") then
+      {
+        name = "HDMI-A-1";
+        light = "light.jpg";
+        dark = "dark.png";
+      }
+    else {};
+  in
+  {
     text = ''
       #! /usr/bin/env fish
 
@@ -45,7 +62,7 @@
               string join0 $gsett $gsett1 > ~/.config/gtk-3.0/settings.ini
               string join0 $gsett $gsett1 > ~/.config/gtk-4.0/settings.ini
               # run hyprpaper
-              hyprctl hyprpaper wallpaper "eDP-1,~/Pictures/Wallpapers/dark.png"
+              hyprctl hyprpaper wallpaper "${mainDisplay.name},~/Pictures/Wallpapers/${mainDisplay.dark}"
               # change alacritty color
               cp -f ~/.config/alacritty/dark.toml ~/.config/alacritty/color.toml
               # change wezterm color
@@ -62,7 +79,7 @@
               echo $gsett > ~/.config/gtk-3.0/settings.ini
               echo $gsett > ~/.config/gtk-4.0/settings.ini
               # run hyprpaper
-              hyprctl hyprpaper wallpaper "eDP-1,~/Pictures/Wallpapers/light.png"
+              hyprctl hyprpaper wallpaper "${mainDisplay.name},~/Pictures/Wallpapers/${mainDisplay.light}"
               # change alacritty color
               cp -f ~/.config/alacritty/light.toml ~/.config/alacritty/color.toml
               # change wezterm color
@@ -85,7 +102,7 @@
               # close eww (problems with layers)
               eww --config ~/.config/eww/bar close bar
               # run hyprpaper
-              hyprctl hyprpaper wallpaper "eDP-1,~/Pictures/Wallpapers/light.png"
+              hyprctl hyprpaper wallpaper "${mainDisplay.name},~/Pictures/Wallpapers/${mainDisplay.light}"
               # change alacritty color
               cp -f ~/.config/alacritty/light.toml ~/.config/alacritty/color.toml
               # change wezterm color

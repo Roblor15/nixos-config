@@ -273,19 +273,30 @@
 
   hardware.sensor.iio.enable = true;
 
-  hardware.graphics = 
-    # let
-    #   pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-    # in
-     {
+  hardware.graphics = if (variants.hostName == "roblor-matebook") then {
     enable = true;
-    # package = pkgs-unstable.mesa.drivers;
-    # driSupport = true;
     extraPackages = with pkgs; [
-      intel-media-driver
-      # vaapiIntel
+      intel-media-driver     # Hardware video acceleration (VA-API)
+      vaapiIntel             # Legacy VA-API driver (optional)
+      libvdpau-va-gl         # VDPAU driver (for apps like MPV)
+      mesa.drivers           # OpenGL/Vulkan support
     ];
-  };
+    # For 32-bit applications (e.g., Wine):
+    extraPackages32 = with pkgs; [
+      driversi686Linux.vaapiIntel
+    ];
+  } else if (variants.hostName == "roblor-desktop") then {
+    enable = true;
+    extraPackages = with pkgs; [
+      amdvlk             # AMD Vulkan driver
+      mesa.drivers       # OpenGL drivers
+      rocmPackages.clr   # AMD ROCm for compute (optional)
+    ];
+    # For 32-bit applications (e.g., Wine):
+    extraPackages32 = with pkgs; [
+      driversi686Linux.amdvlk
+    ];
+  } else {};
 
   programs.hyprland = {
     enable = variants.hyprland;

@@ -281,10 +281,6 @@
       libvdpau-va-gl         # VDPAU driver (for apps like MPV)
       mesa.drivers           # OpenGL/Vulkan support
     ];
-    # For 32-bit applications (e.g., Wine):
-    extraPackages32 = with pkgs; [
-      driversi686Linux.vaapiIntel
-    ];
   } else if (variants.hostName == "roblor-desktop") then {
     enable = true;
     extraPackages = with pkgs; [

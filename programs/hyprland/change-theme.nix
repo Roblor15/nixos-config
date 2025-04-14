@@ -14,7 +14,7 @@
       {
         name = "HDMI-A-1";
         light = "light.jpg";
-        dark = "dark.png";
+        dark = "dark.jpg";
       }
     else {};
   in

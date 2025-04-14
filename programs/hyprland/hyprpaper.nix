@@ -33,7 +33,7 @@
     '' else if (variants.hostName == "roblor-desktop") then ''
       preload = ~/Pictures/Wallpapers/wolf-1.jpg
       preload = ~/Pictures/Wallpapers/light.jpg
-      preload = ~/Pictures/Wallpapers/dark.png
+      preload = ~/Pictures/Wallpapers/dark.jpg
 
       wallpaper = HDMI-A-1,~/Pictures/Wallpapers/light.jpg
       wallpaper = ,~/Pictures/Wallpapers/wolf-1.jpg

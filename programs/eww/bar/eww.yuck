@@ -1,4 +1,5 @@
 (defvar eww "eww --config ~/.config/eww/bar")
+(defvar desktop true)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;							Widget Section's							 ;;	
@@ -30,8 +31,8 @@
 ; (deflisten workspace "scripts/workspace")
 
 ;; Battery Widgets ;;
-(defwidget bat []
-	(box :class "bat_module" :vexpand "false" :hexpand "false" 
+(defwidget bat [visible]
+	(box :class "bat_module" :vexpand "false" :hexpand "false" :visible {visible}
 		(circular-progress :value "${EWW_BATTERY["BAT0"].capacity}"
 			:class {EWW_BATTERY["BAT0"].capacity > 10 ? "batbar" : "batbar batlowlevel"}
 			:start-at 75
@@ -125,7 +126,7 @@
 	(box :orientation "v" 
 		:space-evenly false  
 		:class "control"
-		(bat)
+		(bat :visible {!desktop})
 		(wifi)
 		(bright)
 		(volum)

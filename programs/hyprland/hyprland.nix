@@ -12,7 +12,14 @@
     ./toggle_bars.nix
   ];
 
-  wayland.windowManager.hyprland = {
+  wayland.windowManager.hyprland =
+  let
+    eww-command = if (variants.hostName == "roblor-matebook") then
+      "eww open --config /home/roblor/.config/eww/bar bar && eww update --config /home/roblor/.config/eww/bar desktop=false"
+    else
+      "eww open --config /home/roblor/.config/eww/bar bar";
+  in
+  {
     enable = true;
   # wayland.windowManager.hyprland.package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     settings = {
@@ -26,7 +33,7 @@
       exec-once = [
         "~/.config/hypr/change-theme.fish --theme onepiece"
         "~/.config/hypr/rounded-borders.fish"
-        "eww --config ~/.config/eww/bar open bar"
+        eww-command
         "hyprctl setcursor Bibata-Modern-Amber 24"
         "hypridle"
         "mako"
@@ -111,14 +118,19 @@
         "SUPER, F, fullscreen"
         "SUPER, S, fullscreenstate"
         "SUPER, SPACE, centerwindow"
-        "SUPER, O, exec, systemctl suspend-then-hibernate"
+        (
+          if (variants.hostName == "roblor-matebook") then
+            "SUPER, O, exec, systemctl suspend-then-hibernate"
+          else
+            "SUPER, O, exec, systemctl suspend"
+        )
         "SUPER, L, exec, hyprlock"
         "SUPER, W, exec, pkill wlsunset; wlsunset -l $(~/.config/hypr/position.fish --lat) -L $(~/.config/hypr/position.fish --lon) -t 3000"
         "SUPER SHIFT, W, exec, pkill wlsunset"
-        "SUPER, P, exec, eww open --config ~/.config/eww/bar bar"
+        "SUPER, P, exec, ${eww-command}"
         "SUPER SHIFT, P, exec, eww close --config ~/.config/eww/bar bar"
-        "SUPER ALT, 0, exec, eww open --config ~/.config/eww/bar bar --screen 0"
-        "SUPER ALT, 1, exec, eww open --config ~/.config/eww/bar bar --screen 1"
+        "SUPER ALT, 0, exec, ${eww-command} --screen 0"
+        "SUPER ALT, 1, exec, ${eww-command} --screen 1"
         "SUPER SHIFT, c, exec, ~/.config/hypr/hypridle.fish"
         "SUPER, h, exec, ~/.config/hypr/change-theme.fish --theme hyprland"
         "SUPER SHIFT, h, exec, ~/.config/hypr/change-theme.fish --theme onepiece"

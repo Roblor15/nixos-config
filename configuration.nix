@@ -83,6 +83,7 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+  services.xserver.videoDrivers = lib.mkIf (variants.hostName == "roblor-desktop") [ "amdgpu" ];
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
@@ -289,9 +290,9 @@
       rocmPackages.clr   # AMD ROCm for compute (optional)
     ];
     # For 32-bit applications (e.g., Wine):
-    extraPackages32 = with pkgs; [
-      driversi686Linux.amdvlk
-    ];
+    # extraPackages32 = with pkgs; [
+    #   driversi686Linux.amdvlk
+    # ];
   } else {};
 
   programs.hyprland = {

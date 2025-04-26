@@ -34,8 +34,15 @@
   hardware.i2c.enable = true;
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  boot.initrd.systemd.enable = true;
+
+  boot.lanzaboote = {
+    enable = true;
+    pkiBundle = "/etc/secureboot";
+  };
 
   # Setup keyfile
   boot.initrd.secrets = lib.mkIf (variants.hostName == "roblor-matebook") {
@@ -44,8 +51,10 @@
 
   # Enable swap on luks
   boot.initrd.luks.devices = if (variants.hostName == "roblor-matebook") then {
-    "luks-bcdb7e4a-a24a-4781-a361-c9401db61474".device = "/dev/disk/by-uuid/bcdb7e4a-a24a-4781-a361-c9401db61474";
-    "luks-bcdb7e4a-a24a-4781-a361-c9401db61474".keyFile = "/crypto_keyfile.bin";
+    "luks-bcdb7e4a-a24a-4781-a361-c9401db61474" = {
+      device = "/dev/disk/by-uuid/bcdb7e4a-a24a-4781-a361-c9401db61474";
+      keyFile = "/crypto_keyfile.bin";
+    };
   } else if (variants.hostName == "roblor-desktop") then {
     "luks-3120b0d0-a11c-4b71-acc1-5786217863d2".device = "/dev/disk/by-uuid/3120b0d0-a11c-4b71-acc1-5786217863d2";
   } else {};

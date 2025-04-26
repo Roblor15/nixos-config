@@ -32,9 +32,16 @@
     # };
     zen-browser.url = "github:omarcresp/zen-browser-flake";
     hyprpanel.url = "github:Jas-SinghFSU/HyprPanel";
+
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.2";
+
+      # Optional but recommended to limit the size of your system closure.
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, hyprpanel, ... }@inputs:
+  outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, hyprpanel, lanzaboote, ... }@inputs:
     {
       nixosConfigurations.roblor-matebook = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -48,7 +55,8 @@
           };
         }; 
         modules = [
-          ({ config, pkgs, ... }: {
+          lanzaboote.nixosModules.lanzaboote
+          ({ config, pkgs, lib, ... }: {
             nixpkgs.overlays = [
               rust-overlay.overlays.default
               alacritty-theme.overlays.default
@@ -103,6 +111,7 @@
           };
         }; 
         modules = [
+          lanzaboote.nixosModules.lanzaboote
           ({ config, pkgs, ... }: {
             nixpkgs.overlays = [
               rust-overlay.overlays.default

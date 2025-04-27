@@ -344,7 +344,14 @@
     resyncTimer = "1h";
   };
 
-  services.zerotierone.enable = true;
+  services.zerotierone = {
+    enable = true;
+    joinNetworks = if (variants.hostName == "roblor-desktop") then
+      [
+        "8056c2e21c1d9f50"
+      ]
+    else [];
+  };
 
   programs.adb.enable = true;
 

@@ -94,6 +94,7 @@
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
+  services.xserver.displayManager.gdm.autoSuspend = (variants.hostName != "roblor-desktop");
   services.xserver.desktopManager.gnome.enable = variants.gnome;
 
   # Configure keymap in X11
@@ -342,7 +343,14 @@
     resyncTimer = "1h";
   };
 
-  services.zerotierone.enable = true;
+  services.zerotierone = {
+    enable = true;
+    joinNetworks = if (variants.hostName == "roblor-desktop") then
+      [
+        "8056c2e21c1d9f50"
+      ]
+    else [];
+  };
 
   programs.adb.enable = true;
 

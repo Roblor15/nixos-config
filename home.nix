@@ -99,6 +99,7 @@
     hyprpaper
     wlsunset
     eww
+    waypipe
   ] else []) ++ (if (variants.hostName == "roblor-desktop") then [
     openrgb-with-all-plugins
   ] else []);

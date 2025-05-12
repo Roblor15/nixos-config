@@ -13,6 +13,8 @@
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   nix.settings = {
     builders-use-substitutes = true;
     substituters = [
@@ -93,8 +95,12 @@
   services.xserver.videoDrivers = lib.mkIf (variants.hostName == "roblor-desktop") [ "amdgpu" ];
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.displayManager.gdm.autoSuspend = (variants.hostName != "roblor-desktop");
+  services.xserver.displayManager.gdm.enable = (variants.hostName == "roblor-matebook");
+  services.displayManager.sddm = {
+    enable = (variants.hostName == "roblor-desktop");
+    theme = "catppuccin-sddm-corners";
+  };
+
   services.xserver.desktopManager.gnome.enable = variants.gnome;
 
   # Configure keymap in X11
@@ -199,6 +205,7 @@
 
   environment.systemPackages = (with pkgs; [
     gparted
+    catppuccin-sddm-corners
   ]);
 
   environment.gnome.excludePackages = (with pkgs; [

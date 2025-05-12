@@ -76,7 +76,7 @@
           {
             home-manager = {
               useGlobalPkgs = true;
-              # useUserPackages = true;
+              useUserPackages = true;
               backupFileExtension = "backup";
               users.roblor = { ... }: {
                 imports = [

@@ -105,7 +105,7 @@
           inherit inputs;
           variants = {
             hyprland = true;
-            gnome = false;
+            gnome = true;
             initialVersion = "24.11";
             hostName = "roblor-desktop";
           };

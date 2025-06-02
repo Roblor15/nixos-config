@@ -405,7 +405,7 @@
       };
 
       programs.steam = {
-        enable = true;
+        enable = lib.mkForce true;
       };
     };
   };

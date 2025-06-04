@@ -86,8 +86,7 @@
     darktable
     mattermost-desktop
     inputs.zen-browser.packages."${pkgs.system}".specific
-    # platformio-core
-    # unstable.probe-rs-tools
+    rquickshare
   ] ++ (if (variants.hyprland) then [
     grimblast
     wl-clipboard

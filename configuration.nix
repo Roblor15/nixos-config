@@ -13,7 +13,8 @@
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages;
 
   nix.settings = {
     builders-use-substitutes = true;
@@ -295,13 +296,13 @@
       intel-media-driver     # Hardware video acceleration (VA-API)
       vaapiIntel             # Legacy VA-API driver (optional)
       libvdpau-va-gl         # VDPAU driver (for apps like MPV)
-      mesa.drivers           # OpenGL/Vulkan support
+      mesa           # OpenGL/Vulkan support
     ];
   } else if (variants.hostName == "roblor-desktop") then {
     enable = true;
     extraPackages = with pkgs; [
       amdvlk             # AMD Vulkan driver
-      mesa.drivers       # OpenGL drivers
+      mesa       # OpenGL drivers
       rocmPackages.clr   # AMD ROCm for compute (optional)
     ];
     # For 32-bit applications (e.g., Wine):

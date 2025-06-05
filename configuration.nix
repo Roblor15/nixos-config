@@ -160,9 +160,9 @@
       "dialout"
       "video"
       "i2c"
-      # "tss"
       "adbusers"
       "plugdev"
+      "vboxusers"
     ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH/sr4SCrEhqqGnBOGyhD+NJqW8kKyri1/EOVGoSivTV roblor@roblor-desktop"
@@ -444,5 +444,5 @@
   ];
 
   virtualisation.virtualbox.host.enable = true;
-  users.extraGroups.vboxusers.members = [ "user-with-access-to-virtualbox" ];
+  virtualisation.virtualbox.host.enableExtensionPack = true;
 }

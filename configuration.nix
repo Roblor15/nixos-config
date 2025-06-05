@@ -114,7 +114,22 @@
   console.keyMap = lib.mkIf (variants.hostName == "roblor-matebook") "it2";
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+  services.printing = {
+    enable = true;
+    drivers = with pkgs; [
+      hplip
+    ];
+  };
+
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true; # Open port 5353 for mDNS discovery
+    publish = {
+      enable = true;
+      userServices = true;
+    };
+  };
 
   # Enable sound with pipewire.
   security.rtkit.enable = true;

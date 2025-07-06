@@ -13,8 +13,10 @@
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelPackages = pkgs.linuxPackages;
+  boot.kernelPackages = if (variants.hostName == "roblor-matebook") then
+      pkgs.linuxPackages_latest
+    else
+      pkgs.linuxPackages;
 
   nix.settings = {
     builders-use-substitutes = true;
@@ -315,15 +317,16 @@
     ];
   } else if (variants.hostName == "roblor-desktop") then {
     enable = true;
+    enable32Bit = true;
     extraPackages = with pkgs; [
       amdvlk             # AMD Vulkan driver
       mesa       # OpenGL drivers
       rocmPackages.clr   # AMD ROCm for compute (optional)
     ];
     # For 32-bit applications (e.g., Wine):
-    # extraPackages32 = with pkgs; [
-    #   driversi686Linux.amdvlk
-    # ];
+    extraPackages32 = with pkgs; [
+      driversi686Linux.amdvlk
+    ];
   } else {};
 
   programs.hyprland = {

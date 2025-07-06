@@ -31,8 +31,6 @@
       # inputs.nixpkgs.follows = "nixpkgs";
     # };
     zen-browser.url = "github:omarcresp/zen-browser-flake";
-    hyprpanel.url = "github:Jas-SinghFSU/HyprPanel";
-
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.2";
 
@@ -41,7 +39,7 @@
     };
   };
 
-  outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, hyprpanel, lanzaboote, ... }@inputs:
+  outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, lanzaboote, ... }@inputs:
     {
       nixosConfigurations.roblor-matebook = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -60,7 +58,6 @@
             nixpkgs.overlays = [
               rust-overlay.overlays.default
               alacritty-theme.overlays.default
-              inputs.hyprpanel.overlay
               # inputs.hypridle.overlays.default
               # inputs.hyprlock.overlays.default
               # inputs.hyprpaper.overlays.default
@@ -116,7 +113,6 @@
             nixpkgs.overlays = [
               rust-overlay.overlays.default
               alacritty-theme.overlays.default
-              inputs.hyprpanel.overlay
               # inputs.hypridle.overlays.default
               # inputs.hyprlock.overlays.default
               # inputs.hyprpaper.overlays.default

@@ -1,23 +1,44 @@
-{ config, /* unstable, */ inputs, pkgs, variants, ... }:
+{
+  config, # unstable,
+  inputs,
+  pkgs,
+  variants,
+  ...
+}:
 
 {
-  imports = [
-    ./programs/alacritty.nix
-    ./programs/bash.nix
-    ./programs/git.nix
-    ./programs/helix.nix
-    ./programs/fish.nix
-    ./programs/rustic.nix
-    ./programs/vscode.nix
-    ./programs/zathura.nix
-    ./programs/wezterm.nix
-  ] ++ (if (variants.hyprland) then [
-    ./programs/anyrun.nix
-    ./programs/hyprland/hyprland.nix
-    ./programs/mako.nix
-    ./programs/eww/eww.nix
-    # ./programs/hyprpanel.nix
-  ] else []);
+  imports =
+    [
+      ./programs/alacritty.nix
+      ./programs/bash.nix
+      ./programs/git.nix
+      ./programs/helix.nix
+      ./programs/fish.nix
+      ./programs/rustic.nix
+      ./programs/vscode.nix
+      ./programs/zathura.nix
+      ./programs/wezterm.nix
+    ]
+    ++ (
+      if (variants.hyprland) then
+        [
+          ./programs/anyrun.nix
+          ./programs/hyprland/hyprland.nix
+          ./programs/mako.nix
+          ./programs/eww/eww.nix
+          # ./programs/hyprpanel.nix
+        ]
+      else
+        [ ]
+    )
+    ++ (
+      if (variants.hostName == "roblor-desktop") then
+        [
+          ./programs/mangohud.nix
+        ]
+      else
+        [ ]
+    );
 
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -42,66 +63,82 @@
     enableFishIntegration = true;
   };
 
-  home.packages = with pkgs; [
-    firefox
-    google-chrome
-    cryptsetup
-    gcc
-    tdesktop
-    # nodejs
-    tree-sitter
-    ripgrep
-    fd
-    bibata-cursors
-    spotify
-    zoom-us
-    lm_sensors
-    starship
-    onlyoffice-bin
-    ddcutil
-    rustic-rs
-    libva-utils
-    profile-sync-daemon
-    audacity
-    zoxide
-    nix-your-shell
-    clang-tools
-    rust-analyzer
-    nil
-    taplo
-    cachix
-    nodePackages.bash-language-server
-    cargo-generate
-    quickemu
-    tor-browser
-    # unstable.cliphist
-    # unstable.wluma
-    jq
-    socat
-    # inputs.hyprland-contrib.packages.${pkgs.system}.grimblast
-    # kicad
-    nemo
-    # hyprutils
-    ethtool
-    darktable
-    mattermost-desktop
-    inputs.zen-browser.packages."${pkgs.system}".specific
-    rquickshare
-  ] ++ (if (variants.hyprland) then [
-    grimblast
-    wl-clipboard
-    cliphist
-    wluma
-    mako
-    hypridle
-    hyprlock
-    hyprpaper
-    wlsunset
-    eww
-    waypipe
-  ] else []) ++ (if (variants.hostName == "roblor-desktop") then [
-    openrgb-with-all-plugins
-  ] else []);
+  home.packages =
+    with pkgs;
+    [
+      firefox
+      google-chrome
+      cryptsetup
+      gcc
+      tdesktop
+      # nodejs
+      tree-sitter
+      ripgrep
+      fd
+      bibata-cursors
+      spotify
+      zoom-us
+      lm_sensors
+      starship
+      onlyoffice-bin
+      ddcutil
+      rustic-rs
+      libva-utils
+      profile-sync-daemon
+      audacity
+      zoxide
+      nix-your-shell
+      clang-tools
+      rust-analyzer
+      nil
+      taplo
+      cachix
+      nodePackages.bash-language-server
+      cargo-generate
+      quickemu
+      tor-browser
+      # unstable.cliphist
+      # unstable.wluma
+      jq
+      socat
+      # inputs.hyprland-contrib.packages.${pkgs.system}.grimblast
+      # kicad
+      nemo
+      # hyprutils
+      ethtool
+      darktable
+      mattermost-desktop
+      inputs.zen-browser.packages."${pkgs.system}".specific
+      rquickshare
+    ]
+    ++ (
+      if (variants.hyprland) then
+        [
+          grimblast
+          wl-clipboard
+          cliphist
+          wluma
+          mako
+          hypridle
+          hyprlock
+          hyprpaper
+          wlsunset
+          eww
+          waypipe
+        ]
+      else
+        [ ]
+    )
+    ++ (
+      if (variants.hostName == "roblor-desktop") then
+        [
+          openrgb-with-all-plugins
+          lact
+          lsp-ai
+        ]
+      else
+        [ ]
+    );
 
   home.pointerCursor = {
     gtk.enable = true;
@@ -120,23 +157,23 @@
     };
   };
 
-# gtk = {
-#   enable = true;
-#   theme = {
-#     package = pkgs.flat-remix-gtk;
-#     name = "Flat-Remix-GTK-Grey-Darkest";
-#   };
+  # gtk = {
+  #   enable = true;
+  #   theme = {
+  #     package = pkgs.flat-remix-gtk;
+  #     name = "Flat-Remix-GTK-Grey-Darkest";
+  #   };
 
-#   iconTheme = {
-#     package = pkgs.gnome.adwaita-icon-theme;
-#     name = "Adwaita";
-#   };
+  #   iconTheme = {
+  #     package = pkgs.gnome.adwaita-icon-theme;
+  #     name = "Adwaita";
+  #   };
 
-#   font = {
-#     name = "Sans";
-#     size = 11;
-#   };
-# };
+  #   font = {
+  #     name = "Sans";
+  #     size = 11;
+  #   };
+  # };
 
   services.mpris-proxy.enable = true;
 }

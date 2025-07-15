@@ -1,22 +1,40 @@
-{ config, pkgs, lib, inputs, variants, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  variants,
+  ...
+}:
 
 {
-  imports = if (variants.hostName == "roblor-matebook")
-  then [
-    ./hardware-configuration-matebook.nix
-  ] else if (variants.hostName == "roblor-desktop")
-  then [
-    ./hardware-configuration-desktop.nix
-  ]
-  else [];
-
-  nix.registry.nixpkgs.flake = inputs.nixpkgs;
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  boot.kernelPackages = if (variants.hostName == "roblor-matebook") then
-      pkgs.linuxPackages_latest
+  imports =
+    if (variants.hostName == "roblor-matebook") then
+      [
+        ./hardware-configuration-matebook.nix
+      ]
+    else if (variants.hostName == "roblor-desktop") then
+      [
+        ./hardware-configuration-desktop.nix
+      ]
     else
-      pkgs.linuxPackages;
+      [ ];
+
+  nix = {
+    settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+    registry.nixpkgs.flake = inputs.unstable;
+  };
+
+  # programs.corectrl.enable = true;
+  services.lact.enable = (variants.hostName == "roblor-desktop");
+  boot.kernelParams = lib.mkIf (variants.hostName == "roblor-desktop") [
+    "amdgpu.ppfeaturemask=0xffffffff"
+  ];
+  boot.kernelPackages =
+    if (variants.hostName == "roblor-desktop") then pkgs.linuxPackages_latest else pkgs.linuxPackages;
 
   nix.settings = {
     builders-use-substitutes = true;
@@ -55,14 +73,21 @@
   };
 
   # Enable swap on luks
-  boot.initrd.luks.devices = if (variants.hostName == "roblor-matebook") then {
-    "luks-bcdb7e4a-a24a-4781-a361-c9401db61474" = {
-      device = "/dev/disk/by-uuid/bcdb7e4a-a24a-4781-a361-c9401db61474";
-      keyFile = "/crypto_keyfile.bin";
-    };
-  } else if (variants.hostName == "roblor-desktop") then {
-    "luks-3120b0d0-a11c-4b71-acc1-5786217863d2".device = "/dev/disk/by-uuid/3120b0d0-a11c-4b71-acc1-5786217863d2";
-  } else {};
+  boot.initrd.luks.devices =
+    if (variants.hostName == "roblor-matebook") then
+      {
+        "luks-bcdb7e4a-a24a-4781-a361-c9401db61474" = {
+          device = "/dev/disk/by-uuid/bcdb7e4a-a24a-4781-a361-c9401db61474";
+          keyFile = "/crypto_keyfile.bin";
+        };
+      }
+    else if (variants.hostName == "roblor-desktop") then
+      {
+        "luks-3120b0d0-a11c-4b71-acc1-5786217863d2".device =
+          "/dev/disk/by-uuid/3120b0d0-a11c-4b71-acc1-5786217863d2";
+      }
+    else
+      { };
 
   networking.hostName = variants.hostName; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -98,13 +123,13 @@
   services.xserver.videoDrivers = lib.mkIf (variants.hostName == "roblor-desktop") [ "amdgpu" ];
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = (variants.hostName == "roblor-matebook");
+  services.displayManager.gdm.enable = (variants.hostName == "roblor-matebook");
   services.displayManager.sddm = {
     enable = (variants.hostName == "roblor-desktop");
     theme = "catppuccin-sddm-corners";
   };
 
-  services.xserver.desktopManager.gnome.enable = variants.gnome;
+  services.desktopManager.gnome.enable = variants.gnome;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -221,31 +246,37 @@
     # })
   ];
 
-  environment.systemPackages = (with pkgs; [
-    gparted
-    catppuccin-sddm-corners
-  ]);
+  environment.systemPackages = (
+    with pkgs;
+    [
+      gparted
+      catppuccin-sddm-corners
+    ]
+  );
 
-  environment.gnome.excludePackages = (with pkgs; [
-    gnome-photos
-    gnome-tour
-    # gnome-console
-    xterm
-    cheese # webcam tool
-    gnome-music
-    gnome-terminal
-    # gedit # text editor
-    epiphany # web browser
-    geary # email reader
-    evince # document viewer
-    gnome-characters
-    totem # video player
-    tali # poker game
-    iagno # go game
-    hitori # sudoku game
-    atomix # puzzle game
-    nautilus
-  ]);
+  environment.gnome.excludePackages = (
+    with pkgs;
+    [
+      gnome-photos
+      gnome-tour
+      # gnome-console
+      xterm
+      cheese # webcam tool
+      gnome-music
+      gnome-terminal
+      # gedit # text editor
+      epiphany # web browser
+      geary # email reader
+      evince # document viewer
+      gnome-characters
+      totem # video player
+      tali # poker game
+      iagno # go game
+      hitori # sudoku game
+      atomix # puzzle game
+      nautilus
+    ]
+  );
 
   services.xserver.excludePackages = [ pkgs.xterm ];
 
@@ -277,9 +308,9 @@
       IdleActionSec=2m
     '';
     # extraConfig = ''
-      # HandlePowerKey=poweroff
-      # IdleAction=suspend
-      # IdleActionSec=2m
+    # HandlePowerKey=poweroff
+    # IdleAction=suspend
+    # IdleActionSec=2m
     # '';
   };
 
@@ -307,32 +338,39 @@
 
   hardware.sensor.iio.enable = true;
 
-  hardware.graphics = if (variants.hostName == "roblor-matebook") then {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver     # Hardware video acceleration (VA-API)
-      vaapiIntel             # Legacy VA-API driver (optional)
-      libvdpau-va-gl         # VDPAU driver (for apps like MPV)
-      mesa           # OpenGL/Vulkan support
-    ];
-  } else if (variants.hostName == "roblor-desktop") then {
-    enable = true;
-    enable32Bit = true;
-    extraPackages = with pkgs; [
-      amdvlk             # AMD Vulkan driver
-      mesa       # OpenGL drivers
-      rocmPackages.clr   # AMD ROCm for compute (optional)
-    ];
-    # For 32-bit applications (e.g., Wine):
-    extraPackages32 = with pkgs; [
-      driversi686Linux.amdvlk
-    ];
-  } else {};
+  hardware.graphics =
+    if (variants.hostName == "roblor-matebook") then
+      {
+        enable = true;
+        extraPackages = with pkgs; [
+          intel-media-driver # Hardware video acceleration (VA-API)
+          vaapiIntel # Legacy VA-API driver (optional)
+          libvdpau-va-gl # VDPAU driver (for apps like MPV)
+          mesa # OpenGL/Vulkan support
+        ];
+      }
+    else if (variants.hostName == "roblor-desktop") then
+      {
+        enable = true;
+        enable32Bit = true;
+        extraPackages = with pkgs; [
+          amdvlk # AMD Vulkan driver
+          mesa # OpenGL drivers
+          rocmPackages.clr.icd # AMD ROCm for compute (optional)
+        ];
+        # For 32-bit applications (e.g., Wine):
+        extraPackages32 = with pkgs; [
+          driversi686Linux.amdvlk
+        ];
+      }
+    else
+      { };
 
   programs.hyprland = {
     enable = variants.hyprland;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    portalPackage =
+      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
   };
   services.upower.enable = true;
   security.pam.services.swaylock = {
@@ -371,19 +409,21 @@
 
   services.zerotierone = {
     enable = true;
-    joinNetworks = if (variants.hostName == "roblor-desktop") then
-      [
-        "8056c2e21c1d9f50"
-      ]
-    else [];
+    joinNetworks =
+      if (variants.hostName == "roblor-desktop") then
+        [
+          "8056c2e21c1d9f50"
+        ]
+      else
+        [ ];
   };
 
   programs.adb.enable = true;
 
   specialisation = lib.mkIf (variants.hostName == "roblor-matebook") {
     nvidia.configuration = {
-      services.xserver.videoDrivers = ["nvidia"];
-      
+      services.xserver.videoDrivers = [ "nvidia" ];
+
       hardware.nvidia = {
         # Modesetting is required.
         modesetting.enable = true;
@@ -418,9 +458,9 @@
             enable = true;
             enableOffloadCmd = true;
           };
-            nvidiaBusId = "PCI:1:0:0";
-            intelBusId = "PCI:0:2:0";
-          };
+          nvidiaBusId = "PCI:1:0:0";
+          intelBusId = "PCI:0:2:0";
+        };
       };
 
       programs.steam = {
@@ -448,4 +488,17 @@
 
   virtualisation.virtualbox.host.enable = true;
   virtualisation.virtualbox.host.enableExtensionPack = true;
+
+  services.ollama = lib.mkIf (variants.hostName == "roblor-desktop") {
+    enable = true;
+    acceleration = "rocm";
+    # rocmOverrideGfx = "12.0.1";
+    environmentVariables = {
+      OLLAMA_DEBUG = "1"; # Add or ensure this line is present
+      # You might also want to add ROCm-specific debug variables:
+      # HSA_ENABLE_SDMA = "0"; # Can sometimes help with stability/perf
+      # HSA_ENABLE_COMPRESSION = "1"; # Can sometimes help with perf
+      # AMD_LOG_LEVEL = "3"; # For very verbose AMD GPU driver logs
+    };
+  };
 }

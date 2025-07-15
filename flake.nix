@@ -1,10 +1,14 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    # unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    home-manager-unstable = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "unstable";
     };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -20,15 +24,15 @@
     # hyprpaper.url = "github:hyprwm/hyprpaper";
     # hypridle = {
     #   url = "github:hyprwm/hypridle";
-      # inputs.nixpkgs.follows = "nixpkgs";
+    # inputs.nixpkgs.follows = "nixpkgs";
     # };
     # hyprlock = {
-      # url = "github:hyprwm/hyprlock";
-      # inputs.nixpkgs.follows = "nixpkgs";
+    # url = "github:hyprwm/hyprlock";
+    # inputs.nixpkgs.follows = "nixpkgs";
     # };
     # hyprland-contrib = {
-      # url = "github:hyprwm/contrib";
-      # inputs.nixpkgs.follows = "nixpkgs";
+    # url = "github:hyprwm/contrib";
+    # inputs.nixpkgs.follows = "nixpkgs";
     # };
     zen-browser.url = "github:omarcresp/zen-browser-flake";
     lanzaboote = {
@@ -39,7 +43,19 @@
     };
   };
 
-  outputs = { self, /* unstable, */ nixpkgs, alacritty-theme, rust-overlay, home-manager, anyrun, lanzaboote, ... }@inputs:
+  outputs =
+    {
+      self,
+      unstable,
+      nixpkgs,
+      alacritty-theme,
+      rust-overlay,
+      home-manager,
+      home-manager-unstable,
+      anyrun,
+      lanzaboote,
+      ...
+    }@inputs:
     {
       nixosConfigurations.roblor-matebook = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -51,36 +67,45 @@
             initialVersion = "23.05";
             hostName = "roblor-matebook";
           };
-        }; 
+        };
         modules = [
           lanzaboote.nixosModules.lanzaboote
-          ({ config, pkgs, lib, ... }: {
-            nixpkgs.overlays = [
-              rust-overlay.overlays.default
-              alacritty-theme.overlays.default
-              # inputs.hypridle.overlays.default
-              # inputs.hyprlock.overlays.default
-              # inputs.hyprpaper.overlays.default
-            ];
-            environment.systemPackages = [
-              (pkgs.rust-bin.stable.latest.default.override
-                {
+          (
+            {
+              config,
+              pkgs,
+              lib,
+              ...
+            }:
+            {
+              nixpkgs.overlays = [
+                rust-overlay.overlays.default
+                alacritty-theme.overlays.default
+                # inputs.hypridle.overlays.default
+                # inputs.hyprlock.overlays.default
+                # inputs.hyprpaper.overlays.default
+              ];
+              environment.systemPackages = [
+                (pkgs.rust-bin.stable.latest.default.override {
                   extensions = [ "rust-src" ];
                 })
-            ];
-          })
+              ];
+            }
+          )
           home-manager.nixosModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
               backupFileExtension = "backup";
-              users.roblor = { ... }: {
-                imports = [
-                  ./home.nix
-                ];
-              };
-              extraSpecialArgs = { 
+              users.roblor =
+                { ... }:
+                {
+                  imports = [
+                    ./home.nix
+                  ];
+                };
+              extraSpecialArgs = {
                 # unstable = import unstable {
                 #   inherit system;
                 # };
@@ -96,7 +121,7 @@
           ./configuration.nix
         ];
       };
-      nixosConfigurations.roblor-desktop = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.roblor-desktop = unstable.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
           inherit inputs;
@@ -106,36 +131,73 @@
             initialVersion = "24.11";
             hostName = "roblor-desktop";
           };
-        }; 
+        };
         modules = [
           lanzaboote.nixosModules.lanzaboote
-          ({ config, pkgs, ... }: {
-            nixpkgs.overlays = [
-              rust-overlay.overlays.default
-              alacritty-theme.overlays.default
-              # inputs.hypridle.overlays.default
-              # inputs.hyprlock.overlays.default
-              # inputs.hyprpaper.overlays.default
-            ];
-            environment.systemPackages = [
-              (pkgs.rust-bin.stable.latest.default.override
-                {
+          (
+            { config, pkgs, ... }:
+            {
+              nixpkgs.overlays = [
+                rust-overlay.overlays.default
+                alacritty-theme.overlays.default
+                # (final: prev: {
+                #   rocmPackages = prev.rocmPackages // rec {
+                #     clr =
+                #       (prev.rocmPackages.clr.override {
+                #         localGpuTargets = [ "gfx1201" ];
+                #       }).overrideAttrs
+                #         (oldAttrs: {
+                #           passthru = oldAttrs.passthru // {
+                #             gpuTargets = oldAttrs.passthru.gpuTargets ++ [ "gfx1201" ];
+                #           };
+                #         });
+                #     rocminfo = (
+                #       prev.rocmPackages.rocminfo.override {
+                #         clr = clr;
+                #       }
+                #     );
+                #     rocblas = (
+                #       prev.rocmPackages.rocblas.override {
+                #         clr = clr;
+                #       }
+                #     );
+                #     rocsparse = (
+                #       prev.rocmPackages.rocsparse.override {
+                #         clr = clr;
+                #       }
+                #     );
+                #     rocsolver = (
+                #       prev.rocmPackages.rocsolver.override {
+                #         clr = clr;
+                #       }
+                #     );
+                #   };
+                # })
+                # inputs.hypridle.overlays.default
+                # inputs.hyprlock.overlays.default
+                # inputs.hyprpaper.overlays.default
+              ];
+              environment.systemPackages = [
+                (pkgs.rust-bin.stable.latest.default.override {
                   extensions = [ "rust-src" ];
                 })
-            ];
-          })
-          home-manager.nixosModules.home-manager
+              ];
+            }
+          )
+          home-manager-unstable.nixosModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
               backupFileExtension = "backup";
-              users.roblor = { ... }: {
-                imports = [
-                  ./home.nix
-                ];
-              };
-              extraSpecialArgs = { 
+              users.roblor =
+                { ... }:
+                {
+                  imports = [
+                    ./home.nix
+                  ];
+                };
+              extraSpecialArgs = {
                 # unstable = import unstable {
                 #   inherit system;
                 # };

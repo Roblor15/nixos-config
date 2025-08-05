@@ -118,6 +118,7 @@
         "SUPER, F, fullscreen"
         "SUPER, S, fullscreenstate"
         "SUPER, SPACE, centerwindow"
+        "SUPER, G, exec, steam"
         (
           if (variants.hostName == "roblor-matebook") then
             "SUPER, O, exec, systemctl suspend-then-hibernate"

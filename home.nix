@@ -85,7 +85,6 @@
       rustic-rs
       libva-utils
       profile-sync-daemon
-      audacity
       zoxide
       nix-your-shell
       clang-tools

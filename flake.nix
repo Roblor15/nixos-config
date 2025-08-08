@@ -64,7 +64,7 @@
           variants = {
             hyprland = true;
             gnome = true;
-            initialVersion = "23.05";
+            initialVersion = "25.05";
             hostName = "roblor-matebook";
           };
         };
@@ -112,7 +112,7 @@
                 inherit inputs;
                 variants = {
                   hyprland = true;
-                  initialVersion = "23.05";
+                  initialVersion = "25.05";
                   hostName = "roblor-matebook";
                 };
               };

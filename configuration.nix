@@ -29,14 +29,24 @@
       "nix-command"
       "flakes"
     ];
-    registry.nixpkgs.flake = inputs.unstable;
+    registry.nixpkgs.flake = lib.mkIf (variants.hostName == "roblor-desktop") inputs.unstable;
   };
 
   # programs.corectrl.enable = true;
-  services.lact.enable = (variants.hostName == "roblor-desktop");
-  boot.kernelParams = lib.mkIf (variants.hostName == "roblor-desktop") [
-    "amdgpu.ppfeaturemask=0xffffffff"
-  ];
+  # services.lact.enable = (variants.hostName == "roblor-desktop");
+  boot.kernelParams =
+    if (variants.hostName == "roblor-desktop") then
+      [
+        "amdgpu.ppfeaturemask=0xffffffff"
+      ]
+    else if (variants.hostName == "roblor-matebook") then
+      [
+        "nvme_core.default_ps_max_latency_us=0"
+        "pcie_aspm=off"
+        "pcie_port_pm=off"
+      ]
+    else
+      [ ];
   boot.kernelPackages =
     if (variants.hostName == "roblor-desktop") then pkgs.linuxPackages_latest else pkgs.linuxPackages;
 
@@ -72,18 +82,18 @@
   };
 
   # Setup keyfile
-  boot.initrd.secrets = lib.mkIf (variants.hostName == "roblor-matebook") {
-    "/crypto_keyfile.bin" = null;
-  };
+  # boot.initrd.secrets = lib.mkIf (variants.hostName == "roblor-matebook") {
+  #   "/crypto_keyfile.bin" = null;
+  # };
 
   # Enable swap on luks
   boot.initrd.luks.devices =
     if (variants.hostName == "roblor-matebook") then
       {
-        "luks-bcdb7e4a-a24a-4781-a361-c9401db61474" = {
-          device = "/dev/disk/by-uuid/bcdb7e4a-a24a-4781-a361-c9401db61474";
-          keyFile = "/crypto_keyfile.bin";
-        };
+        # "luks-33749a6c-ffae-4456-bf7b-a3b7da23af0a" = {
+        #   device = "/dev/disk/by-uuid/33749a6c-ffae-4456-bf7b-a3b7da23af0a";
+        # keyFile = "/crypto_keyfile.bin";
+        # };
       }
     else if (variants.hostName == "roblor-desktop") then
       {
@@ -127,13 +137,13 @@
   services.xserver.videoDrivers = lib.mkIf (variants.hostName == "roblor-desktop") [ "amdgpu" ];
 
   # Enable the GNOME Desktop Environment.
-  services.displayManager.gdm.enable = (variants.hostName == "roblor-matebook");
+  services.xserver.displayManager.gdm.enable = (variants.hostName == "roblor-matebook");
   services.displayManager.sddm = {
     enable = (variants.hostName == "roblor-desktop");
     theme = "catppuccin-sddm-corners";
   };
 
-  services.desktopManager.gnome.enable = variants.gnome;
+  services.xserver.desktopManager.gnome.enable = variants.gnome;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -196,6 +206,7 @@
       "vboxusers"
     ];
     openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMZQFd6dJ1F8f8lHnJ0OEGnnR7LODjshdu3wz/S/okSW roblor@nixos"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH/sr4SCrEhqqGnBOGyhD+NJqW8kKyri1/EOVGoSivTV roblor@roblor-desktop"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHs8fZIPGNqw3rtvzw80UkN/uan20sNzXh1AHuy/UcAm General purpose key"
     ];

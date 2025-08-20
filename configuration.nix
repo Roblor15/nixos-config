@@ -33,7 +33,7 @@
   };
 
   # programs.corectrl.enable = true;
-  # services.lact.enable = (variants.hostName == "roblor-desktop");
+  services.lact.enable = (variants.hostName == "roblor-desktop");
   boot.kernelParams =
     if (variants.hostName == "roblor-desktop") then
       [
@@ -137,13 +137,13 @@
   services.xserver.videoDrivers = lib.mkIf (variants.hostName == "roblor-desktop") [ "amdgpu" ];
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = (variants.hostName == "roblor-matebook");
+  services.displayManager.gdm.enable = (variants.hostName == "roblor-matebook");
   services.displayManager.sddm = {
     enable = (variants.hostName == "roblor-desktop");
     theme = "catppuccin-sddm-corners";
   };
 
-  services.xserver.desktopManager.gnome.enable = variants.gnome;
+  services.desktopManager.gnome.enable = variants.gnome;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -204,6 +204,7 @@
       "adbusers"
       "plugdev"
       "vboxusers"
+      "tss"
     ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMZQFd6dJ1F8f8lHnJ0OEGnnR7LODjshdu3wz/S/okSW roblor@nixos"
@@ -220,6 +221,18 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   networking.firewall.enable = false;
+  networking.interfaces.enp14s0.wakeOnLan = {
+    enable = true;
+    policy = [ "magic" ];
+  };
+
+  # systemd.services.enable-wol = {
+  #   description = "Force-enable Wake-on-LAN";
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig = {
+  #     ExecStart = "${pkgs.ethtool}/sbin/ethtool -s enp14s0 wol g";
+  #   };
+  # };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -404,7 +417,7 @@
   services.power-profiles-daemon.enable = false;
 
   services.tlp = {
-    enable = true;
+    enable = (variants.hostName == "roblor-matebook");
     settings = {
       CPU_BOOST_ON_AC = 0;
       CPU_BOOST_ON_BAT = 0;
@@ -516,4 +529,8 @@
       # AMD_LOG_LEVEL = "3"; # For very verbose AMD GPU driver logs
     };
   };
+
+  security.tpm2.enable = true;
+  security.tpm2.pkcs11.enable = true;
+  security.tpm2.tctiEnvironment.enable = true; # TPM2TOOLS_TCTI and TPM2_PKCS11_TCTI env variables
 }

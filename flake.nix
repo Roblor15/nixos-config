@@ -57,7 +57,7 @@
       ...
     }@inputs:
     {
-      nixosConfigurations.roblor-matebook = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.roblor-matebook = unstable.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
           inherit inputs;
@@ -92,7 +92,7 @@
               ];
             }
           )
-          home-manager.nixosModules.home-manager
+          home-manager-unstable.nixosModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;

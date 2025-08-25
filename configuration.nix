@@ -225,7 +225,7 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   networking.firewall.enable = false;
-  networking.interfaces.enp14s0.wakeOnLan = {
+  networking.interfaces.enp14s0.wakeOnLan = lib.mkIf (variants.hostName == "roblor-desktop") {
     enable = true;
     policy = [ "magic" ];
   };

@@ -41,7 +41,7 @@
       ]
     else if (variants.hostName == "roblor-matebook") then
       [
-        # "nvme_core.default_ps_max_latency_us=0"
+        "nvme_core.default_ps_max_latency_us=5500"
         # "pcie_aspm=off"
         # "pcie_port_pm=off"
       ]
@@ -225,9 +225,11 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   networking.firewall.enable = false;
-  networking.interfaces.enp14s0.wakeOnLan = lib.mkIf (variants.hostName == "roblor-desktop") {
-    enable = true;
-    policy = [ "magic" ];
+  networking.interfaces = lib.mkIf (variants.hostName == "roblor-desktop") {
+    enp14s0.wakeOnLan = {
+      enable = true;
+      policy = [ "magic" ];
+    };
   };
 
   # systemd.services.enable-wol = {
@@ -494,14 +496,10 @@
           intelBusId = "PCI:0:2:0";
         };
       };
-
-      programs.steam = {
-        enable = lib.mkForce true;
-      };
     };
   };
 
-  programs.steam.enable = (variants.hostName == "roblor-desktop");
+  programs.steam.enable = true;
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 

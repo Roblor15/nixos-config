@@ -7,38 +7,37 @@
 }:
 
 {
-  imports =
-    [
-      ./programs/alacritty.nix
-      ./programs/bash.nix
-      ./programs/git.nix
-      ./programs/helix.nix
-      ./programs/fish.nix
-      ./programs/rustic.nix
-      ./programs/vscode.nix
-      ./programs/zathura.nix
-      ./programs/wezterm.nix
-    ]
-    ++ (
-      if (variants.hyprland) then
-        [
-          ./programs/anyrun.nix
-          ./programs/hyprland/hyprland.nix
-          ./programs/mako.nix
-          ./programs/eww/eww.nix
-          # ./programs/hyprpanel.nix
-        ]
-      else
-        [ ]
-    )
-    ++ (
-      if (variants.hostName == "roblor-desktop") then
-        [
-          ./programs/mangohud.nix
-        ]
-      else
-        [ ]
-    );
+  imports = [
+    ./programs/alacritty.nix
+    ./programs/bash.nix
+    ./programs/git.nix
+    ./programs/helix.nix
+    ./programs/fish.nix
+    ./programs/rustic.nix
+    ./programs/vscode.nix
+    ./programs/zathura.nix
+    ./programs/wezterm.nix
+  ]
+  ++ (
+    if (variants.hyprland) then
+      [
+        ./programs/anyrun.nix
+        ./programs/hyprland/hyprland.nix
+        ./programs/mako.nix
+        ./programs/eww/eww.nix
+        # ./programs/hyprpanel.nix
+      ]
+    else
+      [ ]
+  )
+  ++ (
+    if (variants.hostName == "roblor-desktop") then
+      [
+        ./programs/mangohud.nix
+      ]
+    else
+      [ ]
+  );
 
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -107,7 +106,9 @@
       ethtool
       darktable
       mattermost-desktop
-      inputs.zen-browser.packages."${pkgs.system}".specific
+      (inputs.zen-browser.packages."${system}".default.override {
+        nativeMessagingHosts = [ firefoxpwa ];
+      })
       rquickshare
     ]
     ++ (

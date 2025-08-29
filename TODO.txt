@@ -1,6 +1,6 @@
-A simple configuration file where I can select which programs I want to activate (hyprland and home-manager synch)
-Convert configurations to nix
 Improve eww bar
 Change theme for hyprlock
-
 Create a way with nix to generate automatic colors file for more themes 
+
+Configuration of bat and other tools 
+Configuration of zen-browser

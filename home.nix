@@ -21,7 +21,8 @@
   ++ (
     if (variants.hyprland) then
       [
-        ./programs/anyrun.nix
+        # ./programs/anyrun.nix
+        ./programs/fuzzel.nix
         ./programs/hyprland/hyprland.nix
         ./programs/mako.nix
         ./programs/eww/eww.nix

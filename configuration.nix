@@ -144,7 +144,7 @@
   services.displayManager.gdm.enable = (variants.hostName == "roblor-matebook");
   services.displayManager.sddm = {
     enable = (variants.hostName == "roblor-desktop");
-    theme = "catppuccin-sddm-corners";
+    theme = "catppuccin-latte-yellow";
   };
 
   services.desktopManager.gnome.enable = variants.gnome;
@@ -253,6 +253,7 @@
     jetbrains-mono
     ibm-plex
     (iosevka-bin.override { variant = "SGr-IosevkaTerm"; })
+    (iosevka-bin.override { variant = "Aile"; })
     # (iosevka.override {
     #   set = "Term";
     #   privateBuildPlan = ''
@@ -284,7 +285,14 @@
     with pkgs;
     [
       gparted
-      catppuccin-sddm-corners
+      (pkgs.catppuccin-sddm.override {
+        flavor = "latte";
+        accent = "yellow";
+        font = "Iosevka Aile";
+        fontSize = "16";
+        # background = "${./wallpaper.png}";
+        loginBackground = true;
+      })
     ]
   );
 
@@ -333,22 +341,22 @@
   virtualisation.podman.enable = true;
   virtualisation.spiceUSBRedirection.enable = true;
 
-  services.logind = {
-    lidSwitch = "suspend-then-hibernate";
-    # lidSwitch = "suspend";
-    extraConfig = ''
-      HandlePowerKey=poweroff
-      IdleAction=suspend-then-hibernate
-      IdleActionSec=2m
-    '';
-    # extraConfig = ''
-    # HandlePowerKey=poweroff
-    # IdleAction=suspend
-    # IdleActionSec=2m
-    # '';
-  };
+  # services.logind = {
+  #   lidSwitch = "suspend-then-hibernate";
+  #   # lidSwitch = "suspend";
+  #   extraConfig = ''
+  #     HandlePowerKey=poweroff
+  #     IdleAction=suspend-then-hibernate
+  #     IdleActionSec=2m
+  #   '';
+  #   # extraConfig = ''
+  #   # HandlePowerKey=poweroff
+  #   # IdleAction=suspend
+  #   # IdleActionSec=2m
+  #   # '';
+  # };
 
-  systemd.sleep.extraConfig = "HibernateDelaySec=6h";
+  # systemd.sleep.extraConfig = "HibernateDelaySec=6h";
 
   hardware.bluetooth.enable = true;
 
@@ -388,13 +396,8 @@
         enable = true;
         enable32Bit = true;
         extraPackages = with pkgs; [
-          amdvlk # AMD Vulkan driver
           mesa # OpenGL drivers
           rocmPackages.clr.icd # AMD ROCm for compute (optional)
-        ];
-        # For 32-bit applications (e.g., Wine):
-        extraPackages32 = with pkgs; [
-          driversi686Linux.amdvlk
         ];
       }
     else

@@ -1,19 +1,19 @@
 { osConfig, config, pkgs, inputs, ... }:
 
 {
-  # imports = [
-  #   inputs.anyrun.homeManagerModules.default
-  # ];
-
   programs.anyrun = {
     enable = true;
     config = {
       plugins = [
         # An array of all the plugins you want, which either can be paths to the .so files, or their packages
-        inputs.anyrun.packages.${pkgs.system}.applications
-        inputs.anyrun.packages.${pkgs.system}.translate
-        inputs.anyrun.packages.${pkgs.system}.websearch
-        inputs.anyrun.packages.${pkgs.system}.rink
+        "${pkgs.anyrun}/lib/libapplications.so"
+        "${pkgs.anyrun}/lib/libtranslate.so"
+        "${pkgs.anyrun}/lib/libwebsearch.so"
+        "${pkgs.anyrun}/lib/librink.so"
+        # "${inputs.anyrun.packages.${pkgs.system}.anyrun-with-all-plugins}/lib/applications"
+        # "${inputs.anyrun.packages.${pkgs.system}.anyrun-with-all-plugins}/lib/translate"
+        # "${inputs.anyrun.packages.${pkgs.system}.anyrun-with-all-plugins}/lib/websearch"
+        # "${inputs.anyrun.packages.${pkgs.system}.anyrun-with-all-plugins}/lib/rink"
         # ./some_plugin.so
         # "${inputs.anyrun.packages.${pkgs.system}.anyrun-with-all-plugins}/lib/kidex"
       ];
@@ -117,7 +117,10 @@
       Config(
         desktop_actions: true,
         max_entries: 5,
-        terminal: Some("alacritty"),
+        terminal: Some(Terminal(
+          command: "wezterm",
+          args: "-e {}"
+        )),
       )
     '';
 
@@ -137,7 +140,7 @@
     '';
   };
 
-  home.file.".config/anyrun/libstdin.so" = {
-    source = "${inputs.anyrun.packages.${pkgs.system}.stdin}/lib/libstdin.so";
-  };
+  # home.file.".config/anyrun/libstdin.so" = {
+  #   source = "${inputs.anyrun.packages.${pkgs.system}.stdin}/lib/libstdin.so";
+  # };
 }

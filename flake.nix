@@ -18,8 +18,8 @@
       url = "github:alexghr/alacritty-theme.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    anyrun.url = "github:Kirottu/anyrun";
-    anyrun.inputs.nixpkgs.follows = "nixpkgs";
+    # anyrun.url = "github:Kirottu/anyrun";
+    # anyrun.inputs.nixpkgs.follows = "nixpkgs";
     hyprland.url = "github:hyprwm/Hyprland";
     # hyprpaper.url = "github:hyprwm/hyprpaper";
     # hypridle = {
@@ -56,7 +56,7 @@
       rust-overlay,
       home-manager,
       home-manager-unstable,
-      anyrun,
+      # anyrun,
       lanzaboote,
       ...
     }@inputs:
@@ -73,6 +73,15 @@
           };
         };
         modules = [
+          # (
+          #   { modulesPath, ... }:
+          #   {
+          #     # Important! We disable home-manager's module to avoid option
+          #     # definition collisions
+          #     disabledModules = [ "${modulesPath}/programs/anyrun.nix" ];
+          #   }
+          # )
+          # inputs.anyrun.homeManagerModules.default
           lanzaboote.nixosModules.lanzaboote
           (
             {

@@ -34,7 +34,7 @@
         monitor = [
           "eDP-1,3000x2000@60,0x1440,2"
           "desc:Microstep MSI MP271Q PA3T090C00618,highres,0x0,1"
-          "desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,auto,2.5"
+          "desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,auto,1.5"
           ",preferred,auto,1"
         ];
         exec-once = [
@@ -133,7 +133,7 @@
         };
 
         master.new_status = "master";
-        gestures.workspace_swipe = true;
+        # gestures.workspace_swipe = true;
 
         windowrulev2 = [ "noblur,class:^(?:(?!Alacritty).)+$" ];
 
@@ -144,8 +144,8 @@
           "SUPER, C, killactive,"
           "SUPER, M, exit,"
           "SUPER, V, togglefloating,"
-          "SUPER, R, exec, anyrun"
-          "SUPER SHIFT, R, exec, cliphist list | anyrun --plugins ~/.config/anyrun/libstdin.so | cliphist decode | wl-copy"
+          "SUPER, R, exec, fuzzel"
+          "SUPER SHIFT, R, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
           "SUPER, X, togglesplit,"
           "SUPER, F, fullscreen"
           "SUPER, S, fullscreenstate"

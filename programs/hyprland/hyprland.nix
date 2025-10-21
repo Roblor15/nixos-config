@@ -133,7 +133,10 @@
         };
 
         master.new_status = "master";
-        # gestures.workspace_swipe = true;
+        gesture = [
+          "3, horizontal, workspace"
+          "2, pinch, mod: SUPER, resize"
+        ];
 
         windowrulev2 = [ "noblur,class:^(?:(?!Alacritty).)+$" ];
 

@@ -3,17 +3,17 @@
 {
   programs.git = {
     enable = true;
-    userName = "Roberto Lorenzon";
-    userEmail = "roberto.lorenzon.2001@gmail.com";
-    extraConfig = {
+    settings = {
       user = {
+        name = "Roberto Lorenzon";
+        email = "roberto.lorenzon.2001@gmail.com";
         signingKey = "~/.ssh/github_signing_ed25519";
       };
       init = {
-        defaultBranch = "main";  
+        defaultBranch = "main";
       };
       gpg = {
-        format ="ssh";
+        format = "ssh";
       };
       commit = {
         gpgsign = true;

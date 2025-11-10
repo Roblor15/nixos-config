@@ -138,7 +138,9 @@
           lsp-ai
         ]
       else
-        [ ]
+        [
+          moonlight-qt
+        ]
     );
 
   home.pointerCursor = {

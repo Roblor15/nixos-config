@@ -214,6 +214,7 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMZQFd6dJ1F8f8lHnJ0OEGnnR7LODjshdu3wz/S/okSW roblor@nixos"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH/sr4SCrEhqqGnBOGyhD+NJqW8kKyri1/EOVGoSivTV roblor@roblor-desktop"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHs8fZIPGNqw3rtvzw80UkN/uan20sNzXh1AHuy/UcAm General purpose key"
+      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGIlkz6tQ5lwvgcYogFpHQm84fbO1btLaFp5EBZbn0slL+bC1zEvfVZEV9JePUI/254FnaUl6qUULI0Ad/fNFqU="
     ];
   };
 
@@ -538,4 +539,11 @@
   security.tpm2.enable = true;
   security.tpm2.pkcs11.enable = true;
   security.tpm2.tctiEnvironment.enable = true; # TPM2TOOLS_TCTI and TPM2_PKCS11_TCTI env variables
+
+  services.sunshine = {
+    enable = (variants.hostName == "roblor-desktop");
+    autoStart = true;
+    capSysAdmin = true; # only needed for Wayland -- omit this when using with Xorg
+    openFirewall = true;
+  };
 }

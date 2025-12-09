@@ -381,13 +381,14 @@
 
   hardware.sensor.iio.enable = true;
 
+  hardware.amdgpu.opencl.enable = (variants.hostName == "roblor-desktop");
   hardware.graphics =
     if (variants.hostName == "roblor-matebook") then
       {
         enable = true;
         extraPackages = with pkgs; [
           intel-media-driver # Hardware video acceleration (VA-API)
-          vaapiIntel # Legacy VA-API driver (optional)
+          intel-vaapi-driver # Legacy VA-API driver (optional)
           libvdpau-va-gl # VDPAU driver (for apps like MPV)
           mesa # OpenGL/Vulkan support
         ];
@@ -396,10 +397,10 @@
       {
         enable = true;
         enable32Bit = true;
-        extraPackages = with pkgs; [
-          mesa # OpenGL drivers
-          rocmPackages.clr.icd # AMD ROCm for compute (optional)
-        ];
+        # extraPackages = with pkgs; [
+        #   mesa # OpenGL drivers
+        #   rocmPackages.clr.icd # AMD ROCm for compute (optional)
+        # ];
       }
     else
       { };

@@ -151,7 +151,6 @@
           "SUPER SHIFT, R, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
           "SUPER, X, togglesplit,"
           "SUPER, F, fullscreen"
-          "SUPER, S, fullscreenstate"
           "SUPER, SPACE, centerwindow"
           "SUPER, G, exec, steam"
           (
@@ -170,6 +169,9 @@
           "SUPER SHIFT, c, exec, ~/.config/hypr/hypridle.fish"
           "SUPER, h, exec, ~/.config/hypr/change-theme.fish --theme hyprland"
           "SUPER SHIFT, h, exec, ~/.config/hypr/change-theme.fish --theme onepiece"
+          "SUPER, S, exec, hyprctl keyword 'monitor' 'desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,auto,1'"
+          "SUPER, S, exec, hyprctl keyword 'monitor' 'desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,auto,1'"
+          "SUPER CTRL, R, exec, hyprctl reload"
           "SUPER, left, movefocus, l"
           "SUPER, right, movefocus, r"
           "SUPER, up, movefocus, u"

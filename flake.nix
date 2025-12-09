@@ -1,49 +1,28 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    # nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # home-manager = {
+    #   url = "github:nix-community/home-manager/release-25.05";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     home-manager-unstable = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "unstable";
     };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "unstable";
     };
     alacritty-theme = {
       url = "github:alexghr/alacritty-theme.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "unstable";
     };
-    # anyrun.url = "github:Kirottu/anyrun";
-    # anyrun.inputs.nixpkgs.follows = "nixpkgs";
     hyprland.url = "github:hyprwm/Hyprland";
-    # hyprpaper.url = "github:hyprwm/hyprpaper";
-    # hypridle = {
-    #   url = "github:hyprwm/hypridle";
-    # inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # hyprlock = {
-    # url = "github:hyprwm/hyprlock";
-    # inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # hyprland-contrib = {
-    # url = "github:hyprwm/contrib";
-    # inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.2";
-
+      url = "github:nix-community/lanzaboote/v0.4.3";
       # Optional but recommended to limit the size of your system closure.
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "unstable";
     };
   };
 
@@ -51,12 +30,12 @@
     {
       self,
       unstable,
-      nixpkgs,
-      alacritty-theme,
+      # nixpkgs,unstable      alacritty-theme,
       rust-overlay,
-      home-manager,
+      # home-manager,
       home-manager-unstable,
       # anyrun,
+      alacritty-theme,
       lanzaboote,
       ...
     }@inputs:
@@ -73,15 +52,6 @@
           };
         };
         modules = [
-          # (
-          #   { modulesPath, ... }:
-          #   {
-          #     # Important! We disable home-manager's module to avoid option
-          #     # definition collisions
-          #     disabledModules = [ "${modulesPath}/programs/anyrun.nix" ];
-          #   }
-          # )
-          # inputs.anyrun.homeManagerModules.default
           lanzaboote.nixosModules.lanzaboote
           (
             {
@@ -94,9 +64,6 @@
               nixpkgs.overlays = [
                 rust-overlay.overlays.default
                 alacritty-theme.overlays.default
-                # inputs.hypridle.overlays.default
-                # inputs.hyprlock.overlays.default
-                # inputs.hyprpaper.overlays.default
               ];
               environment.systemPackages = [
                 (pkgs.rust-bin.stable.latest.default.override {
@@ -119,9 +86,6 @@
                   ];
                 };
               extraSpecialArgs = {
-                # unstable = import unstable {
-                #   inherit system;
-                # };
                 inherit inputs;
                 variants = {
                   hyprland = true;
@@ -150,6 +114,7 @@
           (
             { config, pkgs, ... }:
             {
+              nixpkgs.config.rocmSupport = true;
               nixpkgs.overlays = [
                 rust-overlay.overlays.default
                 alacritty-theme.overlays.default
@@ -186,9 +151,6 @@
                 #     );
                 #   };
                 # })
-                # inputs.hypridle.overlays.default
-                # inputs.hyprlock.overlays.default
-                # inputs.hyprpaper.overlays.default
               ];
               environment.systemPackages = [
                 (pkgs.rust-bin.stable.latest.default.override {
@@ -211,9 +173,6 @@
                   ];
                 };
               extraSpecialArgs = {
-                # unstable = import unstable {
-                #   inherit system;
-                # };
                 inherit inputs;
                 variants = {
                   hyprland = true;

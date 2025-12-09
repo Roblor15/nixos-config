@@ -70,7 +70,7 @@
       google-chrome
       cryptsetup
       gcc
-      tdesktop
+      telegram-desktop
       # nodejs
       tree-sitter
       ripgrep
@@ -80,9 +80,9 @@
       zoom-us
       lm_sensors
       starship
-      onlyoffice-bin
+      onlyoffice-desktopeditors
       ddcutil
-      rustic-rs
+      rustic
       libva-utils
       profile-sync-daemon
       zoxide
@@ -107,10 +107,8 @@
       ethtool
       darktable
       mattermost-desktop
-      (inputs.zen-browser.packages."${system}".default.override {
-        nativeMessagingHosts = [ firefoxpwa ];
-      })
       rquickshare
+      vlc
     ]
     ++ (
       if (variants.hyprland) then
@@ -136,6 +134,8 @@
           openrgb-with-all-plugins
           lact
           lsp-ai
+          shotcut
+          inkscape
         ]
       else
         [

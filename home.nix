@@ -109,6 +109,8 @@
       mattermost-desktop
       rquickshare
       vlc
+      tinymist
+      probe-rs-tools
     ]
     ++ (
       if (variants.hyprland) then

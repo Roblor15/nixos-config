@@ -24,14 +24,6 @@
     "libsoup-2.74.3"
   ];
 
-  nix = {
-    settings.experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-    registry.nixpkgs.flake = lib.mkIf (variants.hostName == "roblor-desktop") inputs.unstable;
-  };
-
   # programs.corectrl.enable = true;
   services.lact.enable = (variants.hostName == "roblor-desktop");
   boot.kernelParams =
@@ -42,8 +34,6 @@
     else if (variants.hostName == "roblor-matebook") then
       [
         "nvme_core.default_ps_max_latency_us=5500"
-        # "pcie_aspm=off"
-        # "pcie_port_pm=off"
       ]
     else
       [ ];
@@ -85,21 +75,9 @@
     pkiBundle = "/etc/secureboot";
   };
 
-  # Setup keyfile
-  # boot.initrd.secrets = lib.mkIf (variants.hostName == "roblor-matebook") {
-  #   "/crypto_keyfile.bin" = null;
-  # };
-
   # Enable swap on luks
   boot.initrd.luks.devices =
-    if (variants.hostName == "roblor-matebook") then
-      {
-        # "luks-33749a6c-ffae-4456-bf7b-a3b7da23af0a" = {
-        #   device = "/dev/disk/by-uuid/33749a6c-ffae-4456-bf7b-a3b7da23af0a";
-        # keyFile = "/crypto_keyfile.bin";
-        # };
-      }
-    else if (variants.hostName == "roblor-desktop") then
+    if (variants.hostName == "roblor-desktop") then
       {
         "luks-3120b0d0-a11c-4b71-acc1-5786217863d2".device =
           "/dev/disk/by-uuid/3120b0d0-a11c-4b71-acc1-5786217863d2";
@@ -194,7 +172,7 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  users.groups.plugdev = {};
+  users.groups.plugdev = { };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.roblor = {
@@ -549,4 +527,9 @@
     capSysAdmin = true; # only needed for Wayland -- omit this when using with Xorg
     openFirewall = true;
   };
+
+  services.netbird = {
+    enable = true;
+  };
+
 }

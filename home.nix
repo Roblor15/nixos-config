@@ -111,6 +111,7 @@
       vlc
       tinymist
       probe-rs-tools
+      deploy-rs
     ]
     ++ (
       if (variants.hyprland) then

@@ -7,5 +7,7 @@
     ./ente.nix
     ./seafile.nix
     ./rustfs.nix
+    ./opencloud.nix
+    ./only-office.nix
   ];
 }

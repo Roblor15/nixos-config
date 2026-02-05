@@ -2,35 +2,50 @@
   config,
   pkgs,
   lib,
-  inputs,
   variants,
+  NASOptions,
   ...
 }:
 
-let
-  domain = "lorenzon-nas.duckdns.org";
-  domainDn = "dc=lorenzon-nas,dc=duckdns,dc=org";
-in
 {
   imports = [
     ./services
     ./zfs.nix
     ./users.nix
+    ./hardware-configuration.nix
   ];
 
   # STABILITÀ: Usa il kernel LTS (Long Term Support) per un server, non il latest.
   # Specialmente vitale se userai ZFS in futuro.
   boot.kernelPackages = pkgs.linuxPackages;
 
+  boot.kernelModules = [
+    "coretemp"
+    "it87"
+  ];
+
+  # 2. Scarica il pacchetto driver "out-of-tree" (FONDAMENTALE su NixOS)
+  # Il kernel standard non supporta IT8613E, serve questo pacchetto extra.
+  boot.extraModulePackages = [ config.boot.kernelPackages.it87 ];
+
+  # 3. Configura il driver con l'ID corretto (trovato dai tuoi log)
+  # ignore_resource_conflict=1 è spesso necessario su ZimaBoard per evitare conflitti ACPI
+  boot.extraModprobeConfig = ''
+    options it87 force_id=0x8613 ignore_resource_conflict=1
+  '';
+
   # --- BOOTLOADER (CRITICO: DEVE ESSERE ABILITATO) ---
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Supporto filesystems (aggiungi zfs o btrfs se li userai)
-  boot.supportedFilesystems = [ "ntfs" "zfs" ]; # + "zfs" ?
+  boot.supportedFilesystems = [
+    "ntfs"
+    "zfs"
+  ]; # + "zfs" ?
 
   # HostID univoco (generalo col comando: head -c4 /dev/urandom | od -A none -t x4)
-  networking.hostId = "21309321";
+  networking.hostId = "51c68d72";
 
   # --- HARDWARE & SENSORI ---
   hardware.i2c.enable = true;
@@ -38,7 +53,10 @@ in
   # Abilita accelerazione hardware per transcoding (es. Plex/Jellyfin)
   hardware.graphics = {
     enable = true;
-    # extraPackages = [ pkgs.intel-media-driver ]; # Se hai CPU Intel aggiungi questo
+    extraPackages = [
+      pkgs.intel-media-driver
+      pkgs.mesa
+    ]; # Se hai CPU Intel aggiungi questo
   };
 
   # --- RETE ---
@@ -50,6 +68,9 @@ in
     22
     80
     443
+  ];
+  networking.firewall.allowedUDPPorts = [
+    51821
   ];
   # interfaces."podman0" = {
   #   allowedTCPPorts = [
@@ -88,7 +109,6 @@ in
   # --- UTENTI ---
   users.users.roblor = {
     isNormalUser = true;
-    password = "test"; # Comodo per debug rapido
     description = "Roberto";
     shell = pkgs.fish;
     extraGroups = [
@@ -107,13 +127,22 @@ in
     ];
   };
 
+  users.users.root = {
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMZQFd6dJ1F8f8lHnJ0OEGnnR7LODjshdu3wz/S/okSW roblor@nixos"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH/sr4SCrEhqqGnBOGyhD+NJqW8kKyri1/EOVGoSivTV roblor@roblor-desktop"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHs8fZIPGNqw3rtvzw80UkN/uan20sNzXh1AHuy/UcAm General purpose key"
+      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGIlkz6tQ5lwvgcYogFpHQm84fbO1btLaFp5EBZbn0slL+bC1zEvfVZEV9JePUI/254FnaUl6qUULI0Ad/fNFqU="
+    ];
+  };
+
   # --- SERVIZI ---
   services.openssh = {
     enable = true;
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
-      PermitRootLogin = "no"; # Meglio disabilitare root via SSH per sicurezza
+      PermitRootLogin = "prohibit-password"; # Meglio disabilitare root via SSH per sicurezza
     };
   };
 
@@ -165,6 +194,9 @@ in
     # Network tools
     dig
     rsync
+    tcpdump
+    lm_sensors
+    hdparm
   ];
 
   # Allow unfree (per driver o codec)
@@ -175,7 +207,7 @@ in
     # 1. Risorse Hardware VM
     virtualisation = {
       memorySize = 4096; # 4GB RAM
-      diskSize = 10240;
+      diskSize = 20240;
       cores = 4;
 
       qemu.options = [
@@ -194,6 +226,9 @@ in
 
     # 2. Utente di test (Esiste SOLO nella VM, non sul NAS vero!)
     users.users.root.password = "root"; # Comodo per debug rapido
+    users.users.roblor.password = "test"; # Comodo per debug rapido
+
+    networking.hostName = lib.mkForce "roblor-nas";
 
     # 3. Port Forwarding (FONDAMENTALE PER UN NAS)
     # Ti permette di fare ssh dalla tua macchina host alla VM
@@ -215,16 +250,25 @@ in
   services.caddy = {
     enable = true;
     package = pkgs.caddy.withPlugins {
-      plugins = [ "github.com/caddy-dns/duckdns@v0.5.0" ];
-      hash = "sha256-xVjw7QfnjdWIYGTfc4Ca91l8NeeEb/YKE8tMs4ctzTA=";
+      plugins = [
+        "github.com/caddy-dns/duckdns@v0.5.0"
+        "github.com/caddy-dns/dynu@v1.0.0"
+      ];
+      hash = "sha256-5sY/xJjesO4dS4Tp9p6rtrxLk3+p3/wEhd5WbfPAvSM=";
     };
-    virtualHosts."*.${domain}".extraConfig = ''
+    virtualHosts."*.${NASOptions.domain}".extraConfig = ''
       # 1. Configurazione TLS centralizzata (il token va nel file secret come detto prima)
-      tls {
-        dns duckdns {$DUCKDNS_TOKEN}
-      }
-
       # tls internal
+      # tls {
+      #   dns duckdns {$DUCKDNS_TOKEN}
+      # }
+      tls {
+        dns dynu {$DYNU_API_TOKEN} {
+          own_domain {$OWN_DYNU_DOMAIN}
+        }
+        resolvers 1.1.1.1 8.8.8.8
+        propagation_delay 120s
+      }
 
       # 2. Gestione default per sottodomini inesistenti (opzionale ma pulito)
       handle {
@@ -232,12 +276,18 @@ in
       }
     '';
   };
-  age.secrets.duckdns_key = {
-    file = ../secrets/duckdns_key.age;
+  # age.secrets.duckdns_key = {
+  #   file = ../secrets/duckdns_key.age;
+  #   owner = "caddy";
+  #   group = "caddy";
+  # };
+  age.secrets.dynu_env = {
+    file = ../secrets/dynu_env.age;
     owner = "caddy";
     group = "caddy";
   };
-  systemd.services.caddy.serviceConfig.EnvironmentFile = config.age.secrets.duckdns_key.path;
+  # systemd.services.caddy.serviceConfig.EnvironmentFile = config.age.secrets.duckdns_key.path;
+  systemd.services.caddy.serviceConfig.EnvironmentFile = config.age.secrets.dynu_env.path;
 
   age.secrets.netbird_key = {
     file = ../secrets/netbird_key.age;
@@ -282,32 +332,40 @@ in
   };
 
   myNas.services.immich = {
-    enable = true;
-    domain = domain;
+    enable = NASOptions.services.immich;
+    domain = NASOptions.domain;
   };
   myNas.security.authelia = {
-    enable = true;
-    domain = domain;
+    enable = NASOptions.services.authelia;
+    domain = NASOptions.domain;
   };
   myNas.services.ente = {
-    enable = true;
-    domain = domain;
+    enable = NASOptions.services.ente;
+    domain = NASOptions.domain;
   };
   myNas.services.lldap = {
-    enable = true;
-    domain = domain;
-    baseDn = domainDn;
+    enable = NASOptions.services.lldap;
+    domain = NASOptions.domain;
+    baseDn = NASOptions.domainDn;
   };
   myNas.services.rustfs = {
-    enable = true;
-    domain = domain;
+    enable = NASOptions.services.rustfs;
+    domain = NASOptions.domain;
   };
   myNas.services.seafile = {
-    enable = true;
-    domain = domain;
+    enable = NASOptions.services.seafile;
+    domain = NASOptions.domain;
+  };
+  myNas.services.opencloud = {
+    enable = NASOptions.services.opencloud;
+    domain = NASOptions.domain;
+  };
+  myNas.services.onlyoffice = {
+    enable = NASOptions.services.onlyoffice;
+    domain = NASOptions.domain;
   };
   myNas.users = {
-    enable = true;
+    enable = NASOptions.services.users;
     users = {
       roberto = {
         email = "roberto.lorenzon.2001@gmail.com";
@@ -323,4 +381,116 @@ in
     defaultNetwork.settings.dns_enabled = true; # Important for container names
   };
   virtualisation.oci-containers.backend = "podman";
+
+  age.secrets.wg-private = {
+    file = ../secrets/nas-wg-private.age;
+    mode = "600";
+    owner = "root";
+    group = "root";
+  };
+  age.secrets.wg-preshared = {
+    file = ../secrets/wg-preshared.age;
+    mode = "600";
+    owner = "root";
+    group = "root";
+  };
+
+  # 2. Configurazione WireGuard
+  networking.wg-quick.interfaces = {
+    wg1 = {
+      address = [ "10.100.0.2/24" ];
+
+      # Usa una porta diversa da quella standard di Netbird
+      listenPort = 51821;
+
+      # Percorso gestito da Agenix
+      privateKeyFile = config.age.secrets.wg-private.path;
+
+      peers = [
+        {
+          # Chiave PUBBLICA del VPS (può stare in chiaro qui)
+          publicKey = "rTaqSCr/vI9Xx7lhHmKvJuClZ3ffgxhDstInU2WWM1Y=";
+
+          # Preshared key (gestita da Agenix)
+          presharedKeyFile = config.age.secrets.wg-preshared.path;
+
+          # Indirizzi che il NAS può raggiungere attraverso il tunnel.
+          # Se vuoi che il NAS risponda solo al VPS, metti l'IP VPN del VPS.
+          # Se metti 0.0.0.0/0 tutto il traffico del NAS esce dal VPS (non credo tu voglia questo).
+          allowedIPs = [ "10.100.0.1/32" ];
+
+          # Endpoint del VPS
+          endpoint = "87.106.46.103:51821";
+
+          # Fondamentale per il NAT di casa
+          persistentKeepalive = 25;
+        }
+      ];
+    };
+  };
+
+  hardware.fancontrol = {
+    enable = true;
+    config = ''
+      # Impostazioni Generali
+      INTERVAL=10
+
+      # Mappatura Percorsi (Fondamentale su NixOS per stabilità ai riavvii)
+      # hwmon0 = coretemp (CPU)
+      # hwmon1 = it8613 (Chip Ventole)
+      DEVPATH=hwmon0=devices/platform/coretemp.0 hwmon1=devices/platform/it87.2608
+      DEVNAME=hwmon0=coretemp hwmon1=it8613
+
+      # Associazione Temperatura -> Ventola
+      # Usa la temperatura del Core 0 (temp2_input) o Package (temp1_input) per pilotare la ventola (pwm2)
+      FCTEMPS=hwmon1/pwm2=hwmon0/temp1_input
+
+      # Associazione Ventola -> Sensore Giri (Opzionale ma utile per vedere se è ferma)
+      FCFANS=hwmon1/pwm2=hwmon1/fan2_input
+
+      # --- CURVA VENTOLA ---
+      # Sotto i 45°C spegni la ventola
+      MINTEMP=hwmon1/pwm2=45
+      # A 75°C vai al massimo
+      MAXTEMP=hwmon1/pwm2=75
+
+      # Valori di avvio (PWM 0-255)
+      # MINSTART: spinta iniziale per farla partire da ferma (es. 100/255)
+      MINSTART=hwmon1/pwm2=100
+      # MINSTOP: valore sotto il quale si ferma (es. 60/255)
+      MINSTOP=hwmon1/pwm2=60
+
+      # FORZA MODALITÀ MANUALE (Importante per il tuo errore)
+      # Dice al driver di non lasciare il controllo al BIOS
+      PWM_ENABLE=hwmon1/pwm2=1
+    '';
+  };
+
+  # 2. Servizio Systemd per configurare i dischi all'avvio
+  systemd.services.hdd-config = {
+    description = "Configurazione HDD: Disabilita Sleep e APM (Always On)";
+    # Eseguilo dopo che i filesystem sono montati
+    after = [ "local-fs.target" ];
+    wantedBy = [ "multi-user.target" ];
+    
+    serviceConfig = {
+      Type = "oneshot";
+      # Script che esegue il comando su ogni disco
+      ExecStart = pkgs.writeShellScript "configure-hdds" ''
+        # Sostituisci con il VERO ID del tuo disco
+        DISK1="/dev/disk/by-id/ata-ST4000VN006-3CW104_WW66Z14T"
+        DISK2="/dev/disk/by-id/ata-ST4000VN006-3CW104_WW66Z16T"
+        DISK3="/dev/disk/by-id/ata-ST4000VN006-3CW104_ZW63XZD4"
+        DISK4="/dev/disk/by-id/ata-ST4000VN006-3CW104_ZW63ZJ1X"
+        
+        # -B 254: APM al massimo (prestazioni), niente risparmio
+        # -S 0:   Timer di spindown DISABILITATO (non si spegne mai)
+        ${pkgs.hdparm}/bin/hdparm -B 254 -S 0 $DISK1
+        ${pkgs.hdparm}/bin/hdparm -B 254 -S 0 $DISK2
+        ${pkgs.hdparm}/bin/hdparm -B 254 -S 0 $DISK3
+        ${pkgs.hdparm}/bin/hdparm -B 254 -S 0 $DISK4
+        
+      '';
+    };
+  };
 }

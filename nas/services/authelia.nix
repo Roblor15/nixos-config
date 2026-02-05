@@ -18,7 +18,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-
     # 1. Decifrazione Segreti (Permessi corretti per l'utente authelia-main)
     age.secrets = {
       authelia_jwt = {
@@ -170,6 +169,19 @@ in
         # TODO: add immich-role
         identity_providers = {
           oidc = {
+            cors = {
+              endpoints = [
+                "authorization"
+                "token"
+                "revocation"
+                "introspection"
+                "userinfo"
+              ];
+              allowed_origins = [
+                "https://opencloud.${cfg.domain}"
+              ];
+              allowed_origins_from_client_redirect_uris = true;
+            };
             clients = [
               {
                 client_id = "immich";
@@ -196,7 +208,6 @@ in
                 userinfo_signed_response_alg = "RS256";
                 token_endpoint_auth_method = "client_secret_post";
               }
-              # # Client SEAFILE
               {
                 client_id = "seafile";
                 client_name = "Seafile";
@@ -204,8 +215,116 @@ in
                 public = false;
                 authorization_policy = "one_factor";
                 redirect_uris = [ "https://seafile.${cfg.domain}/oauth/callback/" ];
-                scopes = [ "openid" "profile" "email" ];
-                userinfo_signing_algorithm = "none";
+                scopes = [
+                  "openid"
+                  "profile"
+                  "email"
+                ];
+                userinfo_signed_response_alg = "none";
+              }
+              {
+                client_id = "opencloud_web"; # Doc uses 'web', but 'opencloud' is allowed for this one specific client
+                client_name = "OpenCloud Web";
+                # client_secret = "$pbkdf2-sha512$310000$YOUR_HASH"; # Configurable for Web, but technically docs say 'Public'
+                public = true; # You can keep this false ONLY for the web client if the Proxy handles it
+                authorization_policy = "one_factor";
+                require_pkce = true;
+                access_token_signed_response_alg = "RS256";
+                redirect_uris = [
+                  "https://opencloud.${cfg.domain}/"
+                  "https://opencloud.${cfg.domain}/oidc-callback.html"
+                  "https://opencloud.${cfg.domain}/oidc-silent-redirect.html"
+                ];
+                scopes = [
+                  "openid"
+                  "profile"
+                  "email"
+                  "groups"
+                  "offline_access"
+                ];
+                grant_types = [
+                  "authorization_code"
+                  "refresh_token"
+                ];
+                userinfo_signed_response_alg = "none";
+              }
+
+              # 2. Desktop Client (MUST be exactly 'OpenCloudDesktop')
+              {
+                client_id = "OpenCloudDesktop"; # [cite: 21]
+                client_name = "OpenCloud Desktop";
+                public = true; # [cite: 22]
+                authorization_policy = "one_factor";
+                require_pkce = true;
+                access_token_signed_response_alg = "RS256";
+                redirect_uris = [
+                  "http://127.0.0.1"
+                  "http://localhost"
+                ]; # [cite: 23]
+                scopes = [
+                  "openid"
+                  "profile"
+                  "email"
+                  "groups"
+                  "offline_access"
+                ];
+                response_types = [ "code" ];
+                grant_types = [
+                  "refresh_token"
+                  "authorization_code"
+                ];
+                token_endpoint_auth_method = "none";
+                userinfo_signed_response_alg = "none";
+              }
+
+              # 3. Android Client (MUST be exactly 'OpenCloudAndroid')
+              {
+                client_id = "OpenCloudAndroid"; # [cite: 24]
+                client_name = "OpenCloud Android";
+                public = true; # [cite: 25]
+                authorization_policy = "one_factor";
+                require_pkce = true;
+                access_token_signed_response_alg = "RS256";
+                redirect_uris = [ "oc://android.opencloud.eu" ]; # [cite: 26]
+                scopes = [
+                  "openid"
+                  "profile"
+                  "email"
+                  "groups"
+                  "offline_access"
+                ];
+                response_types = [ "code" ];
+                grant_types = [
+                  "refresh_token"
+                  "authorization_code"
+                ];
+                token_endpoint_auth_method = "none";
+                userinfo_signed_response_alg = "none";
+              }
+
+              # 4. iOS Client (MUST be exactly 'OpenCloudIOS')
+              {
+                client_id = "OpenCloudIOS"; # [cite: 27]
+                client_name = "OpenCloud iOS";
+                public = true; # [cite: 28]
+                authorization_policy = "one_factor";
+                require_pkce = true;
+                access_token_signed_response_alg = "RS256";
+                redirect_uris = [ "oc://ios.opencloud.eu" ]; # [cite: 29]
+                scopes = [
+                  "openid"
+                  "profile"
+                  "email"
+                  "groups"
+                  "offline_access"
+                ];
+                response_types = [ "code" ];
+                grant_types = [
+                  "refresh_token"
+                  "authorization_code"
+                ];
+                token_endpoint_auth_method = "none";
+                userinfo_signed_response_alg = "none";
               }
             ];
           };

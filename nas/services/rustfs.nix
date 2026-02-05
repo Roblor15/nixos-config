@@ -19,6 +19,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    age.secrets.rustfs_env = {
+      file = ../../secrets/rustfs_env.age;
+    };
     virtualisation.oci-containers = {
       containers = {
         rustfs = {
@@ -28,14 +31,16 @@ in
 
           # Map the local storage to the container
           volumes = [
-            "/mnt/rustfs/data:/data"
+            "/mnt/hdd/rustfs/data:/data"
           ];
+
+          environmentFiles = [ config.age.secrets.rustfs_env.path ];
 
           # Environment variables (Strings only)
           environment = {
             RUSTFS_ADDRESS = "9000";
-            RUSTFS_ACCESS_KEY = "rustfsadmin";
-            RUSTFS_SECRET_KEY = "rustfsadmin";
+            # RUSTFS_ACCESS_KEY = "rustfsadmin";
+            # RUSTFS_SECRET_KEY = "rustfsadmin";
             RUSTFS_CONSOLE_ENABLE = "true";
             # RUSTFS_SERVER_DOMAINS = domain;
           };
@@ -63,7 +68,7 @@ in
 
     systemd.tmpfiles.settings = {
       "rustfs" = {
-        "/mnt/rustfs/data" = {
+        "/mnt/hdd/rustfs/data" = {
           d = {
             mode = "0710"; # rwxr-x--- (Secure: only owner/group can read)
             user = "root";

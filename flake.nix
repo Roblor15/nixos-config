@@ -43,6 +43,7 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "unstable";
     };
+    deploy-rs.url = "github:serokell/deploy-rs";
   };
 
   outputs =
@@ -52,8 +53,26 @@
       unstable,
       home-manager,
       home-manager-unstable,
+      deploy-rs,
       ...
     }@inputs:
+    let
+      NASOptions = {
+        domain = "lorenzon-cloud.ddnsfree.com";
+        domainDn = "dc=lorenzon-cloud,dc=ddnsfree,dc=com";
+        services = {
+          immich = true;
+          authelia = true;
+          ente = false;
+          lldap = true;
+          rustfs = true;
+          seafile = false;
+          opencloud = true;
+          onlyoffice = true;
+          users = false;
+        };
+      };
+    in
     {
       nixosConfigurations.roblor-matebook = unstable.lib.nixosSystem {
         system = "x86_64-linux";
@@ -184,13 +203,14 @@
           ./configuration.nix
         ];
       };
-      nixosConfigurations.roblor-nas = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.roblor-zimaboard = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
           inherit inputs;
+          inherit NASOptions;
           variants = {
             initialVersion = "25.11";
-            hostName = "roblor-nas";
+            hostName = "roblor-zimaboard";
           };
         };
         modules = [
@@ -211,5 +231,76 @@
           ./nas
         ];
       };
+      nixosConfigurations.roblor-vps = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs;
+          inherit NASOptions;
+          variants = {
+            initialVersion = "23.11";
+            hostName = "roblor-vps";
+          };
+        };
+        modules = [
+          inputs.lanzaboote-stable.nixosModules.lanzaboote
+          inputs.agenix-stable.nixosModules.default
+          (
+            { config, pkgs, ... }:
+            {
+              nix = {
+                settings.experimental-features = [
+                  "nix-command"
+                  "flakes"
+                ];
+                registry.nixpkgs.flake = inputs.nixpkgs;
+              };
+            }
+          )
+          ./vps
+        ];
+      };
+
+      deploy =
+        let
+          system = "x86_64-linux";
+          # Unmodified nixpkgs
+          pkgs = import nixpkgs { inherit system; };
+          # nixpkgs with deploy-rs overlay but force the nixpkgs package
+          deployPkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              deploy-rs.overlays.default # or deploy-rs.overlays.default
+              (self: super: {
+                deploy-rs = {
+                  inherit (pkgs) deploy-rs;
+                  lib = super.deploy-rs.lib;
+                };
+              })
+            ];
+          };
+        in
+        {
+          sshUser = "root"; # user to SSH in as (change to 'roblor' if root login is disabled)
+          user = "root"; # user to run the activation script (usually root)
+
+          nodes = {
+            "roblor-zimaboard" = {
+              hostname = "roblor-zimaboard"; # Ensure this resolves to an IP, or put the IP here
+
+              profiles.system = {
+                path = deployPkgs.deploy-rs.lib.activate.nixos self.nixosConfigurations.roblor-zimaboard;
+              };
+            };
+            "roblor-vps" = {
+              hostname = "87.106.46.103"; # Ensure this resolves to an IP, or put the IP here
+
+              profiles.system = {
+                path = deployPkgs.deploy-rs.lib.activate.nixos self.nixosConfigurations.roblor-vps;
+              };
+            };
+          };
+        };
+
+      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     };
 }

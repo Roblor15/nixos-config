@@ -6,65 +6,129 @@
 }:
 
 {
-  # --- SUPPORTO BASE ZFS ---
   boot.supportedFilesystems = [ "zfs" ];
-  # Importa il pool dati automaticamente
-  boot.zfs.extraPools = [ "storage" ];
+  boot.zfs.extraPools = [ "hddpool" ];
 
   # --- 1. TUNING PERFORMANCE (16GB RAM) ---
-  # Limita la cache ZFS a 10GB. Lascia 6GB per il sistema.
-  boot.kernelParams = [ "zfs.zfs_arc_max=10737418240" ];
+  boot.kernelParams = [ "zfs.zfs_arc_max=8589934592" ];
 
-  # --- 2. PULIZIA E CORRUZIONE DATI (SCRUB) ---
-  # Controlla l'integrità dei dati ogni settimana.
-  # FONDAMENTALE per RAIDZ1 per prevenire la morte silenziosa dei dati (bitrot).
-  services.zfs.autoScrub = {
+  services.sanoid = {
     enable = true;
-    interval = "weekly";
-    pools = [ "storage" ];
+    interval = "minutely"; # Esegue lo script ogni minuto per precisione, ma crea snap secondo policy
+
+    # Definizione delle policy (quanti backup tenere)
+    templates = {
+      # Policy per SSD (rpool): Mantieni frequenti snapshot recenti, ma pulisci in fretta
+      ssd_backup = {
+        autoprune = true;
+        autosnap = true;
+        hourly = 24;
+        daily = 7;
+        monthly = 0; # Spostiamo i mensili sull'HDD via Syncoid
+        yearly = 0;
+      };
+
+      # Policy per HDD (hddpool): Storage a lungo termine
+      hdd_backup = {
+        autoprune = true;
+        autosnap = true;
+        hourly = 24;
+        daily = 30;
+        monthly = 12;
+        yearly = 2;
+      };
+    };
+
+    # Applicazione delle policy ai dataset
+    datasets = {
+      # RPOOL (SSD): Snapshot dei dati utente e stato sistema
+      "rpool/safe/home" = {
+        useTemplate = [ "ssd_backup" ];
+      };
+      "rpool/safe/persist" = {
+        useTemplate = [ "ssd_backup" ];
+      };
+      "rpool/safe/opencloud" = {
+        useTemplate = [ "ssd_backup" ];
+      };
+
+      # HDDPOOL (HDD): Snapshot dei dati bulk
+      "hddpool/immich" = {
+        useTemplate = [ "hdd_backup" ];
+      };
+      "hddpool/oc-users" = {
+        useTemplate = [ "hdd_backup" ];
+      };
+      "hddpool/rustfs" = {
+        useTemplate = [ "hdd_backup" ];
+      };
+    };
   };
 
-  # --- 3. MONITORAGGIO EMAIL (ZED) ---
-  # Se un disco fallisce, DEVI saperlo subito per sostituirlo.
-  # ZED invia una mail in caso di eventi critici.
+  services.syncoid = {
+    enable = true;
+    # Esegue la sincronizzazione ogni 15 minuti.
+    interval = "hourly";
+
+    # Comandi di backup (Local Backup)
+    commands = {
+      "backup-home" = {
+        source = "rpool/safe/home";
+        target = "hddpool/backups/home";
+        # recursive = true; # Attiva se hai dataset figli
+      };
+      "backup-persist" = {
+        source = "rpool/safe/persist";
+        target = "hddpool/backups/persist";
+      };
+      "backup-opencloud" = {
+        source = "rpool/safe/opencloud";
+        target = "hddpool/backups/opencloud";
+      };
+    };
+  };
+
+  services.zfs.autoScrub = {
+    enable = true;
+    interval = "*-*-01,15 02:00";
+    pools = [
+      "rpool"
+      "hddpool"
+    ];
+  };
+
   services.zfs.zed = {
     enableMail = true;
     settings = {
       # Who gets the alerts?
       ZED_EMAIL_ADDR = [ "roberto.lorenzon.2001@gmail.com" ];
-
       # Use msmtp to send the mail
       ZED_EMAIL_PROG = "${pkgs.msmtp}/bin/msmtp";
-
       # Send an email immediately if a drive degrades or faults
       ZED_NOTIFY_VERBOSE = true;
-
       # Send an email when a scrub finishes (good for testing it works)
       ZED_NOTIFY_DATA = true;
     };
   };
 
-  # --- 4. SALUTE FISICA DISCHI (SMART) ---
-  # Monitora la salute meccanica degli HDD (motore, testine, settori riallocati).
   services.smartd = {
     enable = true;
     autodetect = true;
-    # Esegue un test breve ogni giorno alle 3 di notte e uno lungo il sabato
-    defaults.autodetected = "-a -o on -S on -n standby,q -s (S/../.././03|L/../../6/04)";
+    defaults.autodetected = "-a -o on -S on -n standby,q -s (S/../.././03|L/../10/./04)";
     notifications.mail.enable = true;
     notifications.mail.recipient = "roberto.lorenzon.2001@gmail.com";
+    notifications.mail.sender = "roberto.lorenzon.2001@gmail.com";
   };
 
-  # --- 5. SNAPSHOT AUTOMATICI (Protezione Errore Umano) ---
   # Crea "foto" del filesystem. Ti salva se cancelli file per sbaglio.
-  services.zfs.autoSnapshot = {
-    enable = true;
-    frequent = 4; # Ogni 15 min (ultimi 4)
-    hourly = 24; # Ultime 24 ore
-    daily = 7; # Ultimi 7 giorni
-    weekly = 4; # Ultime 4 settimane
-    monthly = 6; # Ultimi 6 mesi
-  };
+  # services.zfs.autoSnapshot = {
+  #   enable = true;
+  #   frequent = 4; # Ogni 15 min (ultimi 4)
+  #   hourly = 24; # Ultime 24 ore
+  #   daily = 7; # Ultimi 7 giorni
+  #   weekly = 4; # Ultime 4 settimane
+  #   monthly = 6; # Ultimi 6 mesi
+  # };
 
   age.secrets.brevo_password = {
     file = ../secrets/brevo_password.age;

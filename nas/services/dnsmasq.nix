@@ -16,7 +16,7 @@
     
     settings = {
       # Ascolta su tutto (per rispondere a Netbird)
-      listen-address = "127.0.0.1,100.70.241.219,10.0.2.15";
+      listen-address = "127.0.0.1,100.70.241.219,192.168.188.90";
       # interface = [ "lo" "wt0" "eth0" ];
       # Importante: binda le interfacce per evitare race conditions
       bind-interfaces = true;
@@ -31,7 +31,7 @@
         "8.8.8.8"          # 3. Backup Google
       ];
 
-      address = "/.lorenzon-nas.duckdns.org/100.70.241.219";
+      address = "/.lorenzon-cloud.ddnsfree.com/192.168.188.90";
     };
   };
 

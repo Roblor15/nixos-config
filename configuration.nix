@@ -504,18 +504,18 @@
   virtualisation.virtualbox.host.enable = true;
   virtualisation.virtualbox.host.enableExtensionPack = true;
 
-  services.ollama = lib.mkIf (variants.hostName == "roblor-desktop") {
-    enable = true;
-    acceleration = "rocm";
-    # rocmOverrideGfx = "12.0.1";
-    environmentVariables = {
-      OLLAMA_DEBUG = "1"; # Add or ensure this line is present
-      # You might also want to add ROCm-specific debug variables:
-      # HSA_ENABLE_SDMA = "0"; # Can sometimes help with stability/perf
-      # HSA_ENABLE_COMPRESSION = "1"; # Can sometimes help with perf
-      # AMD_LOG_LEVEL = "3"; # For very verbose AMD GPU driver logs
-    };
-  };
+  # services.ollama = lib.mkIf (variants.hostName == "roblor-desktop") {
+  #   enable = true;
+  #   acceleration = "rocm";
+  #   # rocmOverrideGfx = "12.0.1";
+  #   environmentVariables = {
+  #     OLLAMA_DEBUG = "1"; # Add or ensure this line is present
+  #     # You might also want to add ROCm-specific debug variables:
+  #     # HSA_ENABLE_SDMA = "0"; # Can sometimes help with stability/perf
+  #     # HSA_ENABLE_COMPRESSION = "1"; # Can sometimes help with perf
+  #     # AMD_LOG_LEVEL = "3"; # For very verbose AMD GPU driver logs
+  #   };
+  # };
 
   security.tpm2.enable = true;
   security.tpm2.pkcs11.enable = true;

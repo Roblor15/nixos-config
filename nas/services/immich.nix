@@ -30,7 +30,7 @@ in
       port = 2283;
       secretsFile = config.age.secrets.immich_oauth.path;
 
-      mediaLocation = "/mnt/immich";
+      mediaLocation = "/mnt/hdd/immich";
     };
 
     # 2. Integrazione Authelia (Forward Auth)

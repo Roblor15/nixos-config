@@ -79,9 +79,14 @@ in
         };
 
         apps = {
-          public-albums = "https://albums-ente.${cfg.domain}";
-          cast = "https://cast-ente.${cfg.domain}";
-          accounts = "https://accounts-ente.${cfg.domain}";
+          public-albums = "https://${cfgWeb.domains.albums}";
+          cast = "https://${cfgWeb.domains.cast}";
+          accounts = "https://${cfgWeb.domains.accounts}";
+        };
+
+        webauthn = {
+          rpid = cfgWeb.domains.accounts;
+          rporigins = [ "https://${cfgWeb.domains.accounts}" ];
         };
 
         http.use-tls = false;
@@ -90,7 +95,7 @@ in
 
     # Configurazione Web Frontend
     services.ente.web = {
-      enable = true;
+      enable = false;
       domains = {
         photos = "photos-ente.${cfg.domain}";
         cast = "cast-ente.${cfg.domain}";
@@ -99,9 +104,6 @@ in
         accounts = "accounts-ente.${cfg.domain}";
       };
     };
-
-    # Disable nginx completely
-    services.nginx.enable = lib.mkForce false;
 
     # Individual vhosts for each subdomain (more reliable than wildcard)
     services.caddy.virtualHosts."*.${cfg.domain}".extraConfig = ''

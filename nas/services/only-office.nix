@@ -51,8 +51,8 @@ in
       # Use the actual domain so Host header matching works
       # hostname = "localhost";
       hostname = "onlyoffice.${cfg.domain}";
-      # jwtSecretFile = config.age.secrets.onlyoffice_jwt.path;
-      jwtSecretFile = "${pkgs.writeText "onlyoffice-jwt" "ciaociao"}";
+      jwtSecretFile = config.age.secrets.onlyoffice_jwt.path;
+      # jwtSecretFile = "${pkgs.writeText "onlyoffice-jwt" "ciaociao"}";
       securityNonceFile = config.age.secrets.onlyoffice_nonce.path;
 
       package = unstablePkgs.onlyoffice-documentserver;

@@ -9,5 +9,6 @@
     ./rustfs.nix
     ./opencloud.nix
     ./only-office.nix
+    ./gitea.nix
   ];
 }

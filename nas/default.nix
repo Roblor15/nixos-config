@@ -472,7 +472,7 @@
     # Eseguilo dopo che i filesystem sono montati
     after = [ "local-fs.target" ];
     wantedBy = [ "multi-user.target" ];
-    
+
     serviceConfig = {
       Type = "oneshot";
       # Script che esegue il comando su ogni disco
@@ -482,15 +482,50 @@
         DISK2="/dev/disk/by-id/ata-ST4000VN006-3CW104_WW66Z16T"
         DISK3="/dev/disk/by-id/ata-ST4000VN006-3CW104_ZW63XZD4"
         DISK4="/dev/disk/by-id/ata-ST4000VN006-3CW104_ZW63ZJ1X"
-        
+
         # -B 254: APM al massimo (prestazioni), niente risparmio
         # -S 0:   Timer di spindown DISABILITATO (non si spegne mai)
         ${pkgs.hdparm}/bin/hdparm -B 254 -S 0 $DISK1
         ${pkgs.hdparm}/bin/hdparm -B 254 -S 0 $DISK2
         ${pkgs.hdparm}/bin/hdparm -B 254 -S 0 $DISK3
         ${pkgs.hdparm}/bin/hdparm -B 254 -S 0 $DISK4
-        
       '';
+    };
+  };
+
+  power.ups = {
+    enable = true;
+    mode = "standalone";
+
+    ups.tecnoware = {
+      driver = "blazer_usb"; # o nutdrv_qx come discusso prima
+      port = "auto";
+      description = "Tecnoware Strip 800";
+
+      # QUESTA è la parte magica:
+      directives = [
+        # Ignora il segnale "Low Battery" nativo dell'UPS (che spesso arriva troppo tardi)
+        "ignorelb"
+
+        # Definisci tu la soglia critica.
+        # Esempio: 50% (appena tocca il 50%, NUT avvia lo shutdown)
+        "override.battery.charge.low = 30"
+
+        # Opzionale: spegni se rimangono meno di X minuti stimati (es. 10 minuti)
+        # "override.battery.runtime.low = 600"
+      ];
+    };
+
+    # Il resto rimane uguale (upsmon, users, etc...)
+    users.upsmon = {
+      password = "password-locale-sicura";
+      upsmon = "master";
+    };
+
+    upsmon.monitor.tecnoware = {
+      user = "upsmon";
+      type = "master";
+      system = "tecnoware@localhost";
     };
   };
 }

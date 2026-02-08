@@ -77,7 +77,7 @@
       fd
       bibata-cursors
       spotify
-      zoom-us
+      # zoom-us
       lm_sensors
       starship
       onlyoffice-desktopeditors

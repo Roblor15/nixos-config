@@ -139,4 +139,9 @@ in
     vps
     zimaboard
   ];
+  "ups.age".publicKeys = [
+    roblor-desktop
+    nas
+    zimaboard
+  ];
 }

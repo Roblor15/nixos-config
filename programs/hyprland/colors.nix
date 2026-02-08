@@ -18,8 +18,8 @@
       $shadow = rgba(1a1a1aee)
 
       # hyprland
-      $active_border_1 = 0xFF00A6F4;
-      $active_border_2 = 0xFF00D8CE;
+      $active_border_1 = 0xFF00A6F4
+      $active_border_2 = 0xFF00D8CE
     '';
   };
 }

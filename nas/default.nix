@@ -364,6 +364,10 @@
     enable = NASOptions.services.onlyoffice;
     domain = NASOptions.domain;
   };
+  myNas.services.gitea = {
+    enable = NASOptions.services.gitea;
+    domain = NASOptions.domain;
+  };
   myNas.users = {
     enable = NASOptions.services.users;
     users = {
@@ -493,39 +497,42 @@
     };
   };
 
+  age.secrets.ups = {
+    file = ../secrets/ups.age;
+    mode = "600";
+  };
   power.ups = {
     enable = true;
     mode = "standalone";
 
+    # --- DEFINIZIONE HARDWARE E LOGICA (ups.conf) ---
     ups.tecnoware = {
-      driver = "blazer_usb"; # o nutdrv_qx come discusso prima
+      driver = "blazer_usb";
       port = "auto";
       description = "Tecnoware Strip 800";
-
-      # QUESTA è la parte magica:
+      
+      # Qui definiamo che il NAS deve spegnersi al 50%
+      # Ignoriamo il segnale LB originale e lo forziamo noi.
       directives = [
-        # Ignora il segnale "Low Battery" nativo dell'UPS (che spesso arriva troppo tardi)
         "ignorelb"
-
-        # Definisci tu la soglia critica.
-        # Esempio: 50% (appena tocca il 50%, NUT avvia lo shutdown)
-        "override.battery.charge.low = 30"
-
-        # Opzionale: spegni se rimangono meno di X minuti stimati (es. 10 minuti)
-        # "override.battery.runtime.low = 600"
+        "override.battery.charge.low = 50"
       ];
     };
 
-    # Il resto rimane uguale (upsmon, users, etc...)
+    # --- DEFINIZIONE UTENTE SERVER (upsd.users) ---
+    # Definiamo l'utente 'upsmon' che ha i permessi di master (primary)
     users.upsmon = {
-      password = "password-locale-sicura";
-      upsmon = "master";
+      passwordFile = config.age.secrets.ups.path; # Percorso al file creato prima
+      upsmon = "primary";
     };
 
+    # --- DEFINIZIONE MONITOR CLIENT (upsmon.conf) ---
+    # Il demone che controlla lo stato e spegne il PC
     upsmon.monitor.tecnoware = {
-      user = "upsmon";
-      type = "master";
       system = "tecnoware@localhost";
+      user = "upsmon";
+      type = "primary";
+      passwordFile = config.age.secrets.ups.path; # Deve puntare allo stesso file
     };
   };
 }

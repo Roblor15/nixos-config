@@ -129,21 +129,21 @@ in
         # "PROXY_ROLE_ASSIGNMENT_DRIVER" = "oidc";
         "PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM" = "preferred_username";
         "GRAPH_ASSIGN_DEFAULT_USER_ROLE" = "true";
-        "OPEN_CLOUD_LOG_LEVEL" = "info";
+        "OPEN_CLOUD_LOG_LEVEL" = "debug";
 
         # ONLYOFFICE Integration
-        "OC_ADD_RUN_SERVICES" = "collaboration";
-        "COLLABORATION_APP_NAME" = "OnlyOffice";
-        "COLLABORATION_APP_PRODUCT" = "OnlyOffice";
-        "COLLABORATION_APP_ADDR" = "https://onlyoffice.${cfg.domain}";
+        # "OC_ADD_RUN_SERVICES" = "collaboration";
+        # "COLLABORATION_APP_NAME" = "OnlyOffice";
+        # "COLLABORATION_APP_PRODUCT" = "OnlyOffice";
+        # "COLLABORATION_APP_ADDR" = "https://onlyoffice.${cfg.domain}";
 
         # WOPI Configuration
-        "COLLABORATION_WOPI_SRC" = "https://wopi.${cfg.domain}";
+        # "COLLABORATION_WOPI_SRC" = "https://wopi.${cfg.domain}";
 
         # Ensure the JWT secret matches ONLYOFFICE's secret if you configured one
-        "COLLABORATION_JWT_SECRET" = "ciaociao";
-        "COLLABORATION_APP_INSECURE" = "false"; # Add this line
-        "COLLABORATION_APP_PROOF_DISABLE" = "true";
+        # "COLLABORATION_JWT_SECRET" = "ciaociao";
+        # "COLLABORATION_APP_INSECURE" = "false"; # Add this line
+        # "COLLABORATION_APP_PROOF_DISABLE" = "true";
 
         # SMTP configuration
         "NOTIFICATIONS_SMTP_HOST" = "smtp-relay.brevo.com";
@@ -166,7 +166,7 @@ in
         #     };
         #   };
         # };
-        collaboration = {
+        # collaboration = {
           # app = {
           # name = "OnlyOffice";
           # addr = "https://onlyoffice.${cfg.domain}";
@@ -175,7 +175,7 @@ in
           # wopi = {
           #   wopi_src = "https://opencloud.${cfg.domain}";
           # };
-        };
+        # };
         nats = { };
         notifications = { };
         proxy = {

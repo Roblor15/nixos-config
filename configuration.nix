@@ -437,8 +437,6 @@
         [ ];
   };
 
-  programs.adb.enable = true;
-
   specialisation = lib.mkIf (variants.hostName == "roblor-matebook") {
     nvidia.configuration = {
       services.xserver.videoDrivers = [ "nvidia" ];

@@ -70,6 +70,7 @@
           opencloud = true;
           onlyoffice = true;
           users = false;
+          gitea = true;
         };
       };
     in

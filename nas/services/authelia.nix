@@ -326,6 +326,30 @@ in
                 token_endpoint_auth_method = "none";
                 userinfo_signed_response_alg = "none";
               }
+              {
+                client_id = "gitea";
+                client_name = "Gitea";
+                client_secret = "$pbkdf2-sha512$310000$OhyFVDbQx68Crwqwj2QCXQ$yamw3/ucnhfxQ/nvwDQdc.BlxF66a1lSkCcVciCZK9T7C7htMs6T88LET/kwLW0.3RE8fftOKiE2zW321XEmwQ";
+                public = false;
+                authorization_policy = "one_factor";
+                require_pkce = false;
+                pkce_challenge_method = "";
+                redirect_uris = [
+                  "https://git.${cfg.domain}/user/oauth2/authelia/callback"
+                ];
+                scopes = [
+                  "openid"
+                  "email"
+                  "profile"
+                ];
+                response_types = [ "code" ];
+                grant_types = [
+                  "authorization_code"
+                ];
+                access_token_signed_response_alg = "none";
+                userinfo_signed_response_alg = "none";
+                token_endpoint_auth_method = "client_secret_basic";
+              }
             ];
           };
         };

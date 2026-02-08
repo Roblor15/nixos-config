@@ -138,7 +138,7 @@
           "2, pinch, mod: SUPER, resize"
         ];
 
-        windowrulev2 = [ "noblur,class:^(?:(?!Alacritty).)+$" ];
+        # windowrulev2 = [ "noblur,class:^(?:(?!Alacritty).)+$" ];
 
         bind = [
           "SUPER, T, exec, wezterm"

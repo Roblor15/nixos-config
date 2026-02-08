@@ -84,7 +84,7 @@ in
       };
     };
 
-  networking.firewall.allowedTCPPorts = [ 2222 ];
+    networking.firewall.allowedTCPPorts = [ 2222 ];
 
     services.caddy.virtualHosts."*.${cfg.domain}".extraConfig = ''
       @gitea host git.${cfg.domain}

@@ -144,4 +144,14 @@ in
     nas
     zimaboard
   ];
+  "gitea-runner-docker.age".publicKeys = [
+    roblor-desktop
+    nas
+    zimaboard
+  ];
+  "gitea-runner-host.age".publicKeys = [
+    roblor-desktop
+    nas
+    zimaboard
+  ];
 }

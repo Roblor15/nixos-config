@@ -19,10 +19,15 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # age.secrets.rustfs_env = {
-    #   file = ../../secrets/rustfs_env.age;
-    # };
 
+    age.secrets = {
+      runnerDocker = {
+        file = ../../secrets/gitea-runner-docker.age;
+      };
+      runnerHost = {
+        file = ../../secrets/gitea-runner-host.age;
+      };
+    };
     services.gitea = {
       enable = true;
       appName = "Gitea Lorenzon-Cloud";
@@ -48,7 +53,6 @@ in
 
       settings = {
         server = {
-          # IMPORTANTE: Questo deve essere il tuo dominio pubblico gestito da Caddy
           DOMAIN = "git.${cfg.domain}";
           ROOT_URL = "https://git.${cfg.domain}/";
 
@@ -61,6 +65,36 @@ in
           START_SSH_SERVER = true; # Gitea avvia il suo server SSH interno sulla porta 2222
           SSH_PORT = 2222; # Porta esposta per git clone ssh://...
           SSH_LISTEN_PORT = 2222; # Porta su cui Gitea ascolta davvero
+        };
+      };
+    };
+
+    services.gitea-actions-runner.instances = {
+      # 1. Runner per Build generiche (Isolato in Docker)
+      "docker-runner" = {
+        enable = true;
+        name = "nas-docker-builder";
+        url = "https://git.${cfg.domain}/";
+        tokenFile = config.age.secrets.runnerDocker.path;
+        settings = {
+          runner.capacity = 2;
+          labels = [
+            "ubuntu-latest:docker://node:18"
+            # "ubuntu-22.04:docker://ubuntu:22.04"
+          ];
+        };
+      };
+
+      # 2. Runner per Deploy sul NAS (Esegue comandi sul server vero)
+      "host-runner" = {
+        enable = true;
+        name = "nas-shell-deployer";
+        url = "https://git.${cfg.domain}/";
+        tokenFile = config.age.secrets.runnerHost.path; # Serve un token diverso generato su Gitea
+        settings = {
+          runner.capacity = 1; # Uno alla volta per sicurezza
+          # L'etichetta speciale "host" indica esecuzione diretta
+          labels = [ "native:host" ];
         };
       };
     };

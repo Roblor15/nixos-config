@@ -71,6 +71,9 @@
           onlyoffice = true;
           users = false;
           gitea = true;
+          n8n = false;
+          ollama = false;
+          windmill = true;
         };
       };
     in
@@ -165,7 +168,7 @@
                 ];
                 registry.nixpkgs.flake = inputs.unstable;
               };
-              nixpkgs.config.rocmSupport = true;
+              # nixpkgs.config.rocmSupport = true;
               nixpkgs.overlays = [
                 inputs.rust-overlay-unstable.overlays.default
                 inputs.alacritty-theme-unstable.overlays.default

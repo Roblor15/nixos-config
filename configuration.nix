@@ -392,11 +392,6 @@
       inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
   };
   services.upower.enable = true;
-  security.pam.services.swaylock = {
-    text = ''
-      auth include login
-    '';
-  };
   security.pam.services.hyprlock = {
     text = ''
       auth include login
@@ -419,7 +414,7 @@
     };
   };
 
-  programs.light.enable = true;
+  hardware.acpilight.enable = (variants.hostName == "roblor-matebook");
 
   services.psd = {
     enable = true;
@@ -427,7 +422,7 @@
   };
 
   services.zerotierone = {
-    enable = true;
+    enable = false;
     joinNetworks =
       if (variants.hostName == "roblor-desktop") then
         [
@@ -499,8 +494,8 @@
     })
   ];
 
-  virtualisation.virtualbox.host.enable = true;
-  virtualisation.virtualbox.host.enableExtensionPack = true;
+  # virtualisation.virtualbox.host.enable = true;
+  # virtualisation.virtualbox.host.enableExtensionPack = true;
 
   # services.ollama = lib.mkIf (variants.hostName == "roblor-desktop") {
   #   enable = true;
@@ -530,4 +525,19 @@
     enable = true;
   };
 
+  # Abilita il demone di GNOME Keyring
+  services.gnome.gnome-keyring.enable = true;
+
+  # Assicurati che Polkit sia attivo (spesso necessario per la gestione dei segreti)
+  security.polkit.enable = true;
+
+  # --- PER IL LAPTOP (GDM) ---
+  security.pam.services.gdm.enableGnomeKeyring = (variants.hostName == "roblor-matebook");
+  # Su alcune versioni di NixOS/GDM è necessario anche questo modulo:
+  security.pam.services.gdm-password.enableGnomeKeyring = (variants.hostName == "roblor-matebook");
+
+  # --- PER IL DESKTOP (SDDM) ---
+  security.pam.services.sddm.enableGnomeKeyring = (variants.hostName == "roblor-desktop");
+
+  programs.seahorse.enable = true;
 }

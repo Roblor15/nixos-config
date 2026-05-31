@@ -10,5 +10,8 @@
     ./opencloud.nix
     ./only-office.nix
     ./gitea.nix
+    ./n8n.nix
+    ./ollama.nix
+    ./windmill.nix
   ];
 }

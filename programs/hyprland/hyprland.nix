@@ -34,9 +34,18 @@
         monitor = [
           "eDP-1,3000x2000@60,0x1440,2"
           "desc:Microstep MSI MP271Q PA3T090C00618,highres,0x0,1"
-          "desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,auto,1.5"
+          "desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,1500x1440,1.5"
           ",preferred,auto,1"
-        ];
+        ]
+        ++ (
+          if variants.hostName == "roblor-desktop" then
+            [
+              # Monitor virtuale 2K a 60Hz (cambia a 120Hz se preferisci)
+              "sunshine,2560x1440@60,30000x0,1"
+            ]
+          else
+            [ ]
+        );
         exec-once = [
           "~/.config/hypr/change-theme.fish --theme onepiece"
           "~/.config/hypr/rounded-borders.fish"
@@ -52,6 +61,8 @@
         ++ (
           if variants.hostName == "roblor-desktop" then
             [
+              "hyprctl output create headless sunshine"
+              "systemctl --user restart sunshine"
               "steam -silent"
             ]
           else
@@ -262,10 +273,19 @@
           hotspot_padding = 0;
         };
 
-        workspace = lib.mkIf (variants.hostName == "roblor-matebook") [
-          "1,monitor:eDP-1,default:true"
-          "2,monitor:DP-1,default:true"
-        ];
+        workspace =
+          if (variants.hostName == "roblor-matebook") then
+            [
+              "1,monitor:eDP-1,default:true"
+              "2,monitor:DP-1,default:true"
+            ]
+          else if (variants.hostName == "roblor-desktop") then
+            [
+              # Assegna il workspace 99 al monitor virtuale per isolarlo
+              "99,monitor:sunshine,default:true"
+            ]
+          else
+            [ ];
       };
       extraConfig = ''
         # will switch to a submap called resize

@@ -2,11 +2,15 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
 let
   cfg = config.myNas.services.opencloud;
+  unstablePkgs = import inputs.unstable {
+    system = pkgs.system;
+  };
 
   cspConfig = pkgs.writeText "opencloud-csp.yaml" ''
     directives:
@@ -77,6 +81,9 @@ in
     # 2. Configurazione Servizio OpenCloud
     services.opencloud = {
       enable = true;
+      package = unstablePkgs.opencloud;
+      idpWebPackage = unstablePkgs.opencloud.idp-web;
+      webPackage = unstablePkgs.opencloud.web;
       address = "127.0.0.1";
       port = 9200; # Assicurati che coincida con la porta del servizio
       url = "https://opencloud.${cfg.domain}";
@@ -203,6 +210,10 @@ in
                 {
                   role_name = "user";
                   claim_value = "rosella";
+                }
+                {
+                  role_name = "user";
+                  claim_value = "federico";
                 }
               ];
             };

@@ -154,4 +154,14 @@ in
     nas
     zimaboard
   ];
+  "telegram_token.age".publicKeys = [
+    roblor-desktop
+    nas
+    zimaboard
+  ];
+  "telegram_chat_id.age".publicKeys = [
+    roblor-desktop
+    nas
+    zimaboard
+  ];
 }

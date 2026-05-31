@@ -13,6 +13,7 @@
     ./zfs.nix
     ./users.nix
     ./hardware-configuration.nix
+    ./tools/telegram.nix
   ];
 
   # STABILITÀ: Usa il kernel LTS (Long Term Support) per un server, non il latest.
@@ -53,10 +54,12 @@
   # Abilita accelerazione hardware per transcoding (es. Plex/Jellyfin)
   hardware.graphics = {
     enable = true;
-    extraPackages = [
-      pkgs.intel-media-driver
-      pkgs.mesa
-    ]; # Se hai CPU Intel aggiungi questo
+    extraPackages = with pkgs; [
+      intel-media-driver
+      mesa
+      libva-vdpau-driver
+      libvdpau-va-gl
+    ];
   };
 
   # --- RETE ---
@@ -70,6 +73,7 @@
     443
   ];
   networking.firewall.allowedUDPPorts = [
+    51820
     51821
   ];
   # interfaces."podman0" = {
@@ -186,6 +190,11 @@
     fd
     ffmpeg # Transcoding
     nix-your-shell
+    qpdf
+    poppler-utils
+    moonlight-qt
+    qt6.qtwayland
+    python315
 
     # Gestione dischi CLI (sostituiscono gparted)
     parted
@@ -254,7 +263,7 @@
         "github.com/caddy-dns/duckdns@v0.5.0"
         "github.com/caddy-dns/dynu@v1.0.0"
       ];
-      hash = "sha256-5sY/xJjesO4dS4Tp9p6rtrxLk3+p3/wEhd5WbfPAvSM=";
+      hash = "sha256-5KIGotO5kT4VDFYelDc5Puy19lvNVdIlAYWDUN/S6B0=";
     };
     virtualHosts."*.${NASOptions.domain}".extraConfig = ''
       # 1. Configurazione TLS centralizzata (il token va nel file secret come detto prima)
@@ -366,6 +375,18 @@
   };
   myNas.services.gitea = {
     enable = NASOptions.services.gitea;
+    domain = NASOptions.domain;
+  };
+  myNas.services.n8n = {
+    enable = NASOptions.services.n8n;
+    domain = NASOptions.domain;
+  };
+  myNas.services.ollama = {
+    enable = NASOptions.services.ollama;
+    domain = NASOptions.domain;
+  };
+  myNas.services.windmill = {
+    enable = NASOptions.services.windmill;
     domain = NASOptions.domain;
   };
   myNas.users = {
@@ -510,7 +531,7 @@
       driver = "blazer_usb";
       port = "auto";
       description = "Tecnoware Strip 800";
-      
+
       # Qui definiamo che il NAS deve spegnersi al 50%
       # Ignoriamo il segnale LB originale e lo forziamo noi.
       directives = [
@@ -533,6 +554,53 @@
       user = "upsmon";
       type = "primary";
       passwordFile = config.age.secrets.ups.path; # Deve puntare allo stesso file
+    };
+  };
+
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
+  # 3. Supporto Controller e Bluetooth (Se usi pad wireless)
+  # hardware.bluetooth.enable = true;
+  # hardware.bluetooth.powerOnBoot = true;
+  # hardware.xpadneo.enable = true;
+
+  # 4. Creazione dell'utente (sostituisci "kiosk" con il nome utente che preferisci)
+  users.users.kiosk = {
+    isNormalUser = true;
+    description = "Moonlight User";
+    # Aggiungiamo i gruppi necessari per accedere a video, input e audio senza root
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "video"
+      "audio"
+      "input"
+      "render"
+    ];
+  };
+
+  services.seatd.enable = true;
+  security.polkit.enable = true;
+  hardware.uinput.enable = true;
+
+  programs.gamescope = {
+    enable = true;
+    capSysNice = true;
+  };
+
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.gamescope}/bin/gamescope -w 2560 -h 1440 -W 2560 -H 1440 -f -- ${pkgs.moonlight-qt}/bin/moonlight";
+        user = "kiosk";
+      };
     };
   };
 }

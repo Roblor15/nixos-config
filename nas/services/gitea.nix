@@ -19,13 +19,18 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-
     age.secrets = {
       runnerDocker = {
         file = ../../secrets/gitea-runner-docker.age;
+        mode = "440";
+        # owner = "gitea-runner";
+        # group = "gitea-runner";
       };
       runnerHost = {
         file = ../../secrets/gitea-runner-host.age;
+        mode = "440";
+        # owner = "gitea-runner";
+        # group = "gitea-runner";
       };
     };
     services.gitea = {
@@ -71,31 +76,32 @@ in
 
     services.gitea-actions-runner.instances = {
       # 1. Runner per Build generiche (Isolato in Docker)
-      "docker-runner" = {
+      "docker-global" = {
         enable = true;
-        name = "nas-docker-builder";
+        name = "docker-global";
         url = "https://git.${cfg.domain}/";
         tokenFile = config.age.secrets.runnerDocker.path;
+        labels = [
+          "ubuntu-latest:docker://node:22"
+          "ubuntu-22.04:docker://ubuntu:22.04"
+        ];
         settings = {
           runner.capacity = 2;
-          labels = [
-            "ubuntu-latest:docker://node:18"
-            # "ubuntu-22.04:docker://ubuntu:22.04"
-          ];
         };
       };
 
       # 2. Runner per Deploy sul NAS (Esegue comandi sul server vero)
-      "host-runner" = {
+      "host-private" = {
         enable = true;
-        name = "nas-shell-deployer";
+        name = "my-host-private";
         url = "https://git.${cfg.domain}/";
+        # usare token per la prima volta, token file non riesce a leggere il path in questo caso
         tokenFile = config.age.secrets.runnerHost.path; # Serve un token diverso generato su Gitea
-        settings = {
-          runner.capacity = 1; # Uno alla volta per sicurezza
-          # L'etichetta speciale "host" indica esecuzione diretta
-          labels = [ "native:host" ];
-        };
+        labels = [ "native:host" ];
+        # settings = {
+        #   runner.capacity = 1; # Uno alla volta per sicurezza
+        #   # L'etichetta speciale "host" indica esecuzione diretta
+        # };
       };
     };
 

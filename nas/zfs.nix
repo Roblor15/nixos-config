@@ -5,12 +5,15 @@
   ...
 }:
 
+let
+  telegramNotify = import ./tools/telegramNotify.nix { inherit config pkgs; };
+in
 {
   boot.supportedFilesystems = [ "zfs" ];
   boot.zfs.extraPools = [ "hddpool" ];
 
   # --- 1. TUNING PERFORMANCE (16GB RAM) ---
-  boot.kernelParams = [ "zfs.zfs_arc_max=8589934592" ];
+  boot.kernelParams = [ "zfs.zfs_arc_max=6442450944" ];
 
   services.sanoid = {
     enable = true;
@@ -32,6 +35,16 @@
       hdd_backup = {
         autoprune = true;
         autosnap = true;
+        hourly = 24;
+        daily = 30;
+        monthly = 12;
+        yearly = 2;
+      };
+
+      # NUOVO TEMPLATE: Solo pulizia, nessuna creazione
+      backup_target = {
+        autoprune = true;
+        autosnap = false;
         hourly = 24;
         daily = 30;
         monthly = 12;
@@ -61,6 +74,20 @@
       };
       "hddpool/rustfs" = {
         useTemplate = [ "hdd_backup" ];
+      };
+      "hddpool/gitea-data" = {
+        useTemplate = [ "hdd_backup" ];
+      };
+
+      # --- DESTINAZIONI BACKUP (Mancavano questi!) ---
+      "hddpool/backups/home" = {
+        useTemplate = [ "backup_target" ];
+      };
+      "hddpool/backups/persist" = {
+        useTemplate = [ "backup_target" ];
+      };
+      "hddpool/backups/opencloud" = {
+        useTemplate = [ "backup_target" ];
       };
     };
   };
@@ -103,7 +130,8 @@
       # Who gets the alerts?
       ZED_EMAIL_ADDR = [ "roberto.lorenzon.2001@gmail.com" ];
       # Use msmtp to send the mail
-      ZED_EMAIL_PROG = "${pkgs.msmtp}/bin/msmtp";
+      # ZED_EMAIL_PROG = "${pkgs.msmtp}/bin/msmtp";
+      ZED_EMAIL_PROG = "${telegramNotify}";
       # Send an email immediately if a drive degrades or faults
       ZED_NOTIFY_VERBOSE = true;
       # Send an email when a scrub finishes (good for testing it works)

@@ -169,6 +169,11 @@ in
         # TODO: add immich-role
         identity_providers = {
           oidc = {
+            lifespans = {
+              access_token = "1h";     # Mantiene alta la sicurezza sui singoli token di accesso
+              id_token = "1h";
+              refresh_token = "30d";   # Estende la durata del token di rinnovo a ben 30 giorni
+            };
             cors = {
               endpoints = [
                 "authorization"

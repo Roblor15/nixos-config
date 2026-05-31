@@ -92,7 +92,7 @@
       nil
       taplo
       cachix
-      nodePackages.bash-language-server
+      bash-language-server
       cargo-generate
       quickemu
       tor-browser
@@ -112,6 +112,7 @@
       tinymist
       probe-rs-tools
       deploy-rs
+      zed-editor-fhs
     ]
     ++ (
       if (variants.hyprland) then

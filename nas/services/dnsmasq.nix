@@ -16,7 +16,7 @@
     
     settings = {
       # Ascolta su tutto (per rispondere a Netbird)
-      listen-address = "127.0.0.1,100.70.241.219,192.168.188.90";
+      listen-address = "127.0.0.1,192.168.188.90";
       # interface = [ "lo" "wt0" "eth0" ];
       # Importante: binda le interfacce per evitare race conditions
       bind-interfaces = true;

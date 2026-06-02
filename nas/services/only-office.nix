@@ -2,28 +2,28 @@
   config,
   pkgs,
   lib,
-  inputs,
+  # inputs,
   ...
 }:
 
 let
   cfg = config.myNas.services.onlyoffice;
-  unstablePkgs = import inputs.unstable {
-    system = pkgs.system;
-    config = {
-      allowUnfreePredicate =
-        pkg:
-        builtins.elem (lib.getName pkg) [
-          "corefonts"
-        ];
-    };
-  };
+  # unstablePkgs = import inputs.unstable {
+  #   system = pkgs.system;
+  #   config = {
+  #     allowUnfreePredicate =
+  #       pkg:
+  #       builtins.elem (lib.getName pkg) [
+  #         "corefonts"
+  #       ];
+  #   };
+  # };
 in
 {
-  disabledModules = [ "services/web-apps/onlyoffice.nix" ];
-  imports = [
-    ./modules/onlyoffice.nix
-  ];
+  # disabledModules = [ "services/web-apps/onlyoffice.nix" ];
+  # imports = [
+  #   ./modules/onlyoffice.nix
+  # ];
 
   options.myNas.services.onlyoffice = {
     enable = lib.mkEnableOption "Abilita OnlyOffice Server";
@@ -55,7 +55,7 @@ in
       jwtSecretFile = "${pkgs.writeText "onlyoffice-jwt" "ciaociao"}";
       securityNonceFile = config.age.secrets.onlyoffice_nonce.path;
 
-      package = unstablePkgs.onlyoffice-documentserver;
+      # package = unstablePkgs.onlyoffice-documentserver;
       # x2t = unstablePkgs.x2t;
       wopi = true;
     };

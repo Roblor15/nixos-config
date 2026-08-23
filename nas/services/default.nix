@@ -13,5 +13,6 @@
     ./n8n.nix
     ./ollama.nix
     ./windmill.nix
+    ./grampsweb.nix
   ];
 }

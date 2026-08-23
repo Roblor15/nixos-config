@@ -125,6 +125,15 @@
     theme = "catppuccin-latte-yellow";
   };
 
+  # Enable Autologin
+  services.displayManager.autoLogin = {
+    enable = (variants.hostName == "roblor-desktop");
+    user = "roblor";
+  };
+
+  # Tell the display manager to boot straight into Hyprland
+  services.displayManager.defaultSession = "hyprland";
+
   services.desktopManager.gnome.enable = variants.gnome;
 
   # Configure keymap in X11

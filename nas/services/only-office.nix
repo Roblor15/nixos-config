@@ -81,6 +81,28 @@ in
       #   proxy_set_header X-Forwarded-Proto https;
       #   proxy_set_header X-Forwarded-Host $host;
       # '';
+      # Usiamo lib.mkForce per sovrascrivere l'extraConfig del modulo originale
+      extraConfig = lib.mkForce ''
+        rewrite ^/$ /welcome/ redirect;
+        rewrite ^\/OfficeWeb(\/apps\/.*)$ /${config.services.onlyoffice.package.version}/web-apps$1 redirect;
+        rewrite ^(\/web-apps\/apps\/(?!api\/).*)$ /${config.services.onlyoffice.package.version}$1 redirect;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Host $host;
+        
+        # 🔥 IL FIX MAGICO: Forziamo https invece del default $scheme 🔥
+        proxy_set_header X-Forwarded-Proto https;
+        
+        # Manteniamo le configurazioni vitali del modulo per i WebSocket
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+
+        # Regole per accettare il traffico da Caddy
+        set_real_ip_from 127.0.0.1;
+        real_ip_header X-Forwarded-For;
+        real_ip_recursive on;
+      '';
     };
 
     # Configure Caddy to proxy to Nginx

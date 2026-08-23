@@ -113,6 +113,7 @@
       probe-rs-tools
       deploy-rs
       zed-editor-fhs
+      tea
     ]
     ++ (
       if (variants.hyprland) then
@@ -140,6 +141,7 @@
           lsp-ai
           shotcut
           inkscape
+          kicad
         ]
       else
         [
@@ -163,6 +165,8 @@
       size = 24;
     };
   };
+
+  programs.quickshell.enable = true;
 
   # gtk = {
   #   enable = true;

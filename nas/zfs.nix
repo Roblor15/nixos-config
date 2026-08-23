@@ -11,6 +11,7 @@ in
 {
   boot.supportedFilesystems = [ "zfs" ];
   boot.zfs.extraPools = [ "hddpool" ];
+  boot.zfs.forceImportRoot = false;
 
   # --- 1. TUNING PERFORMANCE (16GB RAM) ---
   boot.kernelParams = [ "zfs.zfs_arc_max=6442450944" ];

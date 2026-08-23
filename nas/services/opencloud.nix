@@ -101,7 +101,7 @@ in
         "PROXY_TLS" = "false";
         "OC_OIDC_ISSUER" = "https://auth.${cfg.domain}";
         "OC_EXCLUDE_RUN_SERVICES" = "idp";
-        # "OC_JWT_SECRET" = "ciaociao";
+        "OC_JWT_SECRET" = "ciaociao";
         "PROXY_OIDC_REWRITE_WELLKNOWN" = "true";
 
         # User Mapping Configuration
@@ -115,7 +115,7 @@ in
 
         # Web Client Configuration
         "WEB_OIDC_AUTHORITY" = "https://auth.${cfg.domain}";
-        "WEB_OIDC_CLIENT_ID" = "opencloud_web";
+        "WEB_OIDC_CLIENT_ID" = "web";
         "WEB_OIDC_SCOPE" = "openid profile email groups offline_access";
 
         # Content Security Policy - Reference to YAML file
@@ -139,18 +139,18 @@ in
         "OPEN_CLOUD_LOG_LEVEL" = "debug";
 
         # ONLYOFFICE Integration
-        # "OC_ADD_RUN_SERVICES" = "collaboration";
-        # "COLLABORATION_APP_NAME" = "OnlyOffice";
-        # "COLLABORATION_APP_PRODUCT" = "OnlyOffice";
-        # "COLLABORATION_APP_ADDR" = "https://onlyoffice.${cfg.domain}";
+        "OC_ADD_RUN_SERVICES" = "collaboration";
+        "COLLABORATION_APP_NAME" = "OnlyOffice";
+        "COLLABORATION_APP_PRODUCT" = "OnlyOffice";
+        "COLLABORATION_APP_ADDR" = "https://onlyoffice.${cfg.domain}";
 
         # WOPI Configuration
-        # "COLLABORATION_WOPI_SRC" = "https://wopi.${cfg.domain}";
+        "COLLABORATION_WOPI_SRC" = "https://wopi.${cfg.domain}";
 
         # Ensure the JWT secret matches ONLYOFFICE's secret if you configured one
-        # "COLLABORATION_JWT_SECRET" = "ciaociao";
-        # "COLLABORATION_APP_INSECURE" = "false"; # Add this line
-        # "COLLABORATION_APP_PROOF_DISABLE" = "true";
+        "COLLABORATION_JWT_SECRET" = "ciaociao";
+        "COLLABORATION_APP_INSECURE" = "false"; # Add this line
+        "COLLABORATION_APP_PROOF_DISABLE" = "true";
 
         # SMTP configuration
         "NOTIFICATIONS_SMTP_HOST" = "smtp-relay.brevo.com";
@@ -214,6 +214,14 @@ in
                 {
                   role_name = "user";
                   claim_value = "federico";
+                }
+                {
+                  role_name = "user";
+                  claim_value = "ciccio";
+                }
+                {
+                  role_name = "user";
+                  claim_value = "roby";
                 }
               ];
             };

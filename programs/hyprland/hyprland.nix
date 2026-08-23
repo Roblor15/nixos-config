@@ -18,6 +18,24 @@
     ./toggle_bars.nix
   ];
 
+  systemd.user.services.hyprland-headless-init = lib.mkIf (variants.hostName == "roblor-desktop") {
+    Unit = {
+      Description = "Inizializza monitor headless per Hyprland";
+    };
+    Install = {
+      # Parte all'avvio del demone systemd dell'utente, garantito anche in headless
+      WantedBy = [ "default.target" ]; 
+    };
+    Service = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      # Garantisce che il servizio trovi hyprctl e i comandi base su NixOS
+      Environment = "PATH=/run/current-system/sw/bin:/etc/profiles/per-user/%u/bin:/bin";
+      # Usiamo %t per riferirci direttamente a /run/user/1000
+      ExecStart = "${pkgs.bash}/bin/bash -c 'while [ ! -d \"%t/hypr\" ] || [ -z \"$(ls -A %t/hypr 2>/dev/null)\" ]; do sleep 1; done; sleep 2; export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 %t/hypr | head -n 1); hyprctl output create headless sunshine'";
+    };
+  };
+
   wayland.windowManager.hyprland =
     let
       eww-command =
@@ -28,6 +46,7 @@
     in
     {
       enable = true;
+      configType = "hyprlang";
       # wayland.windowManager.hyprland.package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
       settings = {
         source = "~/.config/hypr/colors.conf";
@@ -61,7 +80,6 @@
         ++ (
           if variants.hostName == "roblor-desktop" then
             [
-              "hyprctl output create headless sunshine"
               "systemctl --user restart sunshine"
               "steam -silent"
             ]
@@ -97,6 +115,10 @@
           }
           {
             name = "keychron-keychron-k3";
+            kb_layout = "us";
+          }
+          {
+            name = "keyboard-passthrough";
             kb_layout = "us";
           }
         ];
@@ -139,7 +161,6 @@
         };
 
         dwindle = {
-          pseudotile = true;
           preserve_split = true;
         };
 
@@ -160,7 +181,7 @@
           "SUPER, V, togglefloating,"
           "SUPER, R, exec, fuzzel"
           "SUPER SHIFT, R, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
-          "SUPER, X, togglesplit,"
+          "SUPER, X, layoutmsg, togglesplit"
           "SUPER, F, fullscreen"
           "SUPER, SPACE, centerwindow"
           "SUPER, G, exec, steam"

@@ -263,7 +263,7 @@
         "github.com/caddy-dns/duckdns@v0.5.0"
         "github.com/caddy-dns/dynu@v1.0.0"
       ];
-      hash = "sha256-5KIGotO5kT4VDFYelDc5Puy19lvNVdIlAYWDUN/S6B0=";
+      hash = "sha256-fjrXNNAqVkdkSLOsLb3sAwmutypc9gThSbhToVTSg1Y=";
     };
     virtualHosts."*.${NASOptions.domain}".extraConfig = ''
       # 1. Configurazione TLS centralizzata (il token va nel file secret come detto prima)
@@ -491,6 +491,13 @@
     '';
   };
 
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
+  hardware.enableAllFirmware = true;
+
   # 2. Servizio Systemd per configurare i dischi all'avvio
   systemd.services.hdd-config = {
     description = "Configurazione HDD: Disabilita Sleep e APM (Always On)";
@@ -603,4 +610,6 @@
       };
     };
   };
+
+  systemd.services.greetd.wantedBy = pkgs.lib.mkForce [];
 }

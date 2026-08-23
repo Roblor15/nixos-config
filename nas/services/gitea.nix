@@ -80,7 +80,8 @@ in
         enable = true;
         name = "docker-global";
         url = "https://git.${cfg.domain}/";
-        tokenFile = config.age.secrets.runnerDocker.path;
+        token = "3pWUb2USHB2UWQWpzI3TMRbhO6Qxfa9AtnJSbqpq";
+        # tokenFile = config.age.secrets.runnerDocker.path;
         labels = [
           "ubuntu-latest:docker://node:22"
           "ubuntu-22.04:docker://ubuntu:22.04"
@@ -96,7 +97,8 @@ in
         name = "my-host-private";
         url = "https://git.${cfg.domain}/";
         # usare token per la prima volta, token file non riesce a leggere il path in questo caso
-        tokenFile = config.age.secrets.runnerHost.path; # Serve un token diverso generato su Gitea
+        token = "WZDUmfrLSHPkZOib9mVprnQARSWeVBy4FXJDoNV5";
+        # tokenFile = config.age.secrets.runnerHost.path; # Serve un token diverso generato su Gitea
         labels = [ "native:host" ];
         # settings = {
         #   runner.capacity = 1; # Uno alla volta per sicurezza

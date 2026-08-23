@@ -73,7 +73,7 @@
           gitea = true;
           n8n = false;
           ollama = false;
-          windmill = true;
+          windmill = false;
         };
       };
     in

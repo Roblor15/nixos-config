@@ -228,7 +228,7 @@ in
                 userinfo_signed_response_alg = "none";
               }
               {
-                client_id = "opencloud_web"; # Doc uses 'web', but 'opencloud' is allowed for this one specific client
+                client_id = "web"; # Doc uses 'web', but 'opencloud' is allowed for this one specific client
                 client_name = "OpenCloud Web";
                 # client_secret = "$pbkdf2-sha512$310000$YOUR_HASH"; # Configurable for Web, but technically docs say 'Public'
                 public = true; # You can keep this false ONLY for the web client if the Proxy handles it

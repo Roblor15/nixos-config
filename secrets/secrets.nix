@@ -164,4 +164,9 @@ in
     nas
     zimaboard
   ];
+  "grampsweb_oidc.age".publicKeys = [
+    roblor-desktop
+    nas
+    zimaboard
+  ];
 }

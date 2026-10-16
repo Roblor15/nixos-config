@@ -20,6 +20,8 @@
   # Specialmente vitale se userai ZFS in futuro.
   boot.kernelPackages = pkgs.linuxPackages;
 
+  boot.initrd.kernelModules = [ "i915" ];
+
   boot.kernelModules = [
     "coretemp"
     "it87"
@@ -387,6 +389,10 @@
   };
   myNas.services.windmill = {
     enable = NASOptions.services.windmill;
+    domain = NASOptions.domain;
+  };
+  myNas.services.grampsweb = {
+    enable = NASOptions.services.grampsweb;
     domain = NASOptions.domain;
   };
   myNas.users = {

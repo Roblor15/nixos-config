@@ -170,9 +170,9 @@ in
         identity_providers = {
           oidc = {
             lifespans = {
-              access_token = "1h";     # Mantiene alta la sicurezza sui singoli token di accesso
+              access_token = "1h"; # Mantiene alta la sicurezza sui singoli token di accesso
               id_token = "1h";
-              refresh_token = "30d";   # Estende la durata del token di rinnovo a ben 30 giorni
+              refresh_token = "30d"; # Estende la durata del token di rinnovo a ben 30 giorni
             };
             cors = {
               endpoints = [
@@ -354,6 +354,24 @@ in
                 access_token_signed_response_alg = "none";
                 userinfo_signed_response_alg = "none";
                 token_endpoint_auth_method = "client_secret_basic";
+              }
+              {
+                client_id = "grampsweb";
+                client_name = "Gramps Web";
+                client_secret = "$pbkdf2-sha512$310000$olJ74cfNaX.KoShHfqEaUg$CiL3czyU8ay.qtl8jF58dwQxX57APyM9gt5Bswd1XHSzjjr/scq4D7z5LSMLSzwHIFykZVHiW4j9pKVb.KYd3A";
+                public = false;
+                authorization_policy = "one_factor";
+                require_pkce = false;
+                redirect_uris = [
+                  "https://gramps.${cfg.domain}/api/oidc/callback/custom"
+                  "https://gramps.${cfg.domain}/api/oidc/callback/?provider=custom"
+                ];
+                scopes = [
+                  "openid"
+                  "profile"
+                  "email"
+                  "groups"
+                ];
               }
             ];
           };

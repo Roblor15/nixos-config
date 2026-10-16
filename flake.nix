@@ -74,6 +74,7 @@
           n8n = false;
           ollama = false;
           windmill = false;
+          grampsweb = true;
         };
       };
     in

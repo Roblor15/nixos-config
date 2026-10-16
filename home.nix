@@ -142,6 +142,7 @@
           shotcut
           inkscape
           kicad
+          rapidraw
         ]
       else
         [

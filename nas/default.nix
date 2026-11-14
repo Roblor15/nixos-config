@@ -265,7 +265,7 @@
         "github.com/caddy-dns/duckdns@v0.5.0"
         "github.com/caddy-dns/dynu@v1.0.0"
       ];
-      hash = "sha256-fjrXNNAqVkdkSLOsLb3sAwmutypc9gThSbhToVTSg1Y=";
+      hash = "sha256-j/YThcmSjSQwIaJVrbH25rZV7lD6hZvpXtZ0TGR38Ns=";
     };
     virtualHosts."*.${NASOptions.domain}".extraConfig = ''
       # 1. Configurazione TLS centralizzata (il token va nel file secret come detto prima)

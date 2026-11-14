@@ -39,8 +39,8 @@
       #match,
       #entry,
       #plugin,
-      #main { 
-        background: transparent; 
+      #main {
+        background: transparent;
       }
 
       #match {
@@ -85,20 +85,20 @@
         font-weight: 400;
       }
 
-      list > #plugin:first-child { 
+      list > #plugin:first-child {
         margin-top: .3rem;
       }
 
-      list > #plugin:last-child { 
-        margin-bottom: .3rem; 
+      list > #plugin:last-child {
+        margin-bottom: .3rem;
       }
 
-      list > #plugin:hover { 
-        padding: 5px; 
+      list > #plugin:hover {
+        padding: 5px;
       }
 
       box#main {
-        border-color: #FCA035;    
+        border-color: #FCA035;
         color: white;
         border-width: 4px;
         border-style: solid;

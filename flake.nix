@@ -232,6 +232,11 @@
                 ];
                 registry.nixpkgs.flake = inputs.nixpkgs;
               };
+              nixpkgs.overlays = [
+                (self: super: {
+                  immich = inputs.unstable.legacyPackages.x86_64-linux.immich;
+                })
+              ];
             }
           )
           ./nas

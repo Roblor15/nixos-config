@@ -115,13 +115,13 @@ in
     teams-for-linux
     # unstable.probe-rs-tools
   ] else [
-    
+
   ]);
 }
 
 # let
-#   config = import ./your-file.nix { 
-#     laptopEnable = true; 
+#   config = import ./your-file.nix {
+#     laptopEnable = true;
 #     hyprlandEnable = false;
 #   };
 # in

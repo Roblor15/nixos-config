@@ -24,7 +24,7 @@ in
   config = lib.mkIf cfg.enable {
     # Forza la creazione del gruppo lldap
     users.groups.lldap = {};
-    
+
     # Assicura che l'utente lldap (del servizio) faccia parte del gruppo
     users.users.lldap = {
       isSystemUser = true;
@@ -62,10 +62,13 @@ in
     services.caddy.virtualHosts."*.${cfg.domain}".extraConfig = ''
       # LLDAP accessibile solo da reti interne (LAN/Netbird)
       @ldap host ldap.${cfg.domain}
-      @internal remote_ip private_ranges
-      
-      handle @ldap @internal {
-        reverse_proxy 127.0.0.1:17170
+      @lan remote_ip 192.168.188.0/24 100.64.0.0/10
+
+      handle @ldap {
+        handle @lan {
+          reverse_proxy 127.0.0.1:17170
+        }
+        respond 403
       }
     '';
     # services.caddy.virtualHosts."ldap.${cfg.domain}".extraConfig = ''

@@ -60,11 +60,11 @@ in
     };
 
     services.caddy.virtualHosts."*.${cfg.domain}".extraConfig = ''
-      # Definisci il matcher solo per "auth"
+      # LLDAP accessibile solo da reti interne (LAN/Netbird)
       @ldap host ldap.${cfg.domain}
+      @internal remote_ip private_ranges
       
-      # Gestisci la richiesta
-      handle @ldap {
+      handle @ldap @internal {
         reverse_proxy 127.0.0.1:17170
       }
     '';

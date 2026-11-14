@@ -44,6 +44,10 @@ in
         file = ../../secrets/lldap_password.age;
         owner = "authelia-main";
       };
+      authelia_smtp_password = {
+        file = ../../secrets/brevo_password.age;
+        owner = "authelia-main";
+      };
     };
 
     # 2. Configurazione Servizio
@@ -117,10 +121,15 @@ in
           };
         };
 
-        # Notifiche (Setup base su file, cambia con SMTP per produzione)
+        # Notifiche SMTP tramite Brevo
         notifier = {
-          filesystem = {
-            filename = "/var/lib/authelia-main/notification.txt";
+          smtp = {
+            username = "9ecdc8001@smtp-brevo.com";
+            password = config.age.secrets.authelia_smtp_password.file;
+            host = "smtp-relay.brevo.com";
+            port = 587;
+            sender = "Authelia <roberto.lorenzon.2001@gmail.com>";
+            encryption = "starttls";
           };
         };
 

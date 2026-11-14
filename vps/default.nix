@@ -166,9 +166,7 @@
   # };
 
   services.iperf3 = {
-    enable = true;
-    port = 5201;
-    openFirewall = true;
+    enable = false;
   };
 
   age.secrets.wg-private = {

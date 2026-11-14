@@ -81,7 +81,7 @@ in
         };
 
         oxicloud = {
-          image = "diocrafts/oxicloud:latest";
+          image = "diocrafts/oxicloud:0.10.0";
 
           volumes = [
             "/mnt/hdd/oxicloud/data:/app/storage"

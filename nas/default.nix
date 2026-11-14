@@ -337,9 +337,7 @@
   };
 
   services.iperf3 = {
-    enable = true;
-    port = 5201;
-    openFirewall = true;
+    enable = false;
   };
 
   myNas.services.immich = {

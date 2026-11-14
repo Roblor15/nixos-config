@@ -57,6 +57,10 @@ in
       };
 
       settings = {
+        service = {
+          DISABLE_REGISTRATION = true;
+          REQUIRE_SIGNIN_VIEW = true;
+        };
         server = {
           DOMAIN = "git.${cfg.domain}";
           ROOT_URL = "https://git.${cfg.domain}/";

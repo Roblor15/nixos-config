@@ -37,7 +37,7 @@
           # kill hyprpaper
           pidof hyprpaper && pkill hyprpaper
           # change hyprland colors
-          cp -f ~/.config/hypr/hyprland-colors.conf ~/.config/hypr/colors.conf
+          cp -f ~/.config/hypr/hyprland-colors.lua ~/.config/hypr/colors.lua
           # change eww colors
           cp -f ~/.config/eww/bar/hyprland-colors.scss ~/.config/eww/bar/colors.scss
           # change helix colors
@@ -50,7 +50,7 @@
           # rm the theme dir
           rm -r /tmp/theme
       else if test $_flag_theme = "onepiece"
-          cp -f ~/.config/hypr/onepiece-colors.conf ~/.config/hypr/colors.conf
+          cp -f ~/.config/hypr/onepiece-colors.lua ~/.config/hypr/colors.lua
           # change eww colors
           cp -f ~/.config/eww/bar/onepiece-colors.scss ~/.config/eww/bar/colors.scss
           # change hyprland colors

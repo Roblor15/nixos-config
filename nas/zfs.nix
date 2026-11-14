@@ -128,15 +128,12 @@ in
   services.zfs.zed = {
     enableMail = true;
     settings = {
-      # Who gets the alerts?
-      ZED_EMAIL_ADDR = [ "roberto.lorenzon.2001@gmail.com" ];
-      # Use msmtp to send the mail
-      # ZED_EMAIL_PROG = "${pkgs.msmtp}/bin/msmtp";
+      # Passa l'email come stringa semplice, non come lista [ "..." ]
+      ZED_EMAIL_ADDR = "roberto.lorenzon.2001@gmail.com";
       ZED_EMAIL_PROG = "${telegramNotify}";
-      # Send an email immediately if a drive degrades or faults
-      ZED_NOTIFY_VERBOSE = true;
-      # Send an email when a scrub finishes (good for testing it works)
-      ZED_NOTIFY_DATA = true;
+      
+      # ZED usa script Bash: esige "1" invece di "true" o "0" invece di "false"
+      ZED_NOTIFY_VERBOSE = "1";
     };
   };
 

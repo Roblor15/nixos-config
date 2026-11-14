@@ -14,5 +14,6 @@
     ./ollama.nix
     ./windmill.nix
     ./grampsweb.nix
+    ./oxicloud.nix
   ];
 }

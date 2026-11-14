@@ -21,25 +21,25 @@ let
         - "'self'"
         - 'blob:'
         - 'data:'
-      
+
       script-src:
         - "'self'"
         - "'unsafe-inline'"
         - "'unsafe-eval'"
-      
+
       style-src:
         - "'self'"
         - "'unsafe-inline'"
-      
+
       img-src:
         - "'self'"
         - 'data:'
         - 'blob:'
-      
+
       font-src:
         - "'self'"
         - 'data:'
-      
+
       connect-src:
         - "'self'"
         - 'https://auth.${cfg.domain}'
@@ -50,14 +50,14 @@ let
 
       frame-src:
         - 'https://onlyoffice.${cfg.domain}'
-      
+
       frame-ancestors:
         - "'self'"
         - "https://onlyoffice.${cfg.domain}"
-      
+
       base-uri:
         - "'self'"
-      
+
       form-action:
         - "'self'"
         - "https://onlyoffice.${cfg.domain}"
@@ -101,7 +101,6 @@ in
         "PROXY_TLS" = "false";
         "OC_OIDC_ISSUER" = "https://auth.${cfg.domain}";
         "OC_EXCLUDE_RUN_SERVICES" = "idp";
-        "OC_JWT_SECRET" = "ciaociao";
         "PROXY_OIDC_REWRITE_WELLKNOWN" = "true";
 
         # User Mapping Configuration
@@ -136,7 +135,7 @@ in
         # "PROXY_ROLE_ASSIGNMENT_DRIVER" = "oidc";
         "PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM" = "preferred_username";
         "GRAPH_ASSIGN_DEFAULT_USER_ROLE" = "true";
-        "OPEN_CLOUD_LOG_LEVEL" = "debug";
+        "OPEN_CLOUD_LOG_LEVEL" = "info";
 
         # ONLYOFFICE Integration
         "OC_ADD_RUN_SERVICES" = "collaboration";

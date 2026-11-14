@@ -23,15 +23,12 @@
       Description = "Inizializza monitor headless per Hyprland";
     };
     Install = {
-      # Parte all'avvio del demone systemd dell'utente, garantito anche in headless
-      WantedBy = [ "default.target" ]; 
+      WantedBy = [ "default.target" ];
     };
     Service = {
       Type = "oneshot";
       RemainAfterExit = true;
-      # Garantisce che il servizio trovi hyprctl e i comandi base su NixOS
       Environment = "PATH=/run/current-system/sw/bin:/etc/profiles/per-user/%u/bin:/bin";
-      # Usiamo %t per riferirci direttamente a /run/user/1000
       ExecStart = "${pkgs.bash}/bin/bash -c 'while [ ! -d \"%t/hypr\" ] || [ -z \"$(ls -A %t/hypr 2>/dev/null)\" ]; do sleep 1; done; sleep 2; export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 %t/hypr | head -n 1); hyprctl output create headless sunshine'";
     };
   };
@@ -43,57 +40,96 @@
           "eww open --config /home/roblor/.config/eww/bar bar && eww update --config /home/roblor/.config/eww/bar desktop=false"
         else
           "eww open --config /home/roblor/.config/eww/bar bar";
+
+      suspend-cmd =
+        if (variants.hostName == "roblor-matebook") then
+          "systemctl suspend-then-hibernate"
+        else
+          "systemctl suspend";
+
+      desktop-exec =
+        if (variants.hostName == "roblor-desktop") then
+          ''
+            hl.exec_cmd("systemctl --user restart sunshine")
+            hl.exec_cmd("steam -silent")
+          ''
+        else
+          "";
     in
     {
       enable = true;
-      configType = "hyprlang";
-      # wayland.windowManager.hyprland.package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      configType = "lua";
+
+      # Non usiamo più extraConfig. Facciamo generare TUTTO a Home Manager in modo nativo.
       settings = {
-        source = "~/.config/hypr/colors.conf";
+        # --- MONITOR ---
         monitor = [
-          "eDP-1,3000x2000@60,0x1440,2"
-          "desc:Microstep MSI MP271Q PA3T090C00618,highres,0x0,1"
-          "desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,1500x1440,1.5"
-          ",preferred,auto,1"
+          {
+            output = "eDP-1";
+            mode = "3000x2000@60";
+            position = "0x1440";
+            scale = 2;
+          }
+          {
+            output = "desc:Microstep MSI MP271Q PA3T090C00618";
+            mode = "highres";
+            position = "0x0";
+            scale = 1;
+          }
+          {
+            output = "desc:Samsung Electric Company SAMSUNG 0x01000E00";
+            mode = "3840x2160@60";
+            position = "1500x1440";
+            scale = 1.5;
+          }
+          {
+            output = "";
+            mode = "preferred";
+            position = "auto";
+            scale = 1;
+          }
         ]
         ++ (
           if variants.hostName == "roblor-desktop" then
             [
-              # Monitor virtuale 2K a 60Hz (cambia a 120Hz se preferisci)
-              "sunshine,2560x1440@60,30000x0,1"
-            ]
-          else
-            [ ]
-        );
-        exec-once = [
-          "~/.config/hypr/change-theme.fish --theme onepiece"
-          "~/.config/hypr/rounded-borders.fish"
-          eww-command
-          "hyprctl setcursor Bibata-Modern-Amber 24"
-          "hypridle"
-          "mako"
-          "wlsunset -l $(~/.config/hypr/position.fish --lat --no-int) -L $(~/.config/hypr/position.fish --lon --no-int) -t 3000"
-          "wl-paste --type text --watch cliphist store"
-          "wl-paste --type image --watch cliphist store"
-          "wluma"
-        ]
-        ++ (
-          if variants.hostName == "roblor-desktop" then
-            [
-              "systemctl --user restart sunshine"
-              "steam -silent"
+              {
+                output = "sunshine";
+                mode = "2560x1440@60";
+                position = "30000x0";
+                scale = 1;
+              }
             ]
           else
             [ ]
         );
 
-        input = {
-          kb_layout = "it";
-          follow_mouse = true;
-          touchpad.natural_scroll = true;
-          sensitivity = 0;
-        };
+        # --- WORKSPACES REGLES ---
+        workspace_rule = [
+          {
+            workspace = "1";
+            monitor = "eDP-1";
+            default = true;
+          }
+          {
+            workspace = "2";
+            monitor = "DP-1";
+            default = true;
+          }
+        ]
+        ++ (
+          if variants.hostName == "roblor-desktop" then
+            [
+              {
+                workspace = "99";
+                monitor = "sunshine";
+                default = true;
+              }
+            ]
+          else
+            [ ]
+        );
 
+        # --- DISPOSITIVI ---
         device = [
           {
             name = "magic-mouse-2";
@@ -123,209 +159,610 @@
           }
         ];
 
-        general = {
-          gaps_in = 5;
-          gaps_out = 20;
-          border_size = 2;
-          "col.active_border" = "$active_border_1 $active_border_2 45deg";
-          "col.inactive_border" = "$inactive_border";
-          layout = "dwindle";
-        };
-
-        decoration = {
-          rounding = 10;
-          shadow = {
-            enabled = true;
-            range = 4;
-            render_power = 3;
-            color = "$shadow";
-          };
-          blur = {
-            enabled = true;
-            passes = 3;
-            size = 15;
-          };
-        };
-
-        animations = {
-          enabled = true;
-          bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
-          animation = [
-            "windows, 1, 7, myBezier"
-            "windowsOut, 1, 7, default, popin 80%"
-            "border, 1, 10, default"
-            "borderangle, 1, 8, default"
-            "fade, 1, 7, default"
-            "workspaces, 1, 6, default"
+        # --- AUTOSTART (Exec Once tramite evento "on") ---
+        on = {
+          _args = [
+            "hyprland.start"
+            (lib.generators.mkLuaInline ''
+              function()
+                hl.exec_cmd("~/.config/hypr/change-theme.fish --theme onepiece")
+                hl.exec_cmd("~/.config/hypr/rounded-borders.fish")
+                hl.exec_cmd("${eww-command}")
+                hl.exec_cmd("hyprctl setcursor Bibata-Modern-Amber 24")
+                hl.exec_cmd("hypridle")
+                hl.exec_cmd("mako")
+                hl.exec_cmd("wlsunset -l $(~/.config/hypr/position.fish --lat --no-int) -L $(~/.config/hypr/position.fish --lon --no-int) -t 3000")
+                hl.exec_cmd("wl-paste --type text --watch cliphist store")
+                hl.exec_cmd("wl-paste --type image --watch cliphist store")
+                hl.exec_cmd("wluma")
+                ${desktop-exec}
+              end
+            '')
           ];
         };
 
-        dwindle = {
-          preserve_split = true;
+        # --- GESTURES E ANIMAZIONI ---
+        gesture = {
+          fingers = 3;
+          direction = "horizontal";
+          action = "workspace";
         };
 
-        master.new_status = "master";
-        gesture = [
-          "3, horizontal, workspace"
-          "2, pinch, mod: SUPER, resize"
+        curve = [
+          {
+            _args = [
+              "myBezier"
+              {
+                type = "bezier";
+                points = [
+                  [
+                    0.05
+                    0.9
+                  ]
+                  [
+                    0.1
+                    1.05
+                  ]
+                ];
+              }
+            ];
+          }
         ];
 
-        # windowrulev2 = [ "noblur,class:^(?:(?!Alacritty).)+$" ];
+        animation = [
+          {
+            leaf = "windows";
+            enabled = true;
+            speed = 7;
+            bezier = "myBezier";
+          }
+          {
+            leaf = "windowsOut";
+            enabled = true;
+            speed = 7;
+            bezier = "default";
+            style = "popin 80%";
+          }
+          {
+            leaf = "border";
+            enabled = true;
+            speed = 10;
+            bezier = "default";
+          }
+          {
+            leaf = "borderangle";
+            enabled = true;
+            speed = 8;
+            bezier = "default";
+          }
+          {
+            leaf = "fade";
+            enabled = true;
+            speed = 7;
+            bezier = "default";
+          }
+          {
+            leaf = "workspaces";
+            enabled = true;
+            speed = 6;
+            bezier = "default";
+          }
+        ];
 
+        # --- BLOCCO CONFIG (Raggruppa le vecchie opzioni sparpagliate e previene il crash) ---
+        config = {
+          general = {
+            gaps_in = 5;
+            gaps_out = 20;
+            border_size = 2;
+            # Importa e legge dinamicamente i colori dal file Lua
+            "col.active_border" = lib.generators.mkLuaInline ''
+              { colors = { dofile(os.getenv("HOME") .. "/.config/hypr/colors.lua").active_border_1, dofile(os.getenv("HOME") .. "/.config/hypr/colors.lua").active_border_2 }, angle = 45 }
+            '';
+            "col.inactive_border" = lib.generators.mkLuaInline ''dofile(os.getenv("HOME") .. "/.config/hypr/colors.lua").inactive_border'';
+            layout = "dwindle";
+          };
+          decoration = {
+            rounding = 10;
+            blur = { enabled = true; passes = 3; size = 15; };
+            shadow = { 
+              enabled = true; range = 4; render_power = 3; 
+              color = lib.generators.mkLuaInline ''dofile(os.getenv("HOME") .. "/.config/hypr/colors.lua").shadow''; 
+            };
+          };
+          input = {
+            kb_layout = "it";
+            follow_mouse = 1; # Nota: in lua usa 1 invece di true
+            touchpad = {
+              natural_scroll = true;
+            };
+            sensitivity = 0;
+          };
+          misc = {
+            disable_splash_rendering = true;
+            force_default_wallpaper = 2;
+          };
+          cursor = {
+            hide_on_touch = true;
+            hotspot_padding = 0;
+            inactive_timeout = 10;
+          };
+          dwindle = {
+            preserve_split = true;
+          };
+          master = {
+            new_status = "master";
+          };
+          animations = {
+            enabled = true;
+          };
+        };
+
+        # --- BINDS ---
         bind = [
-          "SUPER, T, exec, wezterm"
-          "SUPER, N, exec, alacritty -e nvim"
-          "SUPER, B, exec, firefox"
-          "SUPER, C, killactive,"
-          "SUPER, M, exit,"
-          "SUPER, V, togglefloating,"
-          "SUPER, R, exec, fuzzel"
-          "SUPER SHIFT, R, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
-          "SUPER, X, layoutmsg, togglesplit"
-          "SUPER, F, fullscreen"
-          "SUPER, SPACE, centerwindow"
-          "SUPER, G, exec, steam"
-          (
-            if (variants.hostName == "roblor-matebook") then
-              "SUPER, O, exec, systemctl suspend-then-hibernate"
-            else
-              "SUPER, O, exec, systemctl suspend"
+          # Programmi
+          {
+            _args = [
+              "SUPER + T"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"wezterm\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + N"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"alacritty -e nvim\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + B"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"firefox\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + C"
+              (lib.generators.mkLuaInline "hl.dsp.window.close()")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + M"
+              (lib.generators.mkLuaInline "hl.dsp.exit()")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + V"
+              (lib.generators.mkLuaInline "hl.dsp.window.float({ action = \"toggle\" })")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + R"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"fuzzel\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + SHIFT + R"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"cliphist list | fuzzel --dmenu | cliphist decode | wl-copy\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + X"
+              (lib.generators.mkLuaInline "hl.dsp.layout(\"togglesplit\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + F"
+              (lib.generators.mkLuaInline "hl.dsp.window.fullscreen()")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + SPACE"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"hyprctl dispatch centerwindow\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + G"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"steam\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + O"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"${suspend-cmd}\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + L"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"hyprlock\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + W"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"pkill wlsunset; wlsunset -l $(~/.config/hypr/position.fish --lat) -L $(~/.config/hypr/position.fish --lon) -t 3000\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + SHIFT + W"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"pkill wlsunset\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + P"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"${eww-command}\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + SHIFT + P"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"eww close --config ~/.config/eww/bar bar\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + ALT + 0"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"${eww-command} --screen 0\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + ALT + 1"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"${eww-command} --screen 1\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + SHIFT + C"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"~/.config/hypr/hypridle.fish\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + H"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"~/.config/hypr/change-theme.fish --theme hyprland\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + SHIFT + H"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"~/.config/hypr/change-theme.fish --theme onepiece\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + S"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"hyprctl keyword 'monitor' 'desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,auto,1'\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + CTRL + R"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"hyprctl reload\")")
+            ];
+          }
+
+          # Movimento focus
+          {
+            _args = [
+              "SUPER + left"
+              (lib.generators.mkLuaInline "hl.dsp.focus({ direction = \"left\" })")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + right"
+              (lib.generators.mkLuaInline "hl.dsp.focus({ direction = \"right\" })")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + up"
+              (lib.generators.mkLuaInline "hl.dsp.focus({ direction = \"up\" })")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + down"
+              (lib.generators.mkLuaInline "hl.dsp.focus({ direction = \"down\" })")
+            ];
+          }
+
+          # Focus con il mouse
+          {
+            _args = [
+              "SUPER + mouse_down"
+              (lib.generators.mkLuaInline "hl.dsp.focus({ workspace = \"e+1\" })")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + mouse_up"
+              (lib.generators.mkLuaInline "hl.dsp.focus({ workspace = \"e-1\" })")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + mouse_left"
+              (lib.generators.mkLuaInline "hl.dsp.focus({ workspace = \"e+1\" })")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + mouse_right"
+              (lib.generators.mkLuaInline "hl.dsp.focus({ workspace = \"e-1\" })")
+            ];
+          }
+
+          # Media keys & Utilities (con repeating/locked properties ove serve)
+          {
+            _args = [
+              "XF86AudioMicMute"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + XF86AudioLowerVolume"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%-\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + XF86AudioRaiseVolume"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%+\")")
+            ];
+          }
+          {
+            _args = [
+              "XF86Tools"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"firefox --new-window www.gmail.com\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + F10"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"firefox --new-window 'ext+container:name=UniTN&url=www.gmail.com'\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + SHIFT + F10"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"firefox --new-window www.outlook.it\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + CTRL + F10"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"firefox --new-window 'ext+container:name=Tuni&url=www.outlook.it'\")")
+            ];
+          }
+          {
+            _args = [
+              "Print"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"grimblast --notify copysave output ~/Pictures/Screenshots/$(date +'%F-%T.png')\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + Print"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"grimblast --notify copysave active ~/Pictures/Screenshots/$(date +'%F-%T.png')\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + SHIFT + Print"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"grimblast --notify copysave area ~/Pictures/Screenshots/$(date +'%F-%T.png')\")")
+            ];
+          }
+          {
+            _args = [
+              "CTRL + Print"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"grimblast --notify copy output\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + CTRL + Print"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"grimblast --notify copy active\")")
+            ];
+          }
+          {
+            _args = [
+              "SUPER + CTRL + SHIFT + Print"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"grimblast --notify copy area\")")
+            ];
+          }
+
+          # --- BLOCCO bindl ---
+          {
+            _args = [
+              "XF86AudioMute"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle\")")
+              { locked = true; }
+            ];
+          }
+          {
+            _args = [
+              "switch:off:Lid Switch"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"hyprctl keyword monitor 'eDP-1, 3000x2000@60, 530x1440, 2'\")")
+              { locked = true; }
+            ];
+          }
+          {
+            _args = [
+              "switch:on:Lid Switch"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"hyprctl keyword monitor 'eDP-1, disable'\")")
+              { locked = true; }
+            ];
+          }
+
+          # --- BLOCCO bindle ---
+          {
+            _args = [
+              "SUPER + Return"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"hyprctl keyword monitor eDP-1,disable\")")
+              {
+                locked = true;
+                repeating = true;
+              }
+            ];
+          }
+          {
+            _args = [
+              "SUPER + SHIFT + Return"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"hyprctl keyword monitor eDP-1,3000x2000@60,0x1440,2\")")
+              {
+                locked = true;
+                repeating = true;
+              }
+            ];
+          }
+          {
+            _args = [
+              "XF86AudioLowerVolume"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-\")")
+              {
+                locked = true;
+                repeating = true;
+              }
+            ];
+          }
+          {
+            _args = [
+              "XF86AudioRaiseVolume"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+\")")
+              {
+                locked = true;
+                repeating = true;
+              }
+            ];
+          }
+          {
+            _args = [
+              "XF86MonBrightnessUp"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"light -T 1.2\")")
+              {
+                locked = true;
+                repeating = true;
+              }
+            ];
+          }
+          {
+            _args = [
+              "XF86MonBrightnessDown"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"light -T 0.8\")")
+              {
+                locked = true;
+                repeating = true;
+              }
+            ];
+          }
+          {
+            _args = [
+              "SUPER + XF86MonBrightnessUp"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"ddcutil --model \\\"MSI MP271Q\\\" setvcp 10 + 5\")")
+              {
+                locked = true;
+                repeating = true;
+              }
+            ];
+          }
+          {
+            _args = [
+              "SUPER + XF86MonBrightnessDown"
+              (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"ddcutil --model \\\"MSI MP271Q\\\" setvcp 10 - 5\")")
+              {
+                locked = true;
+                repeating = true;
+              }
+            ];
+          }
+
+          # --- BLOCCO bindm ---
+          {
+            _args = [
+              "SUPER + mouse:272"
+              (lib.generators.mkLuaInline "hl.dsp.window.drag()")
+              { mouse = true; }
+            ];
+          }
+          {
+            _args = [
+              "SUPER + mouse:273"
+              (lib.generators.mkLuaInline "hl.dsp.window.resize()")
+              { mouse = true; }
+            ];
+          }
+
+          # TRIGGER PER LA SUBMAP
+          {
+            _args = [
+              "ALT + R"
+              (lib.generators.mkLuaInline "hl.dsp.submap(\"resize\")")
+            ];
+          }
+
+        ]
+        ++ (
+          # Generazione dinamica dei tasti numerici per workspaces 1-10 per non scrivere 30 righe
+          builtins.concatLists (
+            builtins.genList (
+              i:
+              let
+                ws = toString (if i == 9 then 10 else i + 1);
+                key = if ws == "10" then "0" else ws;
+              in
+              [
+                {
+                  _args = [
+                    "SUPER + ${key}"
+                    (lib.generators.mkLuaInline "hl.dsp.focus({ workspace = ${ws} })")
+                  ];
+                }
+                {
+                  _args = [
+                    "SUPER + SHIFT + ${key}"
+                    (lib.generators.mkLuaInline "hl.dsp.window.move({ workspace = ${ws} })")
+                  ];
+                }
+                {
+                  _args = [
+                    "SUPER + CTRL + ${key}"
+                    (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"hyprctl dispatch movetoworkspacesilent ${ws}\")")
+                  ];
+                }
+              ]
+            ) 10
           )
-          "SUPER, L, exec, hyprlock"
-          "SUPER, W, exec, pkill wlsunset; wlsunset -l $(~/.config/hypr/position.fish --lat) -L $(~/.config/hypr/position.fish --lon) -t 3000"
-          "SUPER SHIFT, W, exec, pkill wlsunset"
-          "SUPER, P, exec, ${eww-command}"
-          "SUPER SHIFT, P, exec, eww close --config ~/.config/eww/bar bar"
-          "SUPER ALT, 0, exec, ${eww-command} --screen 0"
-          "SUPER ALT, 1, exec, ${eww-command} --screen 1"
-          "SUPER SHIFT, c, exec, ~/.config/hypr/hypridle.fish"
-          "SUPER, h, exec, ~/.config/hypr/change-theme.fish --theme hyprland"
-          "SUPER SHIFT, h, exec, ~/.config/hypr/change-theme.fish --theme onepiece"
-          "SUPER, S, exec, hyprctl keyword 'monitor' 'desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,auto,1'"
-          "SUPER, S, exec, hyprctl keyword 'monitor' 'desc:Samsung Electric Company SAMSUNG 0x01000E00,3840x2160@60,auto,1'"
-          "SUPER CTRL, R, exec, hyprctl reload"
-          "SUPER, left, movefocus, l"
-          "SUPER, right, movefocus, r"
-          "SUPER, up, movefocus, u"
-          "SUPER, down, movefocus, d"
-          "SUPER, 1, workspace, 1"
-          "SUPER, 2, workspace, 2"
-          "SUPER, 3, workspace, 3"
-          "SUPER, 4, workspace, 4"
-          "SUPER, 5, workspace, 5"
-          "SUPER, 6, workspace, 6"
-          "SUPER, 7, workspace, 7"
-          "SUPER, 8, workspace, 8"
-          "SUPER, 9, workspace, 9"
-          "SUPER, 0, workspace, 10"
-          "SUPER SHIFT, 1, movetoworkspace, 1"
-          "SUPER SHIFT, 2, movetoworkspace, 2"
-          "SUPER SHIFT, 3, movetoworkspace, 3"
-          "SUPER SHIFT, 4, movetoworkspace, 4"
-          "SUPER SHIFT, 5, movetoworkspace, 5"
-          "SUPER SHIFT, 6, movetoworkspace, 6"
-          "SUPER SHIFT, 7, movetoworkspace, 7"
-          "SUPER SHIFT, 8, movetoworkspace, 8"
-          "SUPER SHIFT, 9, movetoworkspace, 9"
-          "SUPER SHIFT, 0, movetoworkspace, 10"
-          "SUPER CTRL, 1, movetoworkspacesilent, 1"
-          "SUPER CTRL, 2, movetoworkspacesilent, 2"
-          "SUPER CTRL, 3, movetoworkspacesilent, 3"
-          "SUPER CTRL, 4, movetoworkspacesilent, 4"
-          "SUPER CTRL, 5, movetoworkspacesilent, 5"
-          "SUPER CTRL, 6, movetoworkspacesilent, 6"
-          "SUPER CTRL, 7, movetoworkspacesilent, 7"
-          "SUPER CTRL, 8, movetoworkspacesilent, 8"
-          "SUPER CTRL, 9, movetoworkspacesilent, 9"
-          "SUPER CTRL, 0, movetoworkspacesilent, 10"
-          "SUPER, mouse_down, workspace, e+1"
-          "SUPER, mouse_up, workspace, e-1"
-          "SUPER, mouse_left, workspace, e+1"
-          "SUPER, mouse_right, workspace, e-1"
-          ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
-          "SUPER, XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%-"
-          "SUPER, XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%+"
-          ", XF86Tools, exec, firefox --new-window www.gmail.com"
-          "SUPER, F10, exec, firefox --new-window 'ext+container:name=UniTN&url=www.gmail.com'"
-          "SUPER SHIFT, F10, exec, firefox --new-window www.outlook.it"
-          "SUPER CTRL, F10, exec, firefox --new-window 'ext+container:name=Tuni&url=www.outlook.it'"
-          ", Print, exec,  grimblast --notify copysave output ~/Pictures/Screenshots/$(date +'%F-%T.png')"
-          "SUPER, Print, exec,  grimblast --notify copysave active ~/Pictures/Screenshots/$(date +'%F-%T.png')"
-          "SUPER SHIFT, Print, exec,  grimblast --notify copysave area ~/Pictures/Screenshots/$(date +'%F-%T.png')"
-          "CTRL, Print, exec,  grimblast --notify copy output"
-          "SUPER CTRL, Print, exec,  grimblast --notify copy active"
-          "SUPER CTRL SHIFT, Print, exec,  grimblast --notify copy area"
-        ];
+        );
 
-        bindm = [
-          "SUPER, mouse:272, movewindow"
-          "SUPER, mouse:273, resizewindow"
-        ];
-
-        bindl = [
-          ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-          # trigger when the switch is turning on
-          ",switch:off:Lid Switch,exec,hyprctl keyword monitor 'eDP-1, 3000x2000@60, 530x1440, 2'"
-          # bindl=,switch:off:Lid Switch,exec,hyprpaper
-          # trigger when the switch is turning off
-          ",switch:on:Lid Switch,exec,hyprctl keyword monitor 'eDP-1, disable'"
-          # bindl=,switch:on:Lid Switch,exec,hyprpaper
-        ];
-
-        bindle = [
-          "SUPER, Return, exec, hyprctl keyword monitor eDP-1,disable"
-          "SUPER SHIFT, Return, exec, hyprctl keyword monitor eDP-1,3000x2000@60,0x1440,2"
-          ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-          ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
-          ", XF86MonBrightnessUp, exec, light -T 1.2"
-          ", XF86MonBrightnessDown, exec, light -T 0.8"
-          "SUPER, XF86MonBrightnessUp, exec, ddcutil --model \"MSI MP271Q\" setvcp 10 + 5"
-          "SUPER, XF86MonBrightnessDown, exec, ddcutil --model \"MSI MP271Q\" setvcp 10 - 5"
-        ];
-
-        misc = {
-          disable_splash_rendering = true;
-          force_default_wallpaper = 2;
+        # --- DEFINIZIONE SUBMAP PURA NATIVA LUA ---
+        # Risolve definitivamente il blocco del tasto Esc e Frecce!
+        define_submap = {
+          _args = [
+            "resize"
+            (lib.generators.mkLuaInline ''
+              function()
+                hl.bind("right", hl.dsp.window.resize({ x = 10, y = 0, relative = true }), { repeating = true })
+                hl.bind("left", hl.dsp.window.resize({ x = -10, y = 0, relative = true }), { repeating = true })
+                hl.bind("up", hl.dsp.window.resize({ x = 0, y = -10, relative = true }), { repeating = true })
+                hl.bind("down", hl.dsp.window.resize({ x = 0, y = 10, relative = true }), { repeating = true })
+                hl.bind("escape", hl.dsp.submap("reset"))
+              end
+            '')
+          ];
         };
-
-        cursor = {
-          inactive_timeout = 10;
-          hide_on_touch = true;
-          hotspot_padding = 0;
-        };
-
-        workspace =
-          if (variants.hostName == "roblor-matebook") then
-            [
-              "1,monitor:eDP-1,default:true"
-              "2,monitor:DP-1,default:true"
-            ]
-          else if (variants.hostName == "roblor-desktop") then
-            [
-              # Assegna il workspace 99 al monitor virtuale per isolarlo
-              "99,monitor:sunshine,default:true"
-            ]
-          else
-            [ ];
       };
-      extraConfig = ''
-        # will switch to a submap called resize
-        bind=ALT,R,submap,resize
-
-        # will start a submap called "resize"
-        submap=resize
-
-        # sets repeatable binds for resizing the active window
-        binde=,right,resizeactive,10 0
-        binde=,left,resizeactive,-10 0
-        binde=,up,resizeactive,0 -10
-        binde=,down,resizeactive,0 10
-
-        # use reset to go back to the global submap
-        bind=,escape,submap,reset 
-
-        # will reset the submap, meaning end the current one and return to the global one
-        submap=reset
-      '';
     };
 }

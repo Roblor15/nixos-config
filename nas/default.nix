@@ -395,6 +395,10 @@
     enable = NASOptions.services.grampsweb;
     domain = NASOptions.domain;
   };
+  myNas.services.oxicloud = {
+    enable = NASOptions.services.oxicloud;
+    domain = NASOptions.domain;
+  };
   myNas.users = {
     enable = NASOptions.services.users;
     users = {
@@ -440,7 +444,7 @@
       peers = [
         {
           # Chiave PUBBLICA del VPS (può stare in chiaro qui)
-          publicKey = "rTaqSCr/vI9Xx7lhHmKvJuClZ3ffgxhDstInU2WWM1Y=";
+          publicKey = "xQvLNCx6U807127MAQZe5oN3/NYbk13/HzMs6p4QXDM=";
 
           # Preshared key (gestita da Agenix)
           presharedKeyFile = config.age.secrets.wg-preshared.path;

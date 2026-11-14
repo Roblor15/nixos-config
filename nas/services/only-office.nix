@@ -51,8 +51,8 @@ in
       # Use the actual domain so Host header matching works
       # hostname = "localhost";
       hostname = "onlyoffice.${cfg.domain}";
-      # jwtSecretFile = config.age.secrets.onlyoffice_jwt.path;
-      jwtSecretFile = "${pkgs.writeText "onlyoffice-jwt" "ciaociao"}";
+      jwtSecretFile = config.age.secrets.onlyoffice_jwt.path;
+      # jwtSecretFile = "${pkgs.writeText "onlyoffice-jwt" "ciaociao"}";
       securityNonceFile = config.age.secrets.onlyoffice_nonce.path;
 
       # package = unstablePkgs.onlyoffice-documentserver;
@@ -89,10 +89,10 @@ in
 
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Host $host;
-        
+
         # 🔥 IL FIX MAGICO: Forziamo https invece del default $scheme 🔥
         proxy_set_header X-Forwarded-Proto https;
-        
+
         # Manteniamo le configurazioni vitali del modulo per i WebSocket
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Upgrade $http_upgrade;

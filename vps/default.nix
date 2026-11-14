@@ -193,7 +193,7 @@
 
       peers = [
         {
-          publicKey = "uJv/kHaiEX++HNuG+88lPWcOilr8RYDmegNBZVZI6H0=";
+          publicKey = "4WMrDC2nXVcaUoc0OiVykENwRfhvlHsFkHYHU7CIi1Q=";
           presharedKeyFile = config.age.secrets.wg-preshared.path;
 
           # Qui autorizziamo l'IP del NAS

@@ -373,6 +373,23 @@ in
                   "groups"
                 ];
               }
+              {
+                client_id = "oxicloud";
+                client_name = "OxiCloud";
+                client_secret = "$pbkdf2-sha512$310000$lbUJlBDry/v6Ccf/f3cJxA$DSdJ7UntPEnqAVlVrVk.SSgLbn5KdEfH8E2zJ1UGJ.n9K7IPD6T32pFNfxgIiIxCUGcoQ3s.eeNsKYv2QF.aFQ";
+                public = false;
+                authorization_policy = "one_factor";
+                redirect_uris = [
+                  "https://oxicloud.${cfg.domain}/api/auth/oidc/callback"
+                ];
+                scopes = [
+                  "openid"
+                  "profile"
+                  "email"
+                  "groups"
+                ];
+                token_endpoint_auth_method = "client_secret_post";
+              }
             ];
           };
         };

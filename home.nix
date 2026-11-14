@@ -143,6 +143,18 @@
           inkscape
           kicad
           rapidraw
+          (appimageTools.wrapType2 {
+            pname = "atomic-chat";
+            version = "2.2.23";
+            src = fetchurl {
+              url = "https://github.com/AtomicBot-ai/Atomic-Chat/releases/download/v2.2.23/Atomic.Chat_2.2.23_amd64.AppImage";
+              sha256 = "07kb9yvf24l2li26zmslr42c1pgy94dfgz8cxd13az415wcd4qk0";
+            };
+            extraPkgs = pkgs: with pkgs; [
+              libgpg-error
+              libgcrypt
+            ];
+          })
         ]
       else
         [
@@ -151,6 +163,7 @@
     );
 
   home.pointerCursor = {
+    enable = true;
     gtk.enable = true;
     # x11.enable = true;
     package = pkgs.bibata-cursors;

@@ -32,7 +32,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     lanzaboote-unstable = {
-      url = "github:nix-community/lanzaboote/v0.4.3";
+      url = "github:nix-community/lanzaboote/v1.2.0";
       inputs.nixpkgs.follows = "unstable";
     };
     agenix-stable = {
@@ -65,7 +65,7 @@
           authelia = true;
           ente = false;
           lldap = true;
-          rustfs = true;
+          rustfs = false;
           seafile = false;
           opencloud = true;
           onlyoffice = true;
@@ -75,6 +75,7 @@
           ollama = false;
           windmill = false;
           grampsweb = true;
+          oxicloud = true;
         };
       };
     in

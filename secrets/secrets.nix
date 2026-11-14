@@ -169,4 +169,9 @@ in
     nas
     zimaboard
   ];
+  "oxicloud-env.age".publicKeys = [
+    roblor-desktop
+    nas
+    zimaboard
+  ];
 }

@@ -65,12 +65,18 @@ in
       "rpool/safe/opencloud" = {
         useTemplate = [ "ssd_backup" ];
       };
+      "rpool/safe/oxicloud-db" = {
+        useTemplate = [ "ssd_backup" ];
+      };
 
       # HDDPOOL (HDD): Snapshot dei dati bulk
       "hddpool/immich" = {
         useTemplate = [ "hdd_backup" ];
       };
       "hddpool/oc-users" = {
+        useTemplate = [ "hdd_backup" ];
+      };
+      "hddpool/oxicloud-data" = {
         useTemplate = [ "hdd_backup" ];
       };
       "hddpool/rustfs" = {
@@ -88,6 +94,9 @@ in
         useTemplate = [ "backup_target" ];
       };
       "hddpool/backups/opencloud" = {
+        useTemplate = [ "backup_target" ];
+      };
+      "hddpool/backups/oxicloud-db" = {
         useTemplate = [ "backup_target" ];
       };
     };
@@ -113,6 +122,10 @@ in
         source = "rpool/safe/opencloud";
         target = "hddpool/backups/opencloud";
       };
+      "backup-oxicloud-db" = {
+        source = "rpool/local/oxicloud-db";
+        target = "hddpool/backups/oxicloud-db";
+      };
     };
   };
 
@@ -131,7 +144,7 @@ in
       # Passa l'email come stringa semplice, non come lista [ "..." ]
       ZED_EMAIL_ADDR = "roberto.lorenzon.2001@gmail.com";
       ZED_EMAIL_PROG = "${telegramNotify}";
-      
+
       # ZED usa script Bash: esige "1" invece di "true" o "0" invece di "false"
       ZED_NOTIFY_VERBOSE = "1";
     };

@@ -57,6 +57,7 @@ in
       environmentVariables = {
         AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE =
           config.age.secrets.authelia_ldap_bind_password.path;
+        AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE = config.age.secrets.authelia_smtp_password.path;
       };
 
       secrets = {
@@ -125,11 +126,9 @@ in
         notifier = {
           smtp = {
             username = "9ecdc8001@smtp-brevo.com";
-            password = config.age.secrets.authelia_smtp_password.file;
-            host = "smtp-relay.brevo.com";
-            port = 587;
+            # "submission://" = porta 587 con STARTTLS
+            address = "submission://smtp-relay.brevo.com:587";
             sender = "Authelia <roberto.lorenzon.2001@gmail.com>";
-            encryption = "starttls";
           };
         };
 
